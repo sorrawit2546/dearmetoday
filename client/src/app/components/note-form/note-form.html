@@ -1,0 +1,306 @@
+<!-- Beautiful Note Form Section -->
+<div #noteFormDiv id="note-form" class="relative py-20 px-8 bg-gradient-to-b from-white via-cozy-cream/30 to-cozy-beige/20 overflow-hidden">
+    
+    <!-- Subtle Background Pattern -->
+    <div class="absolute inset-0 opacity-[0.015]">
+      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="formPattern" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+            <circle cx="25" cy="25" r="0.5" fill="currentColor" opacity="0.3"/>
+            <path d="M10,25 Q25,15 40,25 Q25,35 10,25" fill="none" stroke="currentColor" stroke-width="0.2" opacity="0.2"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#formPattern)" class="text-cozy-brown"/>
+      </svg>
+    </div>
+
+    <!-- Floating ambient elements -->
+    <div class="absolute top-16 right-1/4 w-24 h-24 bg-gradient-radial from-cozy-blush/8 to-transparent rounded-full animate-float" style="animation-duration: 8s;"></div>
+    <div class="absolute bottom-20 left-1/5 w-32 h-32 bg-gradient-radial from-cozy-sage/6 to-transparent rounded-full animate-float" style="animation-duration: 10s; animation-delay: 3s;"></div>
+
+    <div class="relative max-w-3xl mx-auto">
+      
+      <!-- Elegant Form Container -->
+      <div class="cozy-card shadow-cozy-lg backdrop-blur-sm border border-cozy-sage/20 relative overflow-hidden">
+        
+        <!-- Subtle top gradient line -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cozy-brown via-cozy-blush to-cozy-brown opacity-60"></div>
+        
+        <form [formGroup]="noteForm" (ngSubmit)="onSubmit()" class="relative z-10">
+          
+          <!-- Elegant Header -->
+          <div class="text-center mb-12">
+            <div class="mb-6">
+              <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-cozy-brown/10 via-cozy-blush/20 to-cozy-brown/10 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                     class="text-cozy-brown">
+                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                  <path d="M13.5 6.5l4 4" />
+                </svg>
+              </div>
+            </div>
+            
+            <h3 class="text-3xl md:text-4xl text-cozy-charcoal font-light font-thai mb-4 leading-tight">
+              บันทึกความคิดดี ๆ วันนี้
+            </h3>
+            
+            <p class="text-cozy-brown/70 font-light font-english mb-6 leading-relaxed">
+              Share your positive thoughts and create beautiful memories
+            </p>
+            
+            <!-- Beautiful date badge -->
+            <div class="inline-flex items-center bg-gradient-to-r from-cozy-brown/5 via-cozy-blush/10 to-cozy-brown/5 border border-cozy-sage/30 px-6 py-3 rounded-full">
+              <svg class="w-4 h-4 text-cozy-brown/60 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-sm text-cozy-brown/80 font-light font-english">
+                {{ currentDate | date:'d MMMM yyyy' }}
+              </span>
+            </div>
+            
+            <!-- Elegant divider -->
+            <div class="flex items-center justify-center mt-8 mb-8">
+              <div class="w-20 h-px bg-gradient-to-r from-transparent via-cozy-brown/30 to-transparent"></div>
+              <div class="mx-4 w-2 h-2 rounded-full bg-cozy-brown/30"></div>
+              <div class="w-20 h-px bg-gradient-to-l from-transparent via-cozy-brown/30 to-transparent"></div>
+            </div>
+          </div>
+  
+                <!-- Image Upload Area -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <label class="block text-sm font-semibold text-gray-700 font-thai">
+              แนบรูปภาพ (สูงสุด 5 รูป)
+              <span *ngIf="selectedImages.length > 0" class="ml-2 text-[#ac7f5e] text-xs font-mixed">
+                ({{ selectedImages.length }}/5 รูป)
+              </span>
+            </label>
+            
+            <!-- Clear all button -->
+            <button *ngIf="selectedImages.length > 1" 
+                    type="button" 
+                    (click)="clearAllImages()" 
+                    class="text-xs text-red-500 hover:text-red-700 hover:underline transition-colors duration-200 flex items-center font-thai">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+              ลบทั้งหมด
+            </button>
+          </div>
+          
+          <!-- Upload Area with Images -->
+          <div class="relative">
+            <!-- Hidden file input -->
+            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" multiple 
+                   class="hidden" 
+                   [disabled]="selectedImages.length >= 5">
+            
+            <!-- Clickable Upload Area -->
+            <div (click)="triggerFileInput()" 
+                 class="cursor-pointer transition-all duration-300"
+                 [class.pointer-events-none]="selectedImages.length >= 5">
+              
+              <!-- Show upload prompt when no images -->
+              <div *ngIf="selectedImages.length === 0" 
+                   class="bg-gradient-to-br from-[#ac7f5e]/5 to-[#ac7f5e]/10 rounded-xl h-40 border-2 border-dashed border-[#ac7f5e]/30 flex flex-col items-center justify-center transition-all duration-300 hover:border-[#ac7f5e]/50 hover:bg-[#ac7f5e]/10 hover:scale-[1.02]">
+                <div class="text-center">
+                  <svg class="w-12 h-12 text-[#ac7f5e]/60 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                                  <p class="text-[#ac7f5e] font-medium font-thai">คลิกเพื่อเลือกรูปภาพ</p>
+                <p class="text-xs text-gray-500 mt-1 font-english">PNG, JPG หรือ GIF (สูงสุด 10MB)</p>
+                </div>
+              </div>
+
+              <!-- Show images in grid -->
+              <div *ngIf="selectedImages.length > 0" 
+                   class="bg-gradient-to-br from-[#ac7f5e]/5 to-[#ac7f5e]/10 rounded-xl border-2 border-dashed border-[#ac7f5e]/30 p-4 min-h-[10rem] transition-all duration-300 hover:border-[#ac7f5e]/50">
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <!-- Existing Images -->
+                  <div *ngFor="let image of selectedImages; let i = index; trackBy: trackByIndex" class="relative group">
+                    <img [src]="image" alt="Selected image {{i+1}}" 
+                         class="w-full h-20 object-cover rounded-lg shadow-md border border-gray-200 transition-transform hover:scale-105"
+                         (load)="onImageLoad(i)"
+                         (error)="onImageError(i)"
+                         (click)="$event.stopPropagation()">
+                    
+                    <!-- Delete button - always visible on mobile, hover on desktop -->
+                    <button type="button" (click)="removeImage($event, i)" 
+                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-all duration-200 shadow-lg z-40 opacity-80 md:opacity-0 md:group-hover:opacity-100 hover:scale-110">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </button>
+
+                    <!-- Alternative: Context menu button (3 dots) -->
+                    <button type="button" (click)="showImageMenu($event, i)" 
+                            class="absolute top-1 right-1 bg-black/50 text-white rounded-full w-5 h-5 items-center justify-center hover:bg-black/70 transition-all duration-200 z-30 hidden md:flex opacity-0 group-hover:opacity-100">
+                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                      </svg>
+                    </button>
+                    
+                    <!-- Image number indicator -->
+                    <div class="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1.5 py-0.5 rounded pointer-events-none">
+                      {{i+1}}
+                    </div>
+
+                    <!-- Loading placeholder if image not loaded -->
+                    <div *ngIf="!image" class="absolute inset-0 bg-gray-200 rounded-lg flex items-center justify-center">
+                      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#ac7f5e]"></div>
+                    </div>
+                  </div>
+
+                  <!-- Add More Button -->
+                  <div *ngIf="selectedImages.length < 5" 
+                       class="w-full h-20 border-2 border-dashed border-[#ac7f5e]/40 rounded-lg flex items-center justify-center hover:border-[#ac7f5e]/60 hover:bg-[#ac7f5e]/5 transition-all duration-200">
+                    <div class="text-center">
+                      <svg class="w-6 h-6 text-[#ac7f5e]/60 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                      <p class="text-xs text-[#ac7f5e]/70 font-medium font-thai">เพิ่มรูป</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Upload instruction when has images -->
+                <div class="mt-3 text-center">
+                  <p class="text-xs text-gray-500 font-thai">
+                    <span *ngIf="selectedImages.length < 5">คลิกที่พื้นที่นี้เพื่อเพิ่มรูปเพิ่มเติม</span>
+                    <span *ngIf="selectedImages.length >= 5" class="text-[#ac7f5e]">ครบ 5 รูปแล้ว</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+          <!-- Beautiful Email Input -->
+          <div class="mb-10">
+            <label class="flex items-center text-base font-light text-cozy-charcoal/80 mb-4 font-thai">
+              <svg class="w-4 h-4 text-cozy-brown/60 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+              </svg>
+              ที่อยู่อีเมล
+            </label>
+            <div class="relative group">
+              <input type="email" placeholder="your.email@example.com" 
+                     class="cozy-input w-full font-english placeholder:text-cozy-charcoal/40 group-hover:border-cozy-brown/40 focus:ring-2 focus:ring-cozy-brown/20 transition-all duration-300" 
+                     formControlName="email">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                <div class="w-2 h-2 rounded-full bg-cozy-brown/20 group-focus-within:bg-cozy-brown/60 transition-colors duration-300"></div>
+              </div>
+            </div>
+          </div>
+    
+          <!-- Beautiful Positive Note Input -->
+          <div class="mb-10">
+            <label class="flex items-center text-base font-light text-cozy-charcoal/80 mb-4 font-thai">
+              <svg class="w-4 h-4 text-cozy-brown/60 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+              </svg>
+              ข้อความดี ๆ สำหรับวันนี้
+            </label>
+            <div class="relative group">
+              <textarea placeholder="วันนี้เป็นวันใหม่ที่สดใส ฉันจะสร้างความสุขและแบ่งปันพลังบวกให้กับคนรอบข้าง ✨" 
+                        class="cozy-input w-full h-32 resize-none font-thai leading-relaxed placeholder:text-cozy-charcoal/40 group-hover:border-cozy-brown/40 focus:ring-2 focus:ring-cozy-brown/20 transition-all duration-300" 
+                        formControlName="positiveNote"></textarea>
+              <div class="absolute bottom-4 right-4 pointer-events-none">
+                <div class="w-2 h-2 rounded-full bg-cozy-brown/20 group-focus-within:bg-cozy-brown/60 transition-colors duration-300"></div>
+              </div>
+            </div>
+          </div>
+  
+        <!-- Mood Selector -->
+        <div class="mb-8">
+          <label class="block text-sm font-semibold text-gray-700 mb-4 font-mixed">
+            <span class="font-english">How are you feeling today?</span>
+            <span class="text-xs text-gray-500 font-normal font-thai block">เลือกอารมณ์ของคุณ</span>
+          </label>
+          
+          <!-- Mood Pills/Tags -->
+          <div class="flex flex-wrap gap-2 justify-center sm:justify-start">
+            <div *ngFor="let mood of moods; let i = index" class="relative" 
+                 [style.animation-delay]="i * 100 + 'ms'">
+              <input type="radio" [id]="mood.value" [value]="mood.value" formControlName="mood" class="sr-only peer">
+              <label [for]="mood.value" 
+                     class="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-600 bg-white border-2 border-gray-200 rounded-full cursor-pointer transition-all duration-300 hover:border-[#ac7f5e]/50 hover:bg-[#ac7f5e]/5 hover:scale-105 hover:shadow-md peer-checked:bg-gradient-to-r peer-checked:from-[#ac7f5e] peer-checked:to-[#8b6240] peer-checked:text-white peer-checked:border-[#ac7f5e] peer-checked:shadow-lg peer-checked:scale-105 peer-checked:animate-pulse font-english">
+                <span class="flex items-center">
+                  <span class="text-base sm:text-lg mr-1 sm:mr-2 animate-bounce">{{ mood.emoji }}</span>
+                  <span class="hidden sm:inline">{{ mood.text }}</span>
+                  <span class="sm:hidden">{{ mood.shortText || mood.text }}</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Selected mood display -->
+          <div *ngIf="noteForm.get('mood')?.value" 
+               class="mt-4 p-4 bg-gradient-to-r from-[#ac7f5e]/10 to-[#ac7f5e]/5 rounded-xl border border-[#ac7f5e]/20 transform transition-all duration-500 animate-pulse">
+            <div class="flex items-center justify-center text-center">
+              <div class="flex items-center">
+                <div class="w-8 h-8 bg-[#ac7f5e] rounded-full flex items-center justify-center mr-3">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                  </svg>
+                </div>
+                                 <div>
+                   <p class="text-[#ac7f5e] font-bold text-lg font-english">{{ getMoodEmoji() }} {{ getMoodText() }}</p>
+                   <p class="text-gray-600 text-xs font-english">Perfect! Let's capture this feeling</p>
+                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+          <!-- Premium Submit Button -->
+          <div class="text-center pt-8">
+            <div class="relative group inline-block">
+              <!-- Button glow effect -->
+              <div class="absolute inset-0 bg-gradient-to-r from-cozy-brown/20 via-cozy-dark-brown/30 to-cozy-brown/20 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500 scale-110"></div>
+              
+              <button type="submit" [disabled]="noteForm.invalid" 
+                      class="relative overflow-hidden bg-gradient-to-r from-cozy-brown to-cozy-dark-brown text-white px-16 py-5 rounded-2xl shadow-cozy-lg hover:shadow-cozy-button transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none group">
+                
+                <!-- Button content -->
+                <span class="relative flex items-center space-x-4 font-thai text-lg font-normal">
+                  <svg class="w-5 h-5 transition-transform group-hover:scale-110 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                  </svg>
+                  <span>บันทึกความคิดดี ๆ</span>
+                  <svg class="w-5 h-5 transition-transform group-hover:translate-x-1 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  </svg>
+                </span>
+                
+                <!-- Hover shine effect -->
+                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                
+                <!-- Button border highlight -->
+                <div class="absolute inset-0 rounded-2xl border border-white/20 group-hover:border-white/30 transition-colors duration-300"></div>
+              </button>
+            </div>
+            
+                         <!-- Inspirational text below button -->
+             <p class="mt-6 text-sm text-cozy-brown/60 font-light font-thai italic">
+               "ทุกความคิดดี ๆ ล้วนมีคุณค่า และสมควรได้รับการบันทึก"
+             </p>
+           </div>
+    
+         </form>
+       </div>
+     </div>
+</div>
+
+<!-- Toast Notification -->
+<div *ngIf="showToastFlag" 
+     class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-y-0">
+  <div class="flex items-center">
+    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+    <span class="font-thai">{{ toastMessage }}</span>
+  </div>
+</div>
