@@ -29,24 +29,32 @@ model User {
 
 // ## โมเดลสำหรับบันทึก (Entry)
 model Entry {
-  id    String @id @default(uuid())
+  id    String  @id @default(uuid())
   line1 String
-  line2 String
-  line3 String
+  line2 String?
+  line3 String?
+  email String
   mood  Mood
 
   // Map camelCase fields to snake_case columns
-  imageUrl    String?  @db.VarChar(256) @map("image_url")
-  entryDate   DateTime @db.Date @map("entry_date")
   showMessage Boolean  @default(false) @map("show_message")
+  isDelete    Boolean  @default(false) @map("is_delete")
   createdAt   DateTime @default(now()) @map("created_at")
 
   // Relation fields
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @map("user_id") // Foreign key
+  user       User?        @relation(fields: [userId], references: [id])
+  userId     String       @map("user_id") // Foreign key
+  entryImage EntryImage[]
 
   // Map Model name "Entry" to table name "entries"
   @@map("entries")
+}
+
+model EntryImage {
+  id      String @id @default(uuid())
+  url     String
+  entryId String
+  entry   Entry  @relation(fields: [entryId], references: [id])
 }
 
 // ## Enum สำหรับอารมณ์
