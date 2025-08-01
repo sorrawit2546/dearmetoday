@@ -1,17 +1,31 @@
 // positive-note.service.ts
-import { Injectable } from '@nestjs/common';
+import {
+  BadGatewayException,
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
 import { PositiveNoteRepository } from './positive-note.repository';
 import { CreatePositiveNoteDto } from './Dto/create-positive-note';
-import { Entry } from 'generated/prisma';
+import { Entry } from '@prisma/client';
 
 @Injectable()
 export class PositiveNoteService {
-  constructor(private readonly repository: PositiveNoteRepository) {}
+  constructor(
+    private readonly repositoryPositiveNote: PositiveNoteRepository,
+  ) {}
 
   async createPositiveNote(
     createEntryDto: CreatePositiveNoteDto,
   ): Promise<Entry> {
-    const result = await this.repository.createPositiveNote(createEntryDto);
-    return result;
+    try {
+      const result =
+        await this.repositoryPositiveNote.createPositiveNote(createEntryDto);
+      return result;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException();
+      }
+      throw new BadGatewayException(['Bad gateway']);
+    }
   }
 }

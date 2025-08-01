@@ -5,7 +5,7 @@ import {
   IsBoolean,
   IsEnum,
 } from 'class-validator';
-import { Mood } from 'generated/prisma';
+import { Mood } from '@prisma/client';
 
 export class CreatePositiveNoteDto {
   @IsEmail()

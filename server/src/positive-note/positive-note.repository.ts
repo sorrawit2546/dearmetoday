@@ -1,24 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { Entry, PrismaClient } from 'generated/prisma';
+import { Entry } from '@prisma/client';
 import { CreatePositiveNoteDto } from './Dto/create-positive-note';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PositiveNoteRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaService) {}
 
   async createPositiveNote(
     createPositiveNoteDto: CreatePositiveNoteDto,
   ): Promise<Entry> {
-    const { imageUrls, ...entryData } = createPositiveNoteDto;
     const result = await this.prisma.entry.create({
       data: {
-        ...entryData,
-        entryImage: {
-          create: imageUrls?.map((url) => ({ url })) || [],
-        },
-      },
-      include: {
-        entryImage: true,
+        ...createPositiveNoteDto,
       },
     });
     return result;
