@@ -1,6 +1,7 @@
-import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
 import { Api } from '../../services/api';
 
 @Component({
@@ -10,12 +11,15 @@ import { Api } from '../../services/api';
   styleUrl: './note-form.css',
 })
 export class NoteForm {
+  toastError = false;
+  toastMessage: string | null = null;
+  isLoading = false;
   showErrorToast = false;
   previewImages: string[] = [];
   isDragging = false;
   email = '';
   note = '';
-  mood = '';
+  mood = 'happy';
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -76,11 +80,16 @@ export class NoteForm {
   }
 
   submitForm() {
+    console.log('Starting form submission...');
+    this.isLoading = true;
+    console.log('isLoading set to:', this.isLoading);
+    this.cd.detectChanges(); // Force change detection
+
     const formData = new FormData();
     formData.append('email', this.email);
     formData.append('line1', this.note);
     formData.append('mood', this.mood);
-  
+
     this.previewImages.forEach((imageDataUrl, index) => {
       const byteString = atob(imageDataUrl.split(',')[1]);
       const mimeString = imageDataUrl.split(',')[0].split(':')[1].split(';')[0];
@@ -92,17 +101,32 @@ export class NoteForm {
       const blob = new Blob([ab], { type: mimeString });
       formData.append('imageUrls', blob, `image${index}.jpg`);
     });
-  
-    this.apiService.createPositiveNote(formData).subscribe({
-      next: () => {
-        this.resetForm();
-      },
-      error: (err) => {
-        console.error(err);
-        this.showErrorToast = true;
-        setTimeout(() => (this.showErrorToast = false), 3000);
-      },
-    });
+
+    this.apiService
+      .createPositiveNote(formData)
+      .pipe(
+        finalize(() => {
+          console.log('Request finalized');
+          this.ngZone.run(() => {
+            this.isLoading = false;
+            console.log('isLoading set to:', this.isLoading);
+            this.cd.detectChanges();
+          });
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Success:', response);
+          this.resetForm();
+          this.showToast('Send magic message complete! 🎉', false);
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          this.showErrorToast = true;
+          this.showToast('faile to send magic message! ', true);
+          setTimeout(() => (this.showErrorToast = false), 3000);
+        },
+      });
   }
 
   private resetForm(): void {
@@ -110,5 +134,14 @@ export class NoteForm {
     this.note = '';
     this.mood = '';
     this.previewImages = [];
+  }
+
+  showToast(message: string, isError = false) {
+    this.toastMessage = message;
+    this.toastError = isError;
+
+    setTimeout(() => {
+      this.toastMessage = null;
+    }, 3000);
   }
 }

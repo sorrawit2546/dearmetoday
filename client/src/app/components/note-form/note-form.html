@@ -61,7 +61,8 @@
       <!-- Email Field -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-1"
-          >Email</label
+          >Email
+          </label
         >
         <input
           type="email"
@@ -97,9 +98,20 @@
       <button
         (click)="submitForm()"
         class="btn btn-primary w-full"
+        [disabled]="isLoading"
       >
-        <span>Submit</span>
+        <span *ngIf="!isLoading">Submit</span>
+        <span *ngIf="isLoading" class="loading loading-dots loading-md"></span>
       </button>
+      <div *ngIf="toastMessage" class="toast toast-button toast-end z-50">
+        <div
+          class="alert"
+          [ngClass]="toastError ? 'alert-error' : 'alert-success'"
+        >
+          <span>{{ toastMessage }}</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
