@@ -31,6 +31,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    env_file:
+      - ./server/.env
     environment:
       - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydb
       - PORT=3000
@@ -42,6 +44,7 @@ services:
     volumes:
       - ./server:/app
       - /app/node_modules
+      - ./server/uploads:/app/uploads
     restart: unless-stopped
 
 volumes:

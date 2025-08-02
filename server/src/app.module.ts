@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads', // URL prefix เช่น http://localhost:3000/uploads/
     }),
+    SendgridModule,
   ],
   controllers: [AppController],
   providers: [
