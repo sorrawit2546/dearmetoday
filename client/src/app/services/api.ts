@@ -11,11 +11,17 @@ export interface NotePayload {
   providedIn: 'root'
 })
 export class Api {
-  private baseUrl = 'https://your-api-endpoint.com';
+  private baseUrl = 'http://localhost:3000/api'; // หรือใช้ environment
 
   constructor(private http: HttpClient) {}
 
-  sendNote(payload: NotePayload): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/notes`, payload);
+  // Example: GET Positive Notes
+  getPositiveNotes(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/positive-note`);
+  }
+
+  // Example: POST new note
+  createPositiveNote(data: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/positive-note/create`, data);
   }
 }

@@ -1,74 +1,105 @@
 <!-- Note Form -->
 <div id="note-form" class="px-6 pb-20 pt-20">
-    <div class="max-w-2xl mx-auto">
-        <div class="bg-[#ffffff] rounded-3xl shadow-lg p-6">
-            <!-- Date Header -->
-            <div class="text-sm text-gray-600 mb-4">28 July 2025</div>
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-[#ffffff] rounded-3xl shadow-lg p-6">
+      <!-- Date Header -->
+      <div class="text-sm text-gray-600 mb-4">28 July 2025</div>
 
-            <!-- Dropzone with preview inside -->
-            <div class="relative w-full h-[300px] border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 overflow-hidden group cursor-pointer"
-                (drop)="handleDrop($event)" (dragover)="handleDragOver($event)" (dragleave)="handleDragLeave($event)"
-                [class.border-blue-400]="isDragging" (click)="fileInput.click()">
-                <!-- Image previews (in grid) -->
-                <ng-container *ngIf="previewImages.length > 0; else dropHint">
-                    <div class="w-full h-full grid grid-cols-5 gap-5 p-2">
-                        <div *ngFor="let img of previewImages; let i = index"
-                            class="relative h-full aspect-square rounded overflow-hidden border">
-                            <img [src]="img" class="w-full h-full object-cover" />
-                            <button type="button" (click)="removeImage(i); $event.stopPropagation()"
-                                class="absolute top-1 right-1 bg-black/60 text-white text-xs px-1 py-0.5 rounded-full hover:bg-red-600">
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-                </ng-container>
-
-                <!-- Drop hint if no images -->
-                <ng-template #dropHint>
-                    <div class="flex flex-col items-center justify-center h-full text-gray-500">
-                        <p class="text-center">
-                            Drag & drop images here<br />
-                            or <span class="text-[#ac7f5e] font-medium">click to upload</span>
-                            <br />
-                            <span class="text-sm">(up to 5 images)</span>
-                        </p>
-                    </div>
-                </ng-template>
-
-                <!-- Hidden file input -->
-                <input type="file" accept="image/*" multiple hidden #fileInput (change)="handleImageUpload($event)" />
+      <!-- Dropzone with preview inside -->
+      <div
+        class="relative w-full h-[300px] border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 overflow-hidden group cursor-pointer"
+        (drop)="handleDrop($event)"
+        (dragover)="handleDragOver($event)"
+        (dragleave)="handleDragLeave($event)"
+        [class.border-blue-400]="isDragging"
+        (click)="fileInput.click()"
+      >
+        <!-- Image previews (in grid) -->
+        <ng-container *ngIf="previewImages.length > 0; else dropHint">
+          <div class="w-full h-full grid grid-cols-5 gap-5 p-2">
+            <div
+              *ngFor="let img of previewImages; let i = index"
+              class="relative h-full aspect-square rounded overflow-hidden border"
+            >
+              <img [src]="img" class="w-full h-full object-cover" />
+              <button
+                type="button"
+                (click)="removeImage(i); $event.stopPropagation()"
+                class="absolute top-1 right-1 bg-black/60 text-white text-xs px-1 py-0.5 rounded-full hover:bg-red-600"
+              >
+                ✕
+              </button>
             </div>
+          </div>
+        </ng-container>
 
+        <!-- Drop hint if no images -->
+        <ng-template #dropHint>
+          <div
+            class="flex flex-col items-center justify-center h-full text-gray-500"
+          >
+            <p class="text-center">
+              Drag & drop images here<br />
+              or <span class="text-[#ac7f5e] font-medium">click to upload</span>
+              <br />
+              <span class="text-sm">(up to 5 images)</span>
+            </p>
+          </div>
+        </ng-template>
 
+        <!-- Hidden file input -->
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          hidden
+          #fileInput
+          (change)="handleImageUpload($event)"
+        />
+      </div>
 
+      <!-- Email Field -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Email</label
+        >
+        <input
+          type="email"
+          placeholder="someone@gmail.com"
+          [(ngModel)]="email"
+          class="w-full border rounded px-3 py-2"
+        />
+      </div>
 
-            <!-- Email Field -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input type="email" placeholder="someone@gmail.com" class="w-full border rounded px-3 py-2" />
-            </div>
+      <!-- Positive Note Field -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Positive note for today.</label
+        >
+        <textarea
+          placeholder="It's going be today!"
+          [(ngModel)]="note"
+          class="w-full h-20 resize-none border rounded px-3 py-2"
+        ></textarea>
+      </div>
 
-            <!-- Positive Note Field -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Positive note for today.</label>
-                <textarea placeholder="It's going be today!"
-                    class="w-full h-20 resize-none border rounded px-3 py-2"></textarea>
-            </div>
+      <!-- Mood Selector -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Mood</label>
+        <select [(ngModel)]="mood" class="w-full border rounded px-3 py-2">
+          <option value="happy">happy</option>
+          <option value="sad">sad</option>
+          <option value="neutral">neutral</option>
+        </select>
+      </div>
 
-            <!-- Mood Selector -->
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Mood</label>
-                <select class="w-full border rounded px-3 py-2">
-                    <option value="happy">Happy</option>
-                    <option value="excited">excited</option>
-                    <option value="cozy">cozy</option>
-                </select>
-            </div>
-
-            <!-- Submit Button -->
-            <button class="w-full bg-[#2c2c2c] text-[#ffffff] hover:bg-[#1e1e1e] py-3 rounded">
-                Submit
-            </button>
-        </div>
+      <!-- Submit Button -->
+      <button
+        (click)="submitForm()"
+        class="btn btn-primary w-full"
+      >
+        <span>Submit</span>
+      </button>
     </div>
+  </div>
 </div>
