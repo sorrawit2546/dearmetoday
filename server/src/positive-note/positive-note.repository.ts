@@ -10,9 +10,26 @@ export class PositiveNoteRepository {
   async createPositiveNote(
     createPositiveNoteDto: CreatePositiveNoteDto,
   ): Promise<Entry> {
+    let userId: string | null = null;
+
+    // ถ้ามี email ให้หา user
+    if (createPositiveNoteDto.email) {
+      const user = await this.prisma.user.findUnique({
+        where: { email: createPositiveNoteDto.email },
+        select: {
+          id: true,
+        },
+      });
+
+      if (user) {
+        userId = user.id;
+      }
+    }
+
     const result = await this.prisma.entry.create({
       data: {
         ...createPositiveNoteDto,
+        userId: userId, // จะเป็น null ถ้าไม่มี user
       },
     });
     return result;

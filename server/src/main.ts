@@ -12,9 +12,16 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   // เปิดใช้งาน validation pipe สำหรับ class-validator
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   const port = process.env.PORT || 3000;
+  console.log(`🚀 Server running on port ${port}`);
   await app.listen(port);
 }
 

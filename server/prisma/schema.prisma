@@ -43,7 +43,7 @@ model Entry {
 
   // Relation fields
   user       User?        @relation(fields: [userId], references: [id])
-  userId     String       @map("user_id") // Foreign key
+  userId     String?       @map("user_id") // Foreign key
 
   // Map Model name "Entry" to table name "entries"
   @@map("entries")
