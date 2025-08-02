@@ -1,8 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{html,ts}", // ให้ Tailwind สแกนไฟล์ HTML + TypeScript
-  ],
+  content: ["./src/**/*.{html,ts}"],
   theme: {
     extend: {},
   },
