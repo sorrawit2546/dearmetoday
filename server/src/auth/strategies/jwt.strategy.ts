@@ -17,10 +17,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: any) {
+  validate(payload: any) {
     // payload ที่ decode มาจาก JWT
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     return {
       userId: payload.sub,
+      name: payload.name,
+      email: payload.email,
+      avatarUrl: payload.avatarUrl,
     };
   }
 }

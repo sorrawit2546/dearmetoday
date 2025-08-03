@@ -25,7 +25,12 @@ export class AuthService {
     }
 
     // 3. สร้าง JWT
-    const accessToken = this.jwtService.sign({ sub: (user as User).id });
+    const accessToken = this.jwtService.sign({
+      sub: (user as User).id,
+      name: (user as User).name,
+      email: (user as User).email,
+      avatarUrl: (user as User).avatarUrl,
+    });
 
     return { accessToken, user: user as User };
   }
