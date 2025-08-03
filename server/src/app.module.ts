@@ -8,6 +8,7 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
       serveRoot: '/uploads', // URL prefix เช่น http://localhost:3000/uploads/
     }),
     SendgridModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

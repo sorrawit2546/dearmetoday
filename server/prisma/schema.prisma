@@ -12,14 +12,16 @@ datasource db {
 
 // ## โมเดลสำหรับผู้ใช้งาน (User)
 model User {
-  id    String @id @default(uuid())
-  email String @unique
+  id        String  @id @default(uuid())
+  email     String  @unique
+  name      String? // จาก Google profile
+  avatarUrl String? @map("avatar_url") // URL รูปจาก Google
+  provider  String? // เช่น "google"
+  googleId  String? @map("provider_id") // ID จาก Google
 
-  // Map camelCase fields to snake_case columns
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  // Relation
   entries Entry[]
 
   // Map Model name "User" to table name "users"
@@ -42,8 +44,8 @@ model Entry {
   imageUrls   String[] @default([]) @map("image_urls")
 
   // Relation fields
-  user       User?        @relation(fields: [userId], references: [id])
-  userId     String?       @map("user_id") // Foreign key
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @map("user_id") // Foreign key
 
   // Map Model name "Entry" to table name "entries"
   @@map("entries")

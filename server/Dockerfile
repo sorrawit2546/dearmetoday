@@ -4,11 +4,16 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
+# ติดตั้ง pnpm
+RUN npm install -g pnpm
+
 # Copy package.json and package-lock.json
+COPY pnpm-lock.yaml ./
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN pnpm install
+
 
 # Copy the rest of the application code
 COPY . .
@@ -17,10 +22,10 @@ COPY . .
 RUN npx prisma generate
 
 # Build the application
-RUN npm run build
+RUN pnpm run build
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3000 
 
 # Start the application
-CMD ["npm", "run", "start:dev"]
+CMD ["pnpm", "run", "start:dev"]
