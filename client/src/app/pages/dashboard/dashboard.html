@@ -1,1 +1,20 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <div *ngIf="loading" class="loading">
+    <p>กำลังโหลดข้อมูล...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="user && !loading" class="user-info">
+    <h1>ยินดีต้อนรับ {{ user.name }}!</h1>
+    <div class="user-details">
+      <img *ngIf="user.avatarUrl" [src]="user.avatarUrl" [alt]="user.name" class="avatar">
+      <div class="user-text">
+        <p><strong>อีเมล:</strong> {{ user.email }}</p>
+        <p><strong>User ID:</strong> {{ user.userId }}</p>
+      </div>
+    </div>
+  </div>
+</div>

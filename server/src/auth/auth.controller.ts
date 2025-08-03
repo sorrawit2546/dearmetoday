@@ -25,7 +25,11 @@ export class AuthController {
     const { accessToken } = await this.authService.loginWithGoogle(
       req.user as GoogleUser,
     );
-    res.cookie('access_token', accessToken, { httpOnly: true });
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      sameSite: 'lax', // หรือ 'strict' ก็ได้ใน local
+      secure: false, // ต้อง false สำหรับ localhost (ถ้าใส่ true แล้วไม่ได้ใช้ HTTPS = cookie ไม่ถูกส่ง)
+    });
     res.redirect('http://localhost:4200/dashboard');
   }
 
@@ -39,6 +43,9 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   getProfile(@Req() req: RequestWithUser) {
     console.log('User from JWT:', req.user);
-    return req.user;
+    return {
+      success: true,
+      user: req.user,
+    };
   }
 }

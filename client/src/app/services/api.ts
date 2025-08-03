@@ -7,6 +7,18 @@ export interface NotePayload {
   note: string;
   mood: string;
 }
+
+export interface User {
+  userId: string;
+  name: string;
+  email: string;
+  avatarUrl: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  user: User;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -23,5 +35,10 @@ export class Api {
   // Example: POST new note
   createPositiveNote(data: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}/positive-note/create`, data);
+  }
+  getUserdataFromGoogle(): Observable<AuthResponse> {
+    return this.http.get<AuthResponse>(`${this.baseUrl}/auth/me`, { 
+      withCredentials: true 
+    });
   }
 }
