@@ -62,8 +62,7 @@
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-1"
           >Email
-          </label
-        >
+        </label>
         <input
           type="email"
           placeholder="someone@gmail.com"
@@ -97,7 +96,7 @@
       <!-- Submit Button -->
       <button
         (click)="submitForm()"
-        class="btn btn-primary w-full"
+        class="btn btn-soft btn-primary w-full"
         [disabled]="isLoading"
       >
         <span *ngIf="!isLoading">Submit</span>
@@ -112,6 +111,21 @@
         </div>
       </div>
 
+      <!-- Confirm Modal -->
+      <dialog #confirmDialog class="modal">
+        <div class="modal-box">
+          <h3 class="font-bold text-lg">ยืนยันการส่งข้อความ?</h3>
+          <p class="py-2">ระบบจะทำการส่งอีเมล พร้อมข้อความและรูปภาพของคุณ</p>
+          <div class="modal-action">
+            <form method="dialog" class="flex gap-2">
+              <button class="btn" (click)="cancelSend()">ยกเลิก</button>
+              <button class="btn btn-primary" (click)="confirmSend()">
+                ยืนยัน
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   </div>
 </div>

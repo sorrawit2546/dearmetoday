@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Api } from '../../services/api';
@@ -11,6 +11,7 @@ import { Api } from '../../services/api';
   styleUrl: './note-form.css',
 })
 export class NoteForm {
+  @ViewChild('confirmDialog') confirmDialog!: ElementRef<HTMLDialogElement>;
   toastError = false;
   toastMessage: string | null = null;
   isLoading = false;
@@ -80,6 +81,13 @@ export class NoteForm {
   }
 
   submitForm() {
+    this.confirmDialog.nativeElement.showModal(); // เปิด dialog
+  }
+  cancelSend() {
+    this.confirmDialog.nativeElement.close();
+  }
+
+  confirmSend() {
     console.log('Starting form submission...');
     this.isLoading = true;
     console.log('isLoading set to:', this.isLoading);
@@ -117,8 +125,28 @@ export class NoteForm {
       .subscribe({
         next: (response) => {
           console.log('Success:', response);
+          console.log('Current mood:', this.mood);
           this.resetForm();
-          this.showToast('Send magic message complete! 🎉', false);
+          if (this.mood === 'happy') {
+            console.log('Showing happy toast');
+            this.showToast(
+              'ดีใจด้วยนะ! ลองเก็บสิ่งดีๆ นี้ไว้ใช้ในวันที่รู้สึกเหนื่อยนะ :)',
+              false
+            );
+          }
+          if (this.mood === 'sad') {
+            console.log('Showing sad toast');
+            this.showToast(
+              'แม้วันนี้จะไม่ง่าย แต่คุณยังเห็นแสงเล็กๆ อยู่ เก่งมากเลยนะ',
+              false
+            );
+          }if (this.mood === 'neutral') {
+            console.log('Showing happy toast');
+            this.showToast(
+              'บางวันก็กลางๆ แบบนี้แหละ แต่คุณก็ยังเขียนถึงสิ่งดีๆ ได้ เยี่ยมเลย!',
+              false
+            );
+          }
         },
         error: (err) => {
           console.error('Error:', err);
@@ -132,7 +160,7 @@ export class NoteForm {
   private resetForm(): void {
     this.email = '';
     this.note = '';
-    this.mood = '';
+    // this.mood = ''; // ไม่ reset mood เพื่อให้ toast ทำงานได้
     this.previewImages = [];
   }
 
