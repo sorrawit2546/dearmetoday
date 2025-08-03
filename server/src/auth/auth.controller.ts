@@ -29,6 +29,7 @@ export class AuthController {
       httpOnly: true,
       sameSite: 'lax', // หรือ 'strict' ก็ได้ใน local
       secure: false, // ต้อง false สำหรับ localhost (ถ้าใส่ true แล้วไม่ได้ใช้ HTTPS = cookie ไม่ถูกส่ง)
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
     res.redirect('http://localhost:4200/dashboard');
   }

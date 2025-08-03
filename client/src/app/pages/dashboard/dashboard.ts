@@ -14,21 +14,46 @@ export class Dashboard implements OnInit {
   ) {}
   
   user: User | null = null;
-  loading = true;
   error: string | null = null;
+  isLoading: boolean = true;
+  retryCount: number = 0;
+  maxRetries: number = 3;
 
   ngOnInit(): void {
-    // AuthGuard ได้เช็ค token แล้ว ดังนั้นเราจะได้ข้อมูลผู้ใช้แน่นอน
+    this.loadUserData();
+  }
+
+  loadUserData(): void {
+    this.isLoading = true;
+    this.error = null;
+    
     this.apiService.getUserdataFromGoogle().subscribe({
       next: (response: AuthResponse) => {
+        console.log('User data loaded:', response);
         this.user = response.user;
-        this.loading = false;
+        this.isLoading = false;
+        this.retryCount = 0; // รีเซ็ต retry count เมื่อสำเร็จ
       },
       error: (err) => {
-        // ถ้าเกิด error หลังจาก AuthGuard ผ่านแล้ว = ปัญหาอื่น
-        this.error = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
-        this.loading = false;
+        console.error('Error loading user data:', err);
+        this.retryCount++;
+        
+        if (this.retryCount < this.maxRetries) {
+          // ลองใหม่หลังจาก 2 วินาที
+          setTimeout(() => {
+            console.log(`Retrying... Attempt ${this.retryCount + 1}/${this.maxRetries}`);
+            this.loadUserData();
+          }, 2000);
+        } else {
+          this.error = 'ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง';
+          this.isLoading = false;
+        }
       }
     });
+  }
+
+  retry(): void {
+    this.retryCount = 0;
+    this.loadUserData();
   }
 }
