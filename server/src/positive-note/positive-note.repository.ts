@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Entry } from '@prisma/client';
-import { CreatePositiveNoteDto } from './Dto/create-positive-note';
+import {
+  CreatePositiveNoteDto,
+  CreatePositiveNoteAuthDto,
+} from './Dto/create-positive-note';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -8,11 +11,11 @@ export class PositiveNoteRepository {
   constructor(private prisma: PrismaService) {}
 
   async createPositiveNote(
-    createPositiveNoteDto: CreatePositiveNoteDto,
+    createPositiveNoteDto: CreatePositiveNoteDto | CreatePositiveNoteAuthDto,
   ): Promise<Entry> {
     let userId: string | null = null;
 
-    // ถ้ามี email ให้หา user
+    // ใช้ email จาก DTO (ที่มาจาก token หรือ body)
     if (createPositiveNoteDto.email) {
       const user = await this.prisma.user.findUnique({
         where: { email: createPositiveNoteDto.email },
@@ -28,8 +31,15 @@ export class PositiveNoteRepository {
 
     const result = await this.prisma.entry.create({
       data: {
-        ...createPositiveNoteDto,
-        userId: userId, // จะเป็น null ถ้าไม่มี user
+        line1: createPositiveNoteDto.line1,
+        line2: createPositiveNoteDto.line2,
+        line3: createPositiveNoteDto.line3,
+        email: createPositiveNoteDto.email || '',
+        mood: createPositiveNoteDto.mood,
+        showMessage: createPositiveNoteDto.showMessage,
+        isDelete: createPositiveNoteDto.isDelete,
+        imageUrls: createPositiveNoteDto.imageUrls || [],
+        userId: userId,
       },
     });
     return result;

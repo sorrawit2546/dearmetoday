@@ -39,3 +39,36 @@ export class CreatePositiveNoteDto {
   @IsBoolean()
   isDelete?: boolean;
 }
+
+export class CreatePositiveNoteAuthDto {
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsString()
+  line1: string;
+
+  @IsOptional()
+  @IsString()
+  line2?: string | null;
+
+  @IsOptional()
+  @IsString()
+  line3?: string | null;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  imageUrls?: string[]; // เก็บหลาย URL ของรูปภาพ
+
+  @IsEnum(Mood)
+  mood: Mood;
+
+  @IsOptional()
+  @IsBoolean()
+  showMessage?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isDelete?: boolean;
+}
