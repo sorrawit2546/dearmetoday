@@ -13,7 +13,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         (req) => {
           console.log('JWT Strategy: Extracting token from cookie');
           console.log('JWT Strategy: Cookies:', req?.cookies);
-          console.log('JWT Strategy: Access token:', req?.cookies?.access_token ? 'Present' : 'Missing');
+          console.log(
+            'JWT Strategy: Access token:',
+            req?.cookies?.access_token ? 'Present' : 'Missing',
+          );
           return req?.cookies?.access_token || null; // ✅ จาก cookie
         },
       ]),

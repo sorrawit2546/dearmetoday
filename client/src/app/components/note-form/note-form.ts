@@ -21,12 +21,22 @@ export class NoteForm {
   email = '';
   note = '';
   mood = 'happy';
+  formattedDate: string = '';
 
   constructor(
     private cd: ChangeDetectorRef,
     private ngZone: NgZone,
     private apiService: Api
   ) {}
+
+  ngOnInit(): void {
+    const now = new Date();
+    this.formattedDate = now.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    }); // เช่น "28 July 2025"
+  }
 
   handleImageUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -172,4 +182,5 @@ export class NoteForm {
       this.toastMessage = null;
     }, 3000);
   }
+
 }

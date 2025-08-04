@@ -3,7 +3,7 @@
   <div class="max-w-2xl mx-auto">
     <div class="bg-[#ffffff] rounded-3xl shadow-lg p-6">
       <!-- Date Header -->
-      <div class="text-sm text-gray-600 mb-4">28 July 2025</div>
+      <div class="text-sm text-gray-600 mb-4">{{formattedDate}}</div>
 
       <!-- Dropzone with preview inside -->
       <div
@@ -40,7 +40,7 @@
           >
             <p class="text-center">
               Drag & drop images here<br />
-              or <span class="text-[#ac7f5e] font-medium">click to upload</span>
+              or <span class="font-medium text-blue-600">click to upload</span>
               <br />
               <span class="text-sm">(up to 5 images)</span>
             </p>
@@ -65,7 +65,7 @@
         </label>
         <input
           type="email"
-          placeholder="someone@gmail.com"
+          placeholder="example@gmail.com"
           [(ngModel)]="email"
           class="w-full border rounded px-3 py-2"
         />
@@ -77,9 +77,9 @@
           >Positive note for today.</label
         >
         <textarea
-          placeholder="It's going be today!"
+          placeholder="เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้..."
           [(ngModel)]="note"
-          class="w-full h-20 resize-none border rounded px-3 py-2"
+          class="w-full h-20 resize-none border rounded px-3 py-2 text-gray-700"
         ></textarea>
       </div>
 

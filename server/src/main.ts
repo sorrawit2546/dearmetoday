@@ -3,16 +3,24 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const configService = app.get(ConfigService);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const frontendUrl = configService.get<string>('FRONTEND_URL');
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   app.use(cookieParser()); // ✅ ใส่ตรงนี้
-  
+
   // ปรับปรุง CORS configuration
   app.enableCors({
-    origin: 'http://localhost:4200',
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    origin: frontendUrl,
     credentials: true, // ต้องเปิดเพื่อให้ cookie ทำงาน
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
@@ -32,7 +40,8 @@ async function bootstrap() {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   app.use(passport.initialize());
-  const port = process.env.PORT || 3000;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const port = configService.get<number>('PORT') || 3000;
   console.log(`🚀 Server running on port ${port}`);
   await app.listen(port);
 }

@@ -42,7 +42,7 @@ export class AuthController {
       'AuthController: Access token generated:',
       accessToken ? 'Yes' : 'No',
     );
-    
+
     // แก้ไข cookie configuration
     res.cookie('access_token', accessToken, {
       httpOnly: true,
@@ -52,7 +52,7 @@ export class AuthController {
       domain: 'localhost', // ระบุ domain
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 วัน
     });
-    
+
     console.log('AuthController: Cookie set, redirecting to dashboard');
     res.redirect('http://localhost:4200/dashboard');
   }
@@ -72,6 +72,7 @@ export class AuthController {
     console.log('AuthController: Cookies:', req.cookies);
     console.log(
       'AuthController: Access token cookie:',
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       req.cookies?.access_token ? 'Present' : 'Missing',
     );
 

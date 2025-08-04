@@ -32,7 +32,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - ./server/.env
+      - ./server/.env.local
     environment:
       - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydb
       - PORT=3000

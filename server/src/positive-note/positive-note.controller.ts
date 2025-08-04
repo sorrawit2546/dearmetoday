@@ -16,6 +16,7 @@ import { Entry } from '@prisma/client';
 @Controller('positive-note')
 export class PositiveNoteController {
   constructor(private readonly positivenoteService: PositiveNoteService) {}
+  BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
   @Post('create')
   @UseInterceptors(
@@ -39,7 +40,7 @@ export class PositiveNoteController {
     @Body() body: CreatePositiveNoteDto,
   ): Promise<Entry> {
     const imageUrls = files.map(
-      (file) => `http://localhost:3000/uploads/${file.filename}`,
+      (file) => `${this.BASE_URL}/uploads/${file.filename}`,
     );
 
     return this.positivenoteService.createPositiveNote({
