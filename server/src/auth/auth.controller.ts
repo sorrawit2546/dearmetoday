@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
@@ -15,27 +23,43 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleLogin() {
+  googleLogin() {
+    console.log('AuthController: Google login initiated');
     // ปล่อยให้ Passport ทำงาน
   }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: RequestWithUser, @Res() res: Response) {
+    console.log('AuthController: Google callback received');
+    console.log('AuthController: User from Google:', req.user);
+
     const { accessToken } = await this.authService.loginWithGoogle(
       req.user as GoogleUser,
     );
+
+    console.log(
+      'AuthController: Access token generated:',
+      accessToken ? 'Yes' : 'No',
+    );
+    
+    // แก้ไข cookie configuration
     res.cookie('access_token', accessToken, {
       httpOnly: true,
-      sameSite: 'lax', // หรือ 'strict' ก็ได้ใน local
-      secure: false, // ต้อง false สำหรับ localhost (ถ้าใส่ true แล้วไม่ได้ใช้ HTTPS = cookie ไม่ถูกส่ง)
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      sameSite: 'lax',
+      secure: false, // ต้อง false สำหรับ localhost
+      path: '/', // เพิ่ม path
+      domain: 'localhost', // ระบุ domain
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 วัน
     });
+    
+    console.log('AuthController: Cookie set, redirecting to dashboard');
     res.redirect('http://localhost:4200/dashboard');
   }
 
   @Post('logout')
   logout(@Res() res: Response) {
+    console.log('AuthController: Logout requested');
     res.clearCookie('access_token');
     res.status(200).json({ message: 'Logged out' });
   }
@@ -43,7 +67,22 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   getProfile(@Req() req: RequestWithUser) {
-    console.log('User from JWT:', req.user);
+    console.log('AuthController: /me endpoint called');
+    console.log('AuthController: User from JWT:', req.user);
+    console.log('AuthController: Cookies:', req.cookies);
+    console.log(
+      'AuthController: Access token cookie:',
+      req.cookies?.access_token ? 'Present' : 'Missing',
+    );
+
+    if (!req.user) {
+      console.log(
+        'AuthController: No user found, throwing UnauthorizedException',
+      );
+      throw new UnauthorizedException('User not found');
+    }
+
+    console.log('AuthController: Returning user data');
     return {
       success: true,
       user: req.user,

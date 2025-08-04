@@ -9,10 +9,13 @@ async function bootstrap() {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   app.use(cookieParser()); // ✅ ใส่ตรงนี้
-  // เปิดใช้งาน CORS ถ้าต้องการเชื่อมจาก frontend
+  
+  // ปรับปรุง CORS configuration
   app.enableCors({
     origin: 'http://localhost:4200',
     credentials: true, // ต้องเปิดเพื่อให้ cookie ทำงาน
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   });
 
   // ✅ กำหนดให้ทุก route มี prefix เป็น /api
