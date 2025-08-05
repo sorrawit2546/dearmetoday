@@ -1,8 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  NgZone,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import { Api } from '../../services/api';
+import { Api, AuthResponse } from '../../services/api';
 
 @Component({
   selector: 'app-note-form',
@@ -26,7 +32,8 @@ export class NoteForm {
   constructor(
     private cd: ChangeDetectorRef,
     private ngZone: NgZone,
-    private apiService: Api
+    private apiService: Api,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -34,8 +41,24 @@ export class NoteForm {
     this.formattedDate = now.toLocaleDateString('en-GB', {
       day: '2-digit',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
     }); // เช่น "28 July 2025"
+    this.apiService.getUserdataFromGoogle().subscribe({
+      next: (response: AuthResponse) => {
+        this.ngZone.run(() => {
+          console.log('Dashboard: User data loaded successfully:', response);
+          this.email = response.user.email;
+          console.log(this.email)
+          this.isLoading = false;
+          this.cdr.detectChanges(); // ✅ บังคับให้ Angular อัปเดต
+        });
+      },
+      error: (err) => {
+        this.ngZone.run(() => {
+          console.error('Dashboard: Error loading user data:', err);
+        });
+      },
+    });
   }
 
   handleImageUpload(event: Event): void {
@@ -150,7 +173,8 @@ export class NoteForm {
               'แม้วันนี้จะไม่ง่าย แต่คุณยังเห็นแสงเล็กๆ อยู่ เก่งมากเลยนะ',
               false
             );
-          }if (this.mood === 'neutral') {
+          }
+          if (this.mood === 'neutral') {
             console.log('Showing happy toast');
             this.showToast(
               'บางวันก็กลางๆ แบบนี้แหละ แต่คุณก็ยังเขียนถึงสิ่งดีๆ ได้ เยี่ยมเลย!',
@@ -182,5 +206,4 @@ export class NoteForm {
       this.toastMessage = null;
     }, 3000);
   }
-
 }
