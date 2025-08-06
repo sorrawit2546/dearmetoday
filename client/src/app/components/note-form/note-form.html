@@ -115,7 +115,15 @@
       <dialog #confirmDialog class="modal">
         <div class="modal-box">
           <h3 class="font-bold text-lg">ยืนยันการส่งข้อความ?</h3>
-          <p class="py-2">ระบบจะทำการส่งอีเมล พร้อมข้อความและรูปภาพของคุณ</p>
+          <p class="py-2">ระบบจะทำการส่งอีเมล พร้อมข้อความและรูปภาพของคุณไปยัง</p>
+          <p class="py-2">{{email}}</p>
+          <fieldset class=" fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
+            <legend class="fieldset-legend">แบ่งปันบันทึกฉบับนี้ไหมครับ</legend>
+            <label class="label">
+              <input [(ngModel)]="showMessage" type="checkbox" class="checkbox checkbox-info" />
+              จัดไป!
+            </label>
+          </fieldset>
           <div class="modal-action">
             <form method="dialog" class="flex gap-2">
               <button class="btn" (click)="cancelSend()">ยกเลิก</button>

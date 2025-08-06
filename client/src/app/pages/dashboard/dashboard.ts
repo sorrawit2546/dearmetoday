@@ -66,7 +66,6 @@ export class Dashboard implements OnInit, OnDestroy {
     this.apiService.getUserdataFromGoogle().subscribe({
       next: (response: AuthResponse) => {
         this.ngZone.run(() => {
-          console.log('Dashboard: User data loaded successfully:', response);
           this.user = response.user;
           this.isLoading = false;
           this.retryCount = 0;
@@ -75,15 +74,9 @@ export class Dashboard implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.ngZone.run(() => {
-          console.error('Dashboard: Error loading user data:', err);
           this.retryCount++;
 
           if (this.retryCount < this.maxRetries) {
-            console.log(
-              `Dashboard: Retrying... Attempt ${this.retryCount + 1}/${
-                this.maxRetries
-              }`
-            );
             setTimeout(() => this.loadUserData(), 2000);
           } else {
             if (err.status === 401) {

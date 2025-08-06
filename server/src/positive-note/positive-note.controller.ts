@@ -71,6 +71,7 @@ export class PositiveNoteController {
       ...body,
       email: emailToUse,
       imageUrls: imageUrls,
+      showMessage: Boolean(body.showMessage),
     });
   }
 

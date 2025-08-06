@@ -7,6 +7,7 @@ import {
   IsArray,
 } from 'class-validator';
 import { Mood } from '@prisma/client';
+import { Transform } from 'class-transformer';
 
 export class CreatePositiveNoteDto {
   @IsEmail()
@@ -33,6 +34,7 @@ export class CreatePositiveNoteDto {
 
   @IsOptional()
   @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
   showMessage?: boolean;
 
   @IsOptional()

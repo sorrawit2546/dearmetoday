@@ -28,6 +28,7 @@ export class NoteForm {
   note = '';
   mood = 'happy';
   formattedDate: string = '';
+  showMessage = false;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -130,6 +131,8 @@ export class NoteForm {
     formData.append('email', this.email);
     formData.append('line1', this.note);
     formData.append('mood', this.mood);
+    formData.append('showMessage', this.showMessage ? 'true' : 'false');
+
 
     this.previewImages.forEach((imageDataUrl, index) => {
       const byteString = atob(imageDataUrl.split(',')[1]);
