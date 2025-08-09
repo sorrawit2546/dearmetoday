@@ -115,4 +115,6 @@ export class PositiveNoteController {
       imageUrls: imageUrls,
     });
   }
+
+  async getAllpositiveNoteById(@Req() req: Request) {}
 }
