@@ -1,0 +1,38 @@
+<div class="flex bg-white rounded-xl shadow-md overflow-hidden max-w-4xl">
+  <!-- Photo Carousel -->
+  <div class="relative w-1/2 h-64 bg-gray-100 flex items-center justify-center">
+    <img
+      *ngIf="photos.length"
+      [src]="photos[currentIndex]"
+      alt="note photo"
+      class="object-cover w-full h-full"
+    />
+
+    <!-- Left arrow -->
+    <button
+      class="absolute left-2 bg-white/70 rounded-full p-2 hover:bg-white"
+      (click)="prevPhoto()">
+      ◀
+    </button>
+
+    <!-- Right arrow -->
+    <button
+      class="absolute right-2 bg-white/70 rounded-full p-2 hover:bg-white"
+      (click)="nextPhoto()">
+      ▶
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="p-6 w-1/2 flex flex-col justify-between">
+    <div>
+      <h3 class="text-lg font-bold">{{date}}</h3>
+      <p class="mt-2 text-gray-700">{{line1}}</p>
+    </div>
+
+    <div class="mt-4 flex items-center justify-between">
+      <span class="badge badge-soft badge-primary w-20 rounded-[10px]">{{mood}}</span>
+      <span class="text-sm text-gray-500">{{ email }}</span>
+    </div>
+  </div>
+</div>

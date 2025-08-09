@@ -5,11 +5,12 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Entry } from '@prisma/client';
-import { SendgridService } from 'src/third-party/sendgrid/sendgrid.service';
+import { SendgridService } from '../third-party/sendgrid/sendgrid.service';
 import {
-  CreatePositiveNoteDto,
   CreatePositiveNoteAuthDto,
+  CreatePositiveNoteDto,
 } from './Dto/create-positive-note';
+import { getAllNoteSendById } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
 
 @Injectable()
@@ -54,6 +55,23 @@ export class PositiveNoteService {
         throw new BadRequestException();
       }
       throw new BadGatewayException(['Bad gateway']);
+    }
+  }
+
+  async getAllNoteByUserId(userId: string): Promise<getAllNoteSendById[]> {
+    try {
+      const result = await this.repositoryPositiveNote.getAllNoteById(userId);
+      const mapResult: getAllNoteSendById[] = result.map((e) => ({
+        id: e.id,
+        email: e.email,
+        line1: e.line1,
+        imageUrls: e.imageUrls,
+        mood: e.mood,
+        createdAt: e.createdAt,
+      }));
+      return mapResult;
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 }

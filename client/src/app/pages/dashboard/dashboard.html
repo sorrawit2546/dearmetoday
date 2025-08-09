@@ -20,31 +20,45 @@
     class="bg-[#ffffff] rounded-3xl shadow-lg p-6"
   >
     <!-- 🟦 Header Section (modern design) -->
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-4">
-        <img
-          *ngIf="user.avatarUrl"
-          [src]="user.avatarUrl"
-          [alt]="user.name"
-          class="w-14 h-14 rounded-full border border-gray-200 shadow-sm"
-        />
-        <div>
-          <h1 class="text-xl font-semibold text-gray-800">Welcome back,</h1>
-          <p class="text-lg font-bold text-blue-600">{{ user.name }}</p>
+    <div class="navbar bg-base-100 rounded-2xl mb-6 px-2 sm:px-4 justify-end-safe">
+      <div class="flex-none ">
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+            <div class="w-10 rounded-full">
+              <img *ngIf="user.avatarUrl" [src]="user.avatarUrl" [alt]="user.name" />
+            </div>
+          </div>
+          <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow">
+            <li class="menu-title">{{ user.name }}</li>
+            <li><button (click)="logout()">Logout</button></li>
+          </ul>
         </div>
       </div>
-      <button
-        (click)="logout()"
-        class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-2 rounded-lg shadow-sm transition duration-150"
-      >
-        Logout
-      </button>
     </div>
 
-    <!-- 📧 User Details -->
-    <div class="text-sm text-gray-600">
-      <p><strong>Email:</strong> {{ user.email }}</p>
-    </div>
-    <app-note-form></app-note-form>
+    <div class="flex flex-col justify-center items-center ">
+      <div class="w-[700px] flex justify-start text-2xl ">
+        <div class="flex flex-row">
+          <img class="w-[30px] h-[30px] " src="assets/images/mail.png" alt=""><span class="pl-1.5 font-bold">Overview Section</span></div>
+        </div>
+      <div role="alert" class=" bg-white flex flex-row h-20 items-center px-5 space-x-3 rounded-[10px] mb-4 w-[700px] shadow-md
+      ">
+        <span class="relative flex size-3">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span>
+          <span class="relative inline-flex size-3 rounded-full bg-sky-500"></span>
+        </span>
+        <div>
+          <h3 class="font-bold">คุณได้เขียนบันทึกเชิงบวกของชีวิตในแต่ละวันไปแล้ว x ฉบับ!</h3>
+          <div class="text-xs">นั่นมันมีความหมายมาก อย่าลืมกลับมาเขียนอีกนะ</div>
+        </div>
+      </div>
+      <app-note-card
+      [date]="'28 July 2025'"
+      [line1]="'ลองข้อความโน้ตตัวอย่างสำหรับทดสอบเลื่อนรูป'"
+      [mood]="'happy'"
+      [email]="'mock@example.com'"
+      [photos]="['https://picsum.photos/id/1015/800/600','https://picsum.photos/id/1025/800/600','https://picsum.photos/id/1035/800/600']">
+    </app-note-card>
   </div>
+  <app-note-form></app-note-form>
 </div>

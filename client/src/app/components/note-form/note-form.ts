@@ -12,9 +12,10 @@ import { Api, AuthResponse } from '../../services/api';
 
 @Component({
   selector: 'app-note-form',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './note-form.html',
-  styleUrl: './note-form.css',
+  styleUrls: ['./note-form.css'],
 })
 export class NoteForm {
   @ViewChild('confirmDialog') confirmDialog!: ElementRef<HTMLDialogElement>;
@@ -49,7 +50,7 @@ export class NoteForm {
         this.ngZone.run(() => {
           console.log('Dashboard: User data loaded successfully:', response);
           this.email = response.user.email;
-          console.log(this.email)
+          console.log(this.email);
           this.isLoading = false;
           this.cdr.detectChanges(); // ✅ บังคับให้ Angular อัปเดต
         });
@@ -132,7 +133,6 @@ export class NoteForm {
     formData.append('line1', this.note);
     formData.append('mood', this.mood);
     formData.append('showMessage', this.showMessage ? 'true' : 'false');
-
 
     this.previewImages.forEach((imageDataUrl, index) => {
       const byteString = atob(imageDataUrl.split(',')[1]);

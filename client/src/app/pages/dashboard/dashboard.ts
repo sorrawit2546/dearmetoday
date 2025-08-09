@@ -11,11 +11,12 @@ import { Subscription } from 'rxjs';
 import { Api, AuthResponse, User } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
 import { NoteForm } from '../../components/note-form/note-form';
+import { NoteCardComponent } from '../../note-card/note-card';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, NoteForm],
+  imports: [CommonModule, NoteForm, NoteCardComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'], // ✅ แก้จาก styleUrl เป็น styleUrls
 })

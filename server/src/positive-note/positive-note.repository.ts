@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Entry } from '@prisma/client';
-import {
-  CreatePositiveNoteDto,
-  CreatePositiveNoteAuthDto,
-} from './Dto/create-positive-note';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  CreatePositiveNoteAuthDto,
+  CreatePositiveNoteDto,
+} from './Dto/create-positive-note';
+import { getAllNoteSendById } from './entity/positive-note.entity';
 
 @Injectable()
 export class PositiveNoteRepository {
@@ -42,6 +43,22 @@ export class PositiveNoteRepository {
         userId: userId,
       },
     });
+    return result;
+  }
+
+  async getAllNoteById(userId: string): Promise<getAllNoteSendById[]> {
+    const entries = await this.prisma.entry.findMany({
+      where: { userId },
+    });
+
+    const result: getAllNoteSendById[] = entries.map((e) => ({
+      id: e.id,
+      email: e.email,
+      line1: e.line1,
+      imageUrls: e.imageUrls,
+      mood: e.mood,
+      createdAt: e.createdAt,
+    }));
     return result;
   }
 }

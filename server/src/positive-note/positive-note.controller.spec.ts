@@ -1,9 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { Entry, Mood } from '@prisma/client'; // ปรับตาม enum จริงของคุณ
+import type { Request as ExpressRequest } from 'express';
+import { CreatePositiveNoteDto } from './Dto/create-positive-note';
 import { PositiveNoteController } from './positive-note.controller';
 import { PositiveNoteService } from './positive-note.service';
-import { CreatePositiveNoteDto } from './Dto/create-positive-note';
-import { Mood } from '@prisma/client'; // ปรับตาม enum จริงของคุณ
-import { Entry } from '@prisma/client';
+
+interface MinimalRequestLike {
+  user?: unknown;
+}
 
 describe('PositiveNoteController', () => {
   let controller: PositiveNoteController;
@@ -45,22 +49,44 @@ describe('PositiveNoteController', () => {
   });
 
   it('should create a positive note and return it', async () => {
+    // Arrange
     const createDto: CreatePositiveNoteDto = {
       line1: 'Test Positive note',
       line2: null,
       line3: null,
       email: 'sangmanee773@gmail.com',
       mood: Mood.happy,
-      imageUrls: [
-        'https://example.com/img1.png',
-        'https://example.com/img2.png',
-      ],
+      imageUrls: [], // will be replaced by controller from files
     };
 
-    const result = await controller.createPositiveNote(createDto);
+    const files = [
+      { filename: 'img1.jpg' } as Express.Multer.File,
+      { filename: 'img2.jpg' } as Express.Multer.File,
+    ];
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(mockService.createPositiveNote).toHaveBeenCalledWith(createDto);
+    const req: MinimalRequestLike = { user: undefined };
+
+    const createPositiveNoteSpy = jest.spyOn(mockService, 'createPositiveNote');
+
+    // Act
+    const result = await controller.createPositiveNote(
+      files,
+      createDto,
+      req as unknown as ExpressRequest,
+    );
+
+    // Assert
+    const expectedImageUrls = [
+      'http://localhost:3000/uploads/img1.jpg',
+      'http://localhost:3000/uploads/img2.jpg',
+    ];
+
+    expect(createPositiveNoteSpy).toHaveBeenCalledWith({
+      ...createDto,
+      email: 'sangmanee773@gmail.com',
+      imageUrls: expectedImageUrls,
+      showMessage: false,
+    });
     expect(result).toEqual(mockResult);
   });
 });
