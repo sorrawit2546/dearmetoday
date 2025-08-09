@@ -10,7 +10,10 @@ import {
   CreatePositiveNoteAuthDto,
   CreatePositiveNoteDto,
 } from './Dto/create-positive-note';
-import { getAllNoteSendById } from './entity/positive-note.entity';
+import {
+  getAllNoteSendById,
+  getAllNoteSendByIdResponse,
+} from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
 
 @Injectable()
@@ -58,8 +61,11 @@ export class PositiveNoteService {
     }
   }
 
-  async getAllNoteByUserId(userId: string): Promise<getAllNoteSendById[]> {
+  async getAllNoteByUserId(
+    userId: string,
+  ): Promise<getAllNoteSendByIdResponse> {
     try {
+      console.log('userId', userId);
       const result = await this.repositoryPositiveNote.getAllNoteById(userId);
       const mapResult: getAllNoteSendById[] = result.map((e) => ({
         id: e.id,
@@ -69,7 +75,14 @@ export class PositiveNoteService {
         mood: e.mood,
         createdAt: e.createdAt,
       }));
-      return mapResult;
+      const countNote = mapResult.length;
+
+      return {
+        data: {
+          mapResult,
+          countNote,
+        },
+      };
     } catch (error) {
       throw new BadRequestException(error);
     }

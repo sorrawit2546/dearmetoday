@@ -48,6 +48,11 @@ export class Api {
     });
   }
 
+  getPositiveNotesByUserId(): Observable<any> {
+    return this.http.post(`${this.baseUrl}/positive-note/getnote-userid`, {}, { withCredentials: true });
+  }
+  
+
   logout(): Observable<any> {
     console.log('API: Calling logout...');
     return this.http.post(`${this.baseUrl}/auth/logout`, {}, { 

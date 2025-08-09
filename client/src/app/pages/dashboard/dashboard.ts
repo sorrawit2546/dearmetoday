@@ -36,7 +36,7 @@ export class Dashboard implements OnInit, OnDestroy {
   isLoading: boolean = true;
   retryCount: number = 0;
   maxRetries: number = 3;
-
+  countNote: number = 0;
   ngOnInit(): void {
     this.loadUserData();
 
@@ -46,6 +46,8 @@ export class Dashboard implements OnInit, OnDestroy {
           this.user = user;
           this.isLoading = false;
           this.error = null;
+          // เรียก API หลังจากที่ user login แล้ว
+          this.loadNotesCount();
         } else if (!this.isLoading) {
           this.router.navigate(['/']);
         }
@@ -96,6 +98,25 @@ export class Dashboard implements OnInit, OnDestroy {
   retry(): void {
     this.retryCount = 0;
     this.loadUserData();
+  }
+
+  loadNotesCount(): void {
+    this.apiService.getPositiveNotesByUserId().subscribe({
+      next: (response) => {
+        this.ngZone.run(() => {
+          this.countNote = response.data.countNote;
+          console.log('Notes count updated:', this.countNote);
+          this.cdr.detectChanges(); // บังคับอัปเดต view
+        });
+      },
+      error: (err) => {
+        console.error('Error loading notes count:', err);
+        this.ngZone.run(() => {
+          this.countNote = 0;
+          this.cdr.detectChanges();
+        });
+      }
+    });
   }
 
   logout(): void {

@@ -48,7 +48,7 @@ export class PositiveNoteRepository {
 
   async getAllNoteById(userId: string): Promise<getAllNoteSendById[]> {
     const entries = await this.prisma.entry.findMany({
-      where: { userId },
+      where: { userId: userId },
     });
 
     const result: getAllNoteSendById[] = entries.map((e) => ({

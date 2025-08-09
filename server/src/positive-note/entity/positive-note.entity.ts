@@ -8,3 +8,10 @@ export interface getAllNoteSendById {
   mood: Mood;
   createdAt: Date;
 }
+
+export interface getAllNoteSendByIdResponse {
+  data: {
+    mapResult: getAllNoteSendById[];
+    countNote: number;
+  };
+}

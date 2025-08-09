@@ -92,7 +92,7 @@ describe('PositiveNoteController', () => {
     expect(result).toEqual(mockResult);
   });
 
-  it('should get all PositiveNote By Id', () => {
+  it('should get all PositiveNote By Id', async() => {
     // mock req object
     const mockReq: any = {
       cookies: {
@@ -138,7 +138,7 @@ describe('PositiveNoteController', () => {
       },
     ];
     mockService.getAllNoteByUserId = jest.fn().mockResolvedValue(mockNotes);
-    const result = controller.getAllpositiveNoteById(mockReq);
+    const result = await controller.getAllpositiveNoteById(mockReq);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockService.getAllNoteByUserId).toHaveBeenCalledWith('mock-token');
     expect(result).toEqual(mockNotes);

@@ -19,6 +19,7 @@ import {
 import { PositiveNoteService } from './positive-note.service';
 import { Entry } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import * as jwt from 'jsonwebtoken';
 
 interface JwtUser {
   userId: string;
@@ -116,5 +117,27 @@ export class PositiveNoteController {
     });
   }
 
-  async getAllpositiveNoteById(@Req() req: Request) {}
+  @Post('getnote-userid')
+  async getAllpositiveNoteById(@Req() req: Request) {
+    // ดึง token จาก cookie (สมมติชื่อ cookie คือ accessToken)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const token = req.cookies?.access_token;
+
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
+    }
+
+    try {
+      // ตรวจสอบและถอดรหัส
+      const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+        sub: string;
+      };
+      const userId = decoded.sub;
+
+      // ดึงข้อมูลจาก service ตาม userId
+      return await this.positivenoteService.getAllNoteByUserId(userId);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+  }
 }
