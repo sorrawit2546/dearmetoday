@@ -1,38 +1,76 @@
-<div class="flex bg-white rounded-xl shadow-md overflow-hidden max-w-4xl">
-  <!-- Photo Carousel -->
-  <div class="relative w-1/2 h-64 bg-gray-100 flex items-center justify-center">
-    <img
-      *ngIf="photos.length"
-      [src]="photos[currentIndex]"
-      alt="note photo"
-      class="object-cover w-full h-full"
-    />
+<div class="bg-white rounded-2xl shadow-md overflow-hidden">
+  <div class="flex flex-col md:flex-row gap-4">
+    <!-- Photo Area -->
+    <div class="relative w-full md:w-1/2">
+      <!-- Image box with dynamic aspect ratio -->
+      <div
+        class="w-full bg-gray-100 flex items-center justify-center max-h-56 md:max-h-96 overflow-hidden"
+        [style.aspect-ratio]="isPortrait ? '4 / 3' : '16 / 9'"
+        tabindex="0"
+        (touchstart)="onTouchStart($event)"
+        (touchend)="onTouchEnd($event)"
+        (keydown)="onKeyDown($event)"
+      >
+        <img
+          *ngIf="(photos?.length ?? 0) > 0; else noPhoto"
+          [src]="photos[currentIndex]"
+          alt="note photo"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+          (load)="onImageLoad($event)"
+          class="w-full h-full"
+          [ngClass]="isPortrait ? 'object-contain' : 'object-cover'"
+        />
+      </div>
 
-    <!-- Left arrow -->
-    <button
-      class="absolute left-2 bg-white/70 rounded-full p-2 hover:bg-white"
-      (click)="prevPhoto()">
-      ◀
-    </button>
+      <!-- Controls -->
+      <button
+        *ngIf="(photos?.length ?? 0) > 1"
+        class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow"
+        (click)="prevPhoto()"
+        aria-label="Previous photo"
+      >
+        ◀
+      </button>
+      <button
+        *ngIf="(photos?.length ?? 0) > 1"
+        class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow"
+        (click)="nextPhoto()"
+        aria-label="Next photo"
+      >
+        ▶
+      </button>
 
-    <!-- Right arrow -->
-    <button
-      class="absolute right-2 bg-white/70 rounded-full p-2 hover:bg-white"
-      (click)="nextPhoto()">
-      ▶
-    </button>
-  </div>
+      <!-- Counter -->
+      <div *ngIf="(photos?.length ?? 0) > 0" class="absolute bottom-2 left-1/2 -translate-x-1/2">
+        <span class="px-2 py-1 text-xs rounded-full bg-black/60 text-white">
+          {{ currentIndex + 1 }} / {{ photos?.length ?? 0 }}
+        </span>
+      </div>
 
-  <!-- Content -->
-  <div class="p-6 w-1/2 flex flex-col justify-between">
-    <div>
-      <h3 class="text-lg font-bold">{{date}}</h3>
-      <p class="mt-2 text-gray-700">{{line1}}</p>
+      <!-- No photo state -->
+      <ng-template #noPhoto>
+        <div class="flex flex-col items-center justify-center text-gray-400 py-10">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-2">
+            <path d="M1.5 6A2.25 2.25 0 013.75 3.75h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zm3 0a.75.75 0 00-.75.75v10.5c0 .414.336.75.75.75h14.25a.75.75 0 00.75-.75V6.75a.75.75 0 00-.75-.75H4.5zm2.438 8.25l2.689-3.585a.75.75 0 011.2-.02l1.62 2.16 1.144-1.43a.75.75 0 011.2.017l2.009 2.858a.75.75 0 01-.612 1.2H7.173a.75.75 0 01-.235-1.2z" />
+          </svg>
+          <span class="text-sm">ไม่มีรูปภาพ</span>
+        </div>
+      </ng-template>
     </div>
 
-    <div class="mt-4 flex items-center justify-between">
-      <span class="badge badge-soft badge-primary w-20 rounded-[10px]">{{mood}}</span>
-      <span class="text-sm text-gray-500">{{ email }}</span>
+    <!-- Content Area -->
+    <div class="p-6 md:w-1/2 flex flex-col justify-between">
+      <div class="w-3xs">
+        <h3 class="text-lg font-bold">🌠{{ date }}</h3>
+        <p class="mt-2 text-gray-700 whitespace-pre-line">{{ line1 }}</p>
+      </div>
+
+      <div class="mt-4 flex items-center justify-between">
+        <span class="badge badge-soft badge-primary w-24 text-center rounded-[10px] truncate">{{ mood }}</span>
+        <span class="badge badge-soft badge-success text-sm truncate">{{ email }}</span>
+      </div>
     </div>
   </div>
 </div>

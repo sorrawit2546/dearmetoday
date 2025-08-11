@@ -1,25 +1,27 @@
 import {
+  BadGatewayException,
+  Body,
   Controller,
   Post,
-  UploadedFiles,
-  UseInterceptors,
-  Body,
   Req,
-  UseGuards,
   UnauthorizedException,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { Entry } from '@prisma/client';
+import { Request } from 'express';
+import * as jwt from 'jsonwebtoken';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { Request } from 'express';
-import {
-  CreatePositiveNoteDto,
-  CreatePositiveNoteAuthDto,
-} from './Dto/create-positive-note';
-import { PositiveNoteService } from './positive-note.service';
-import { Entry } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import * as jwt from 'jsonwebtoken';
+import {
+  CreatePositiveNoteAuthDto,
+  CreatePositiveNoteDto,
+} from './Dto/create-positive-note';
+import { getAllNoteSendById } from './entity/positive-note.entity';
+import { PositiveNoteService } from './positive-note.service';
 
 interface JwtUser {
   userId: string;
@@ -137,7 +139,26 @@ export class PositiveNoteController {
       // ดึงข้อมูลจาก service ตาม userId
       return await this.positivenoteService.getAllNoteByUserId(userId);
     } catch (error) {
-      throw new UnauthorizedException('Invalid or expired token');
+      throw new UnauthorizedException('Invalid or expired token', error);
+    }
+  }
+
+  @Post('recent-note')
+  async recentNote(@Req() req: Request): Promise<getAllNoteSendById> {
+    const token = req.cookies?.access_token;
+    console.log(token);
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
+    }
+    try {
+      const payload = jwt.verify(token, process.env.JWT_SECRET) as {
+        sub: string | undefined;
+      };
+      const userId = payload.sub;
+      const result = await this.positivenoteService.recentNoteByUserId(userId);
+      return result;
+    } catch (error) {
+      throw new BadGatewayException(error);
     }
   }
 }

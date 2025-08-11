@@ -61,4 +61,17 @@ export class PositiveNoteRepository {
     }));
     return result;
   }
+
+  async recentNoteByUserId(userId: string): Promise<getAllNoteSendById> {
+    const data = await this.prisma.entry.findFirst({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    const result: getAllNoteSendById = data;
+    return result;
+  }
 }

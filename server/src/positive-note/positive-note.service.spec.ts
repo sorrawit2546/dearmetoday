@@ -11,6 +11,7 @@ describe('PositiveNoteService', () => {
   const mockRepository = {
     createPositiveNote: jest.fn(),
     getAllNoteById: jest.fn(),
+    recentNoteByUserId: jest.fn(),
   };
 
   const mockSendgridService = {
@@ -136,8 +137,30 @@ describe('PositiveNoteService', () => {
     mockRepository.getAllNoteById = jest.fn().mockResolvedValue(mockNotes);
     const mockUser = 'user-1';
     const result = await service.getAllNoteByUserId(mockUser);
-    expect(result).toEqual(mockNotes);
+    expect(result.data.mapResult).toEqual(mockNotes);
+    expect(result.data.countNote).toBe(mockNotes.length);
     expect(mockRepository.getAllNoteById).toHaveBeenCalledWith('user-1');
-    expect(result[0].email).toBe('john.doe@example.com');
+  });
+
+  it('should be get recent note post by userId', async () => {
+    //mock
+    const mockUserId = 'mock-user1';
+    const mockResult: getAllNoteSendById = {
+      id: 'note-1',
+      email: 'john.doe@example.com',
+      line1: 'วันนี้อากาศดีมาก ไปเดินเล่นสวนสาธารณะ',
+      imageUrls: [
+        'https://via.placeholder.com/400x300?text=Park+View',
+        'https://via.placeholder.com/400x300?text=Sunset',
+      ],
+      mood: Mood.happy,
+      createdAt: new Date('2025-08-09T10:30:00Z'),
+    };
+    //mock repository
+    mockRepository.recentNoteByUserId = jest.fn().mockReturnValue(mockResult);
+    const result = await service.recentNoteByUserId(mockUserId);
+    expect(mockRepository.recentNoteByUserId).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(mockResult);
+    expect(mockRepository.recentNoteByUserId).toHaveBeenCalledWith(mockUserId);
   });
 });

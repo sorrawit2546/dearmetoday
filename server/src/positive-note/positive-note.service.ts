@@ -87,4 +87,9 @@ export class PositiveNoteService {
       throw new BadRequestException(error);
     }
   }
+
+  async recentNoteByUserId(userId: string): Promise<getAllNoteSendById> {
+    const result = await this.repositoryPositiveNote.recentNoteByUserId(userId);
+    return result;
+  }
 }

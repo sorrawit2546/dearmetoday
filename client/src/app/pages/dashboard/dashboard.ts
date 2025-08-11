@@ -1,17 +1,18 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  NgZone,
-  ChangeDetectorRef,
-} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  NgZone,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { NoteForm } from '../../components/note-form/note-form';
+import { entryNote } from '../../model/entry-note';
+import { NoteCardComponent } from '../../note-card/note-card';
 import { Api, AuthResponse, User } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
-import { NoteForm } from '../../components/note-form/note-form';
-import { NoteCardComponent } from '../../note-card/note-card';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,6 +38,18 @@ export class Dashboard implements OnInit, OnDestroy {
   retryCount: number = 0;
   maxRetries: number = 3;
   countNote: number = 0;
+  entry_recent_note: entryNote = {
+    id: '',
+    email: '',
+    line1: '',
+    imageUrls: [],
+    mood: '',
+    createdAt: new Date(),
+  };
+
+  // Modal state for note form
+  showNoteForm = false;
+
   ngOnInit(): void {
     this.loadUserData();
 
@@ -48,6 +61,7 @@ export class Dashboard implements OnInit, OnDestroy {
           this.error = null;
           // เรียก API หลังจากที่ user login แล้ว
           this.loadNotesCount();
+          this.loadRecentNote();
         } else if (!this.isLoading) {
           this.router.navigate(['/']);
         }
@@ -100,6 +114,41 @@ export class Dashboard implements OnInit, OnDestroy {
     this.loadUserData();
   }
 
+  loadRecentNote(): void {
+    this.apiService.getRecentNoteByUserId().subscribe({
+      next: (response) => {
+        this.ngZone.run(() => {
+          const note = response as Partial<entryNote> & {
+            createdAt?: string | Date;
+          };
+          this.entry_recent_note = {
+            id: note.id ?? '',
+            email: note.email ?? '',
+            line1: note.line1 ?? '',
+            imageUrls: Array.isArray(note.imageUrls) ? note.imageUrls : [],
+            mood: (note as any).mood ?? '',
+            createdAt: note.createdAt ? new Date(note.createdAt) : new Date(),
+          };
+          this.cdr.detectChanges();
+        });
+      },
+      error: () => {
+        this.ngZone.run(() => {
+          // คงค่าเริ่มต้นไว้เมื่อโหลดไม่สำเร็จ
+          this.entry_recent_note = {
+            id: '',
+            email: '',
+            line1: '',
+            imageUrls: [],
+            mood: '',
+            createdAt: new Date(),
+          };
+          this.cdr.detectChanges();
+        });
+      },
+    });
+  }
+
   loadNotesCount(): void {
     this.apiService.getPositiveNotesByUserId().subscribe({
       next: (response) => {
@@ -115,8 +164,18 @@ export class Dashboard implements OnInit, OnDestroy {
           this.countNote = 0;
           this.cdr.detectChanges();
         });
-      }
+      },
     });
+  }
+
+  openNoteForm(): void {
+    this.showNoteForm = true;
+    this.cdr.detectChanges();
+  }
+
+  closeNoteForm(): void {
+    this.showNoteForm = false;
+    this.cdr.detectChanges();
   }
 
   logout(): void {

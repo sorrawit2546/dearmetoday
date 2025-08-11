@@ -37,26 +37,30 @@ export class Api {
   createPositiveNote(data: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}/positive-note/create`, data);
   }
-  
+
   getUserdataFromGoogle(): Observable<AuthResponse> {
     console.log('API: Calling getUserdataFromGoogle...');
     console.log('API: Base URL:', this.baseUrl);
     console.log('API: Full URL:', `${this.baseUrl}/auth/me`);
-    
-    return this.http.get<AuthResponse>(`${this.baseUrl}/auth/me`, { 
-      withCredentials: true 
+
+    return this.http.get<AuthResponse>(`${this.baseUrl}/auth/me`, {
+      withCredentials: true
     });
   }
 
   getPositiveNotesByUserId(): Observable<any> {
     return this.http.post(`${this.baseUrl}/positive-note/getnote-userid`, {}, { withCredentials: true });
   }
-  
+
+  getRecentNoteByUserId(): Observable<any>{
+    return this.http.post(`${this.baseUrl}/positive-note/recent-note`, {}, { withCredentials: true })
+  }
+
 
   logout(): Observable<any> {
     console.log('API: Calling logout...');
-    return this.http.post(`${this.baseUrl}/auth/logout`, {}, { 
-      withCredentials: true 
+    return this.http.post(`${this.baseUrl}/auth/logout`, {}, {
+      withCredentials: true
     });
   }
 }

@@ -1,18 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Entry, Mood } from '@prisma/client'; // ปรับตาม enum จริงของคุณ
 import type { Request as ExpressRequest } from 'express';
+import * as jwt from 'jsonwebtoken';
 import { CreatePositiveNoteDto } from './Dto/create-positive-note';
+import { getAllNoteSendById } from './entity/positive-note.entity';
 import { PositiveNoteController } from './positive-note.controller';
 import { PositiveNoteService } from './positive-note.service';
-import { getAllNoteSendById } from './entity/positive-note.entity';
+
+jest.mock('jsonwebtoken', () => ({
+  verify: jest.fn(),
+}));
 
 interface MinimalRequestLike {
   user?: unknown;
+  cookies?: Record<string, string>;
 }
 
 describe('PositiveNoteController', () => {
   let controller: PositiveNoteController;
-  let mockService: PositiveNoteService;
+  let mockService: jest.Mocked<PositiveNoteService>;
 
   const mockResult: Entry = {
     id: 'uuid-1234',
@@ -36,14 +42,18 @@ describe('PositiveNoteController', () => {
           provide: PositiveNoteService,
           useValue: {
             createPositiveNote: jest.fn().mockResolvedValue(mockResult),
-            getAllPositiveNoteById: jest.fn(),
+            getAllNoteByUserId: jest.fn(),
+            recentNoteByUserId: jest.fn(),
           },
         },
       ],
     }).compile();
 
     controller = module.get<PositiveNoteController>(PositiveNoteController);
-    mockService = module.get<PositiveNoteService>(PositiveNoteService);
+    mockService = module.get(PositiveNoteService);
+
+    // reset mocks each test
+    (jwt.verify as jest.Mock).mockReset();
   });
 
   it('should be defined', () => {
@@ -92,19 +102,13 @@ describe('PositiveNoteController', () => {
     expect(result).toEqual(mockResult);
   });
 
-  it('should get all PositiveNote By Id', async() => {
-    // mock req object
-    const mockReq: any = {
+  it('should get all PositiveNote By Id with wrapped data', async () => {
+    const mockReq: MinimalRequestLike = {
       cookies: {
         access_token: 'mock-token',
       },
     };
-    // const mockUser = {
-    //   userId: '123',
-    //   name: 'sorrawit',
-    //   email: 'sangmanee773@gmail.com',
-    //   avatarUrl: 'image_1',
-    // };
+
     const mockNotes: getAllNoteSendById[] = [
       {
         id: 'note-1',
@@ -117,30 +121,55 @@ describe('PositiveNoteController', () => {
         mood: Mood.happy,
         createdAt: new Date('2025-08-09T10:30:00Z'),
       },
-      {
-        id: 'note-2',
-        email: 'jane.smith@example.com',
-        line1: 'ฝนตกทั้งวัน เลยอยู่บ้านอ่านหนังสือ',
-        imageUrls: ['https://via.placeholder.com/400x300?text=Rainy+Day'],
-        mood: Mood.neutral,
-        createdAt: new Date('2025-08-08T15:45:00Z'),
-      },
-      {
-        id: 'note-3',
-        email: 'test.user@example.com',
-        line1: 'เพิ่งได้ลองร้านกาแฟใหม่ใกล้บ้าน อร่อยมาก',
-        imageUrls: [
-          'https://via.placeholder.com/400x300?text=Coffee+Shop',
-          'https://via.placeholder.com/400x300?text=Latte+Art',
-        ],
-        mood: Mood.sad,
-        createdAt: new Date('2025-08-07T08:00:00Z'),
-      },
     ];
-    mockService.getAllNoteByUserId = jest.fn().mockResolvedValue(mockNotes);
-    const result = await controller.getAllpositiveNoteById(mockReq);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    expect(mockService.getAllNoteByUserId).toHaveBeenCalledWith('mock-token');
-    expect(result).toEqual(mockNotes);
+
+    const getAllSpy = jest
+      .spyOn(mockService, 'getAllNoteByUserId')
+      .mockResolvedValue({
+        data: { mapResult: mockNotes, countNote: mockNotes.length },
+      });
+
+    // Mock jwt.verify ให้คืนค่า payload ที่ต้องการ
+    (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-123' });
+
+    const result = await controller.getAllpositiveNoteById(
+      mockReq as unknown as ExpressRequest,
+    );
+
+    expect(getAllSpy).toHaveBeenCalledWith('user-123');
+    expect(result).toEqual({
+      data: { mapResult: mockNotes, countNote: mockNotes.length },
+    });
+  });
+
+  it('should get recent note By Id', async () => {
+    //arrange
+    const mockReq: MinimalRequestLike = {
+      cookies: {
+        access_token: 'mock-token',
+      },
+    };
+    const mockRecentNote: getAllNoteSendById = {
+      id: 'note-1',
+      email: 'john.doe@example.com',
+      line1: 'วันนี้อากาศดีมาก ไปเดินเล่นสวนสาธารณะ',
+      imageUrls: [
+        'https://via.placeholder.com/400x300?text=Park+View',
+        'https://via.placeholder.com/400x300?text=Sunset',
+      ],
+      mood: Mood.happy,
+      createdAt: new Date('2025-08-09T10:30:00Z'),
+    };
+    const getAllSpy = jest
+      .spyOn(mockService, 'recentNoteByUserId')
+      .mockResolvedValue(mockRecentNote);
+    // Mock jwt.verify ให้คืนค่า payload ที่ต้องการ
+    (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-123' });
+
+    const result = await controller.recentNote(
+      mockReq as unknown as ExpressRequest,
+    );
+    expect(getAllSpy).toHaveBeenCalledWith('user-123');
+    expect(result).toEqual(mockRecentNote);
   });
 });
