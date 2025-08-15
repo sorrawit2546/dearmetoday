@@ -1,0 +1,84 @@
+<div
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto"
+>
+  @for (card of cardData; track card.id) {
+  <div
+    class="p-4 rounded-lg border border-gray-200 bg-white cursor-pointer transition-all duration-300 ease-in-out"
+    [ngClass]="{
+          'scale-105 shadow-xl border-rose-200 z-10': hoveredCard() === card.id,
+          'hover:shadow-lg': hoveredCard() !== card.id
+        }"
+    (mouseenter)="setHoveredCard(card.id)"
+    (mouseleave)="setHoveredCard(null)"
+  >
+    <!-- Pink/Rose colored rectangle -->
+    <div class="w-full h-40 rounded-lg mb-3">
+      <div
+        class="w-full bg-gray-100 flex items-center justify-center aspect-[4/3] md:aspect-[16/9] overflow-hidden"
+        tabindex="0"
+        (touchstart)="onTouchStart($event)"
+        (touchend)="onTouchEnd($event)"
+        (keydown)="onKeyDown($event)"
+      >
+        <img
+          *ngIf="(card.photos?.length ?? 0) > 0; else noPhoto"
+          [src]="card.photos[currentIndex]"
+          alt="note photo"
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+          (load)="onImageLoad($event)"
+          class="max-w-full max-h-full w-auto h-auto object-contain transition-transform duration-300 hover:scale-105"
+        />
+      </div>
+      <!-- Controls -->
+      <button
+        *ngIf="(card.photos?.length ?? 0) > 1"
+        class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg"
+        (click)="prevPhoto()"
+        aria-label="Previous photo"
+      >
+        ◀
+      </button>
+      <button
+        *ngIf="(card.photos?.length ?? 0) > 1"
+        class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg"
+        (click)="nextPhoto()"
+        aria-label="Next photo"
+      >
+        ▶
+      </button>
+
+      <!-- Counter -->
+      <div *ngIf="(card.photos?.length ?? 0) > 0" class="absolute bottom-3 left-1/2 -translate-x-1/2">
+        <span class="px-2 py-1 text-xs rounded-full bg-black/60 text-white shadow">
+          {{ currentIndex + 1 }} / {{ photos?.length ?? 0 }}
+        </span>
+      </div>
+
+      <!-- No photo state -->
+      <ng-template #noPhoto>
+        <div class="flex flex-col items-center justify-center text-gray-400 py-12">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-10 h-10 mb-2">
+            <path d="M1.5 6A2.25 2.25 ..."/>
+          </svg>
+          <span class="text-sm">ไม่มีรูปภาพ</span>
+        </div>
+      </ng-template>
+    </div>
+    
+
+    <!-- Date -->
+    <div class="text-sm font-medium text-gray-700 mb-1 mt-10">{{ card.date }}</div>
+
+    <!-- Details / Title -->
+    <div class="text-sm text-gray-600">
+      @if (hoveredCard() === card.id) {
+      <div class="animate-fadeIn">{{ card.details }}</div>
+      } @else {
+      <div class="truncate">{{ card.title }}</div>
+      }
+    </div>
+  </div>
+  }
+</div>

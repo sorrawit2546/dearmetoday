@@ -13,11 +13,12 @@ import { entryNote } from '../../model/entry-note';
 import { NoteCardComponent } from '../../note-card/note-card';
 import { Api, AuthResponse, User } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
+import { NoteCardAll } from '../../note-card-all/note-card-all';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, NoteForm, NoteCardComponent],
+  imports: [CommonModule, NoteForm, NoteCardComponent, NoteCardAll],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'], // ✅ แก้จาก styleUrl เป็น styleUrls
 })
