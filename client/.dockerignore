@@ -1,0 +1,13 @@
+node_modules
+pnpm-lock.yaml
+# build
+dist
+out-tsc
+# Git & IDE
+.git
+.gitignore
+.editorconfig
+.vscode
+.idea
+
+.git

@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PositiveNoteModule } from './positive-note/positive-note.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { PositiveNoteModule } from './positive-note/positive-note.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
 
 @Module({
   imports: [
@@ -38,4 +38,13 @@ import { ConfigModule } from '@nestjs/config';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log('AppModule: NODE_ENV =', process.env.NODE_ENV);
+    console.log('AppModule: SERVER_URL =', process.env.SERVER_URL);
+    console.log(
+      'AppModule: Will read env file:',
+      process.env.NODE_ENV === 'production' ? '.env.production' : '.env.local',
+    );
+  }
+}

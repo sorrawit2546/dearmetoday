@@ -1,0 +1,20 @@
+FROM node:20-alpine
+
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+RUN npm install @angular/cli
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose port 4200 for Angular dev server
+EXPOSE 4200
+
+# Start Angular dev server
+CMD ["npm", "start", "--", "--host", "0.0.0.0", "--port", "4200"]

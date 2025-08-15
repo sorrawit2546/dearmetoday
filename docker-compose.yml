@@ -25,18 +25,33 @@ services:
     networks:
       - app-network
 
+  client:
+    build:
+      context: ./client
+      dockerfile: ${CLIENT_DOCKERFILE:-Dockerfile}
+      args:
+        APP_ENV: ${APP_ENV:-production}
+    ports:
+      - "${CLIENT_PORT:-8080}:80"
+    restart: always
+    depends_on:
+      - server
+    networks:
+      - app-network
+
   server:
+    container_name: server
     build:
       context: ./server
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
     env_file:
-      - ./server/.env.local
+      - ./server/.env.${NODE_ENV:-local}
     environment:
       - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydb
       - PORT=3000
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV:-development}
     depends_on:
       - postgres
     networks:
