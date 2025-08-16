@@ -27,12 +27,10 @@ export interface AuthResponse {
 export class Api {
   constructor(private http: HttpClient) {}
 
-  // Example: GET Positive Notes
   getPositiveNotes(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/positive-note`);
   }
 
-  // Example: POST new note
   createPositiveNote(data: FormData): Observable<any> {
     return this.http.post(`${environment.apiUrl}/positive-note/create`, data);
   }
