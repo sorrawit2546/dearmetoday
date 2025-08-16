@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-note-card',
@@ -8,12 +8,26 @@ import { Component, Input } from '@angular/core';
   templateUrl: './note-card.html',
   styleUrls: ['./note-card.css'],
 })
-export class NoteCardComponent {
+export class NoteCardComponent implements OnChanges {
   @Input() date!: string;
   @Input() line1!: string;
   @Input() mood!: string;
   @Input() email!: string;
   @Input() photos: string[] = [];
+
+  ngOnInit() {
+    console.log('NoteCard Inputs:', {
+      date: this.date,
+      line1: this.line1,
+      mood: this.mood,
+      email: this.email,
+      photos: this.photos,
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('NoteCard ngOnChanges:', changes);
+  }
 
   currentIndex = 0;
   isPortrait = false;

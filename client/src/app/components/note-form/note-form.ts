@@ -3,7 +3,9 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   NgZone,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +21,8 @@ import { Api, AuthResponse } from '../../services/api';
 })
 export class NoteForm {
   @ViewChild('confirmDialog') confirmDialog!: ElementRef<HTMLDialogElement>;
+  @Output() noteCreated = new EventEmitter<void>();
+
   toastError = false;
   toastMessage: string | null = null;
   isLoading = false;
@@ -163,6 +167,10 @@ export class NoteForm {
           console.log('Success:', response);
           console.log('Current mood:', this.mood);
           this.resetForm();
+
+          // แจ้ง dashboard ว่า note ถูกสร้างสำเร็จแล้ว
+          this.noteCreated.emit();
+
           if (this.mood === 'happy') {
             console.log('Showing happy toast');
             this.showToast(

@@ -3,6 +3,7 @@ import {
   BadGatewayException,
   BadRequestException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Entry } from '@prisma/client';
 import { SendgridService } from '../third-party/sendgrid/sendgrid.service';
@@ -15,6 +16,7 @@ import {
   getAllNoteSendByIdResponse,
 } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
+import { promises } from 'dns';
 
 @Injectable()
 export class PositiveNoteService {
@@ -91,5 +93,21 @@ export class PositiveNoteService {
   async recentNoteByUserId(userId: string): Promise<getAllNoteSendById> {
     const result = await this.repositoryPositiveNote.recentNoteByUserId(userId);
     return result;
+  }
+
+  async getAllpositiveNotesWithoutLatest(
+    userId: string,
+  ): Promise<getAllNoteSendById[]> {
+    try {
+      if (!userId) {
+        throw new BadRequestException(['UserId it not contain!']);
+      }
+      return await this.repositoryPositiveNote.getAllpositiveNotesWithoutLatest(
+        userId,
+      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      throw new BadGatewayException('External service unavailable');
+    }
   }
 }

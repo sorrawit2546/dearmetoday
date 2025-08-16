@@ -2,24 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-export interface NotePayload {
-  email: string;
-  note: string;
-  mood: string;
-}
-
-export interface User {
-  userId: string;
-  name: string;
-  email: string;
-  avatarUrl: string;
-}
-
-export interface AuthResponse {
-  success: boolean;
-  user: User;
-}
+import { AuthResponse } from '../model/api-data';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +32,9 @@ export class Api {
     return this.http.post(`${environment.apiUrl}/positive-note/recent-note`, {}, { withCredentials: true })
   }
 
+  getAllNoteByUserId(): Observable<any>{
+    return this.http.post(`${environment.apiUrl}/positive-note/all-note`, {} , {withCredentials:true})
+  }
 
   logout(): Observable<any> {
     console.log('API: Calling logout...');
@@ -57,3 +43,5 @@ export class Api {
     });
   }
 }
+export type { AuthResponse };
+

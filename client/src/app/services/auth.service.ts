@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Api, AuthResponse, User } from './api';
+import { Api, AuthResponse} from './api';
+import { User } from '../model/api-data';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
@@ -20,11 +21,12 @@ export class AuthService {
       next: (response: AuthResponse) => {
         console.log('AuthService: User authenticated:', response.user);
         this.currentUserSubject.next(response.user);
+        console.log('AuthService: currentUserSubject updated');
       },
       error: (error) => {
         console.log('AuthService: User not authenticated:', error);
         this.currentUserSubject.next(null);
-      }
+      },
     });
   }
 
@@ -39,4 +41,4 @@ export class AuthService {
   logout(): Observable<any> {
     return this.apiService.logout();
   }
-} 
+}

@@ -6,6 +6,7 @@ import {
   CreatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
+import { noop } from 'rxjs';
 
 @Injectable()
 export class PositiveNoteRepository {
@@ -73,5 +74,20 @@ export class PositiveNoteRepository {
     });
     const result: getAllNoteSendById = data;
     return result;
+  }
+
+  async getAllpositiveNotesWithoutLatest(
+    userId: string,
+  ): Promise<getAllNoteSendById[]> {
+    const resultRecentNoteByUserId = this.recentNoteByUserId(userId);
+    return await this.prisma.entry.findMany({
+      where: {
+        userId: userId,
+        id: { not: (await resultRecentNoteByUserId).id },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 }

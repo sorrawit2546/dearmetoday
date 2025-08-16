@@ -44,6 +44,7 @@ describe('PositiveNoteController', () => {
             createPositiveNote: jest.fn().mockResolvedValue(mockResult),
             getAllNoteByUserId: jest.fn(),
             recentNoteByUserId: jest.fn(),
+            getAllpositiveNotesWithoutLatest: jest.fn(),
           },
         },
       ],
@@ -171,5 +172,73 @@ describe('PositiveNoteController', () => {
     );
     expect(getAllSpy).toHaveBeenCalledWith('user-123');
     expect(result).toEqual(mockRecentNote);
+  });
+
+  it('should be get all note by userId not include recent note', async () => {
+    const mockReq: MinimalRequestLike = {
+      cookies: {
+        access_token: 'mock-token',
+      },
+    };
+
+    const mockAllNote = [
+      {
+        id: 'note-1',
+        email: 'john1.doe@example.com',
+        line1:
+          'วันนี้อากาศดีมาก ไปเดินเล่นสวนสาธารณะ ไปกินปิ้งย่างงงกานนนนนนนนนน',
+        imageUrls: [
+          'https://via.placeholder.com/400x300?text=Park+View',
+          'https://via.placeholder.com/400x300?text=Sunset',
+        ],
+        mood: Mood.happy,
+        createdAt: new Date('2025-08-09T10:35:00Z'),
+      },
+      {
+        id: 'note-2',
+        email: 'john2.doe@example.com',
+        line1:
+          'วันนี้อากาศดีมาก ไปเดินเล่นสวนสาธารณะ ไปกินปิ้งย่างงงกานนนนนนนนนน',
+        imageUrls: [
+          'https://via.placeholder.com/400x300?text=Park+View',
+          'https://via.placeholder.com/400x300?text=Sunset',
+        ],
+        mood: Mood.happy,
+        createdAt: new Date('2025-08-09T10:30:00Z'),
+      },
+      {
+        id: 'note-3',
+        email: 'john3.doe@example.com',
+        line1:
+          'วันนี้อากาศดีมาก ไปเดินเล่นสวนสาธารณะ ไปกินปิ้งย่างงงกานนนนนนนนนน',
+        imageUrls: [
+          'https://via.placeholder.com/400x300?text=Park+View',
+          'https://via.placeholder.com/400x300?text=Sunset',
+        ],
+        mood: Mood.happy,
+        createdAt: new Date('2025-08-09T10:29:00Z'),
+      },
+    ];
+    // Mock jwt.verify
+    (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-123' });
+
+    // Mock service
+    mockService.getAllpositiveNotesWithoutLatest = jest
+      .fn()
+      .mockResolvedValue(mockAllNote);
+
+    const result = await controller.getAllpositiveNotesWithoutLatest(
+      mockReq as unknown as ExpressRequest,
+    );
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockService.getAllpositiveNotesWithoutLatest).toHaveBeenCalledWith(
+      'user-123',
+    );
+    expect(result).toEqual(mockAllNote);
+
+    // ตรวจสอบว่า recent note ไม่อยู่ในผลลัพธ์
+    const resultIds = result.map((note) => note.id);
+    expect(resultIds).not.toContain('recent-note-id');
   });
 });

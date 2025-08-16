@@ -161,4 +161,24 @@ export class PositiveNoteController {
       throw new BadGatewayException(error);
     }
   }
+
+  @Post('all-note')
+  async getAllpositiveNotesWithoutLatest(@Req() req: Request) {
+    const token = req.cookies?.access_token;
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
+    }
+    try {
+      const payload = jwt.verify(token, process.env.JWT_SECRET) as {
+        sub: string | undefined;
+      };
+      const userId = payload.sub;
+      const result =
+        await this.positivenoteService.getAllpositiveNotesWithoutLatest(userId);
+      return result;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      throw new BadGatewayException(['Bad Gateway Exception']);
+    }
+  }
 }

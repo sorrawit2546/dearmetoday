@@ -5,73 +5,121 @@ import {
   NgZone,
   OnDestroy,
   OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NoteForm } from '../../components/note-form/note-form';
 import { entryNote } from '../../model/entry-note';
-import { NoteCardComponent } from '../../note-card/note-card';
-import { Api, AuthResponse, User } from '../../services/api';
-import { AuthService } from '../../services/auth.service';
 import { NoteCardAll } from '../../note-card-all/note-card-all';
+import { NoteCardComponent } from '../../note-card/note-card';
+import { Api } from '../../services/api';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, NoteForm, NoteCardComponent, NoteCardAll],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css'], // ✅ แก้จาก styleUrl เป็น styleUrls
+  styleUrls: ['./dashboard.css'],
 })
 export class Dashboard implements OnInit, OnDestroy {
   private authSubscription: Subscription | null = null;
+  private authService = inject(AuthService);
+  private apiService = inject(Api);
+  private router = inject(Router);
+  private ngZone = inject(NgZone);
+  private cdr = inject(ChangeDetectorRef);
 
-  constructor(
-    private apiService: Api,
-    private router: Router,
-    private authService: AuthService,
-    private ngZone: NgZone, // ✅ เพิ่ม
-    private cdr: ChangeDetectorRef // ✅ เพิ่ม
-  ) {}
+  // Modern Signal-based state management
+  user = toSignal(this.authService.currentUser$, { initialValue: null });
+  error = signal<string | null>(null);
+  isLoading = signal<boolean>(true);
+  retryCount = signal<number>(0);
+  maxRetries = 3;
+  countNote = signal<number>(0);
 
-  user: User | null = null;
-  error: string | null = null;
-  isLoading: boolean = true;
-  retryCount: number = 0;
-  maxRetries: number = 3;
-  countNote: number = 0;
-  entry_recent_note: entryNote = {
+  // Trigger signal สำหรับ refresh data
+  private refreshTrigger = signal<number>(0);
+
+  // Signal-based recent note
+  entry_recent_note = signal<entryNote>({
     id: '',
     email: '',
     line1: '',
     imageUrls: [],
     mood: '',
     createdAt: new Date(),
-  };
+  });
 
-  // Modal state for note form
-  showNoteForm = false;
+  entry_all_note = signal<entryNote>({
+    id: '',
+    email: '',
+    line1: '',
+    imageUrls: [],
+    mood: '',
+    createdAt: new Date(),
+  });
 
-  ngOnInit(): void {
-    this.loadUserData();
+  // Computed values
+  hasRecentNote = computed(() => {
+    const note = this.entry_recent_note();
+    return note.id !== '' && note.line1 !== '';
+  });
+  hasAllNote = computed(() => {
+    const note = this.entry_all_note();
+    return note.id !== '' && note.line1 !== '';
+  });
 
-    this.authSubscription = this.authService.currentUser$.subscribe((user) => {
-      this.ngZone.run(() => {
-        if (user) {
-          this.user = user;
-          this.isLoading = false;
-          this.error = null;
-          // เรียก API หลังจากที่ user login แล้ว
-          this.loadNotesCount();
-          this.loadRecentNote();
-        } else if (!this.isLoading) {
-          this.router.navigate(['/']);
-        }
-        this.cdr.detectChanges(); // ✅ บังคับให้ Angular อัปเดต
-      });
+  // Computed signal สำหรับ trigger refresh
+  private shouldRefresh = computed(() => {
+    const u = this.user();
+    const trigger = this.refreshTrigger();
+    return u && trigger > 0;
+  });
+
+  // Modal state
+  showNoteForm = signal<boolean>(false);
+
+  constructor() {
+    // Modern effect with automatic cleanup
+    effect(() => {
+      const u = this.user();
+      console.log('Effect triggered, user:', u);
+
+      if (u) {
+        this.isLoading.set(false);
+        this.error.set(null);
+        console.log('Loading notes for user:', u.name);
+        this.loadNotesCount();
+        this.loadRecentNote();
+      } else if (!this.isLoading()) {
+        this.router.navigate(['/']);
+      }
+    });
+
+    // Effect ที่ใช้ computed signal สำหรับ refresh data
+    effect(() => {
+      const shouldRefresh = this.shouldRefresh();
+
+      if (shouldRefresh) {
+        console.log('Refreshing data via computed signal');
+        this.loadNotesCount();
+        this.loadRecentNote();
+      }
     });
   }
 
-  
+  ngOnInit(): void {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      this.authService.checkAuthState();
+    }
+  }
 
   ngOnDestroy(): void {
     if (this.authSubscription) {
@@ -79,52 +127,22 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-  loadUserData(): void {
-    this.isLoading = true;
-    this.error = null;
-
-    this.apiService.getUserdataFromGoogle().subscribe({
-      next: (response: AuthResponse) => {
-        this.ngZone.run(() => {
-          this.user = response.user;
-          this.isLoading = false;
-          this.retryCount = 0;
-          this.cdr.detectChanges(); // ✅ บังคับให้ Angular อัปเดต
-        });
-      },
-      error: (err) => {
-        this.ngZone.run(() => {
-          this.retryCount++;
-
-          if (this.retryCount < this.maxRetries) {
-            setTimeout(() => this.loadUserData(), 2000);
-          } else {
-            if (err.status === 401) {
-              this.router.navigate(['/']);
-            } else {
-              this.error = 'ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง';
-              this.isLoading = false;
-              this.cdr.detectChanges(); // ✅ บังคับให้ Angular อัปเดต
-            }
-          }
-        });
-      },
-    });
-  }
-
-  retry(): void {
-    this.retryCount = 0;
-    this.loadUserData();
+  // Method สำหรับ refresh data
+  refreshData(): void {
+    this.refreshTrigger.update((trigger) => trigger + 1);
   }
 
   loadRecentNote(): void {
+    console.log('Loading recent note...');
     this.apiService.getRecentNoteByUserId().subscribe({
       next: (response) => {
+        console.log('Recent note response:', response);
         this.ngZone.run(() => {
           const note = response as Partial<entryNote> & {
             createdAt?: string | Date;
           };
-          this.entry_recent_note = {
+
+          const updatedNote: entryNote = {
             id: note.id ?? '',
             email: note.email ?? '',
             line1: note.line1 ?? '',
@@ -132,21 +150,21 @@ export class Dashboard implements OnInit, OnDestroy {
             mood: (note as any).mood ?? '',
             createdAt: note.createdAt ? new Date(note.createdAt) : new Date(),
           };
-          this.cdr.detectChanges();
+
+          console.log('Updated entry_recent_note:', updatedNote);
+          this.entry_recent_note.set(updatedNote);
         });
       },
       error: () => {
         this.ngZone.run(() => {
-          // คงค่าเริ่มต้นไว้เมื่อโหลดไม่สำเร็จ
-          this.entry_recent_note = {
+          this.entry_recent_note.set({
             id: '',
             email: '',
             line1: '',
             imageUrls: [],
             mood: '',
             createdAt: new Date(),
-          };
-          this.cdr.detectChanges();
+          });
         });
       },
     });
@@ -156,29 +174,38 @@ export class Dashboard implements OnInit, OnDestroy {
     this.apiService.getPositiveNotesByUserId().subscribe({
       next: (response) => {
         this.ngZone.run(() => {
-          this.countNote = response.data.countNote;
-          console.log('Notes count updated:', this.countNote);
-          this.cdr.detectChanges(); // บังคับอัปเดต view
+          this.countNote.set(response.data.countNote);
+          console.log('Notes count updated:', this.countNote());
         });
       },
       error: (err) => {
         console.error('Error loading notes count:', err);
         this.ngZone.run(() => {
-          this.countNote = 0;
-          this.cdr.detectChanges();
+          this.countNote.set(0);
         });
       },
     });
   }
 
   openNoteForm(): void {
-    this.showNoteForm = true;
-    this.cdr.detectChanges();
+    this.showNoteForm.set(true);
   }
 
   closeNoteForm(): void {
-    this.showNoteForm = false;
-    this.cdr.detectChanges();
+    this.showNoteForm.set(false);
+    // Refresh data หลังจากปิด form
+    this.refreshData();
+  }
+
+  onNoteCreated(): void {
+    console.log('Note created successfully, refreshing data...');
+    // Refresh data เมื่อ note ถูกสร้างสำเร็จ
+    this.refreshData();
+  }
+
+  retry(): void {
+    this.retryCount.set(0);
+    this.authService.checkAuthState();
   }
 
   logout(): void {

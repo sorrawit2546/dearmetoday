@@ -12,6 +12,7 @@ describe('PositiveNoteService', () => {
     createPositiveNote: jest.fn(),
     getAllNoteById: jest.fn(),
     recentNoteByUserId: jest.fn(),
+    getAllpositiveNotesWithoutLatest: jest.fn(),
   };
 
   const mockSendgridService = {
@@ -162,5 +163,83 @@ describe('PositiveNoteService', () => {
     expect(mockRepository.recentNoteByUserId).toHaveBeenCalledTimes(1);
     expect(result).toEqual(mockResult);
     expect(mockRepository.recentNoteByUserId).toHaveBeenCalledWith(mockUserId);
+  });
+
+  it('should be get all note by userId not include recent note', async () => {
+    const mockUserId = 'user-id-1';
+    const mockRecentNote = {
+      id: 'recent-id',
+      email: 'john1.doe@example.com',
+      line1:
+        'วันนี้อากาศดีมาก ไปเดินเล่นสวนสาธารณะ ไปกินปิ้งย่างงงกานนนนนนนนนน',
+      imageUrls: [
+        'https://via.placeholder.com/400x300?text=Park+View',
+        'https://via.placeholder.com/400x300?text=Sunset',
+      ],
+      mood: Mood.happy,
+      createdAt: new Date('2025-08-09T10:30:00Z'),
+    };
+    const mockAllNote = [
+      {
+        id: 'note-1',
+        email: 'john1.doe@example.com',
+        line1:
+          'วันนี้อากาศดีมาก ไปเดินเล่นสวนสาธารณะ ไปกินปิ้งย่างงงกานนนนนนนนนน',
+        imageUrls: [
+          'https://via.placeholder.com/400x300?text=Park+View',
+          'https://via.placeholder.com/400x300?text=Sunset',
+        ],
+        mood: Mood.happy,
+        createdAt: new Date('2025-08-09T10:35:00Z'),
+      },
+      {
+        id: 'note-2',
+        email: 'john2.doe@example.com',
+        line1:
+          'วันนี้อากาศดีมาก ไปเดินเล่นสวนสาธารณะ ไปกินปิ้งย่างงงกานนนนนนนนนน',
+        imageUrls: [
+          'https://via.placeholder.com/400x300?text=Park+View',
+          'https://via.placeholder.com/400x300?text=Sunset',
+        ],
+        mood: Mood.happy,
+        createdAt: new Date('2025-08-09T10:30:00Z'),
+      },
+      {
+        id: 'note-3',
+        email: 'john3.doe@example.com',
+        line1:
+          'วันนี้อากาศดีมาก ไปเดินเล่นสวนสาธารณะ ไปกินปิ้งย่างงงกานนนนนนนนนน',
+        imageUrls: [
+          'https://via.placeholder.com/400x300?text=Park+View',
+          'https://via.placeholder.com/400x300?text=Sunset',
+        ],
+        mood: Mood.happy,
+        createdAt: new Date('2025-08-09T10:29:00Z'),
+      },
+    ];
+    mockRepository.getAllpositiveNotesWithoutLatest = jest
+      .fn()
+      .mockResolvedValue(mockAllNote);
+    mockRepository.recentNoteByUserId = jest
+      .fn()
+      .mockReturnValue(mockRecentNote);
+
+    //check
+    const result = await service.getAllpositiveNotesWithoutLatest(mockUserId);
+    expect(
+      mockRepository.getAllpositiveNotesWithoutLatest,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      mockRepository.getAllpositiveNotesWithoutLatest,
+    ).toHaveBeenCalledWith(mockUserId);
+    expect(result).toEqual(mockAllNote);
+    //check ว่า result note ไม่มีอยู่ในผลลัพธ์
+    const recentNoteId = result.map((note) => note.id);
+    expect(recentNoteId).not.toContain('recent-id');
+    // ตรวจสอบลำดับเวลา (ควรเรียงจากใหม่ไปเก่า)
+    const dataDate = result.map((note) => note.createdAt);
+    expect(dataDate[0] > dataDate[1]).toBeTruthy();
+    expect(dataDate[1] > dataDate[2]).toBeTruthy();
+    // ไม่ต้องตรวจสอบ dataDate[3] เพราะมีแค่ 3 รายการ
   });
 });

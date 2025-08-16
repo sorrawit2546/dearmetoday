@@ -1,5 +1,6 @@
 import { Component, Input, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { resolve } from 'url';
 
 @Component({
   selector: 'app-note-card-all',
@@ -8,45 +9,13 @@ import { NgClass } from '@angular/common';
   styleUrl: './note-card-all.css',
 })
 export class NoteCardAll {
+
   hoveredCard = signal<number | null>(null);
   @Input() date!: string;
   @Input() line1!: string;
   @Input() mood!: string;
   @Input() email!: string;
   @Input() photos: string[] = [];
-  cardData: CardData[] = [
-    {
-      id: 1,
-      date: '15/01/25',
-      title: 'Morning Routine',
-      details: 'Wake up, exercise, breakfast, check emails...',
-      photos: [
-        'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_16x9.jpg?w=1200',
-        'https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_16x9.jpg?w=1200',
-      ],
-    },
-    {
-      id: 2,
-      date: '15/01/25',
-      title: 'Work Tasks',
-      details: 'Finish project report, attend meeting, code review...',
-      photos: [
-        'https://source.unsplash.com/random/400x200?office',
-        'https://source.unsplash.com/random/400x200?laptop',
-      ],
-    },
-    {
-      id: 3,
-      date: '16/01/25',
-      title: 'Workout',
-      details: 'Gym session: cardio & strength training...',
-      photos: [
-        'https://source.unsplash.com/random/400x200?gym',
-        'https://source.unsplash.com/random/400x200?weights',
-      ],
-    },
-    // เพิ่ม card อื่น ๆ แบบเดียวกัน...
-  ];
 
   setHoveredCard(id: number | null) {
     this.hoveredCard.set(id);
