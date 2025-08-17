@@ -104,7 +104,7 @@ export class PositiveNoteService {
         await this.repositoryPositiveNote.getAllpositiveNotesWithoutLatest(
           userId,
         );
-      const mapResult: getAllNoteSendById[] = result.slice(0, 14);
+      const mapResult: getAllNoteSendById[] = result.slice(0, 12);
       return mapResult;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
