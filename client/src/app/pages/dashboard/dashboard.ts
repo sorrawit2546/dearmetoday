@@ -8,11 +8,12 @@ import {
   computed,
   effect,
   inject,
+  resource,
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, firstValueFrom } from 'rxjs';
 import { NoteForm } from '../../components/note-form/note-form';
 import { entryNote } from '../../model/entry-note';
 import { NoteCardAll } from '../../note-card-all/note-card-all';
@@ -119,6 +120,9 @@ export class Dashboard implements OnInit, OnDestroy {
     if (!currentUser) {
       this.authService.checkAuthState();
     }
+
+    // Debug: ดูว่า notes resource ได้ข้อมูลอะไร
+    console.log('Notes resource:', this.notes);
   }
 
   ngOnDestroy(): void {
@@ -126,6 +130,10 @@ export class Dashboard implements OnInit, OnDestroy {
       this.authSubscription.unsubscribe();
     }
   }
+
+  notes = resource({
+    loader: () => firstValueFrom(this.apiService.getAllNoteByUserId()),
+  });
 
   // Method สำหรับ refresh data
   refreshData(): void {

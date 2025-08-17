@@ -1,24 +1,32 @@
-import { Component, Input, signal } from '@angular/core';
-import { NgClass } from '@angular/common';
-import { resolve } from 'url';
+import { CommonModule } from '@angular/common';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-note-card-all',
-  imports: [NgClass],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './note-card-all.html',
-  styleUrl: './note-card-all.css',
+  styleUrls: ['./note-card-all.css'],
 })
-export class NoteCardAll {
-
-  hoveredCard = signal<number | null>(null);
+export class NoteCardAll implements OnChanges {
   @Input() date!: string;
   @Input() line1!: string;
   @Input() mood!: string;
   @Input() email!: string;
   @Input() photos: string[] = [];
 
-  setHoveredCard(id: number | null) {
-    this.hoveredCard.set(id);
+  ngOnInit() {
+    console.log('NoteCardAll Inputs:', {
+      date: this.date,
+      line1: this.line1,
+      mood: this.mood,
+      email: this.email,
+      photos: this.photos,
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('NoteCardAll ngOnChanges:', changes);
   }
 
   currentIndex = 0;
@@ -36,11 +44,17 @@ export class NoteCardAll {
 
   onImageLoad(event: Event) {
     const img = event.target as HTMLImageElement;
+    console.log('Image loaded successfully:', img.src);
     if (!img || !img.naturalWidth || !img.naturalHeight) {
       this.isPortrait = false;
       return;
     }
     this.isPortrait = img.naturalHeight >= img.naturalWidth;
+  }
+
+  onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    console.error('Image failed to load:', img.src);
   }
 
   onTouchStart(event: TouchEvent) {

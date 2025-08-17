@@ -19,27 +19,11 @@
     *ngIf="user() && !isLoading() && !error()"
     class=""
   >
-    <!-- 🟦 Header Section (modern design) -->
-    <!-- <div class="navbar bg-base-100 rounded-2xl mb-6 px-2 sm:px-4 justify-end-safe">
-      <div class="flex-none ">
-        <div class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-            <div class="w-10 rounded-full">
-              <img *ngIf="user()?.avatarUrl" [src]="user()?.avatarUrl" [alt]="user()?.name" />
-            </div>
-          </div>
-          <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow">
-            <li class="menu-title">{{ user()?.name }}</li>
-            <li><button (click)="logout()">Logout</button></li>
-          </ul>
-        </div>
-      </div>
-    </div> -->
-
     <div class="navbar bg-base-100 shadow-sm">
       <div class="flex-1">
-        <a class="btn btn-ghost text-xl">dearmetoday</a>
+        <a class="btn btn-ghost text-xl">Dear Me, Today</a>
       </div>
+      <a class="btn btn-primary rounded-2xl text-xl mr-10">Community</a>
       <div class="flex gap-2">
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
@@ -67,8 +51,8 @@
           <span class="relative inline-flex size-3 rounded-full bg-sky-500"></span>
         </span>
         <div>
-          <h3 class="font-bold">คุณได้เขียนบันทึกเชิงบวกของชีวิตในแต่ละวันไปแล้ว <span>{{countNote()}}</span> ฉบับ!</h3>
-          <div class="text-xs">นั่นมันมีความหมายมาก อย่าลืมกลับมาเขียนอีกนะ</div>
+          <h3 class="font-bold">You’ve written <span>{{countNote()}}</span> notes already! ✨</h3>
+          <div class="text-xs">They’re all meaningful — don’t forget to come back and add more. 💖</div>
         </div>
       </div>
       <div class="w-full max-w-6xl flex justify-start text-2xl my-4">
@@ -87,12 +71,20 @@
 
       <div class="w-full max-w-6xl flex justify-start text-2xl my-4">
         <div class="flex flex-row">
-          <img class="w-[30px] h-[30px]" src="assets/images/mail.png" alt=""><span class="pl-1.5 font-bold">Your Note | :-)</span>
+          <img class="w-[30px] h-[30px]" src="assets/images/book.png" alt=""><span class="pl-1.5 font-bold">Your Notes | :-)</span>
         </div>
       </div>
-      <app-note-card-all class="w-full my-2">
-
-      </app-note-card-all>
+      <div class="grid grid-cols-3 max-w-6xl ">
+        @for(note of notes.value(); track note.id){
+          <app-note-card-all
+          [date]="(note.createdAt | date:'dd MMM yyyy') ?? ''"
+          [line1]="note.line1"
+          [mood]="note.mood"
+          [photos]="note.imageUrls"
+          class="w-full my-2">
+          </app-note-card-all>
+        }
+      </div>
     </div>
 
     <!-- Floating Action Button (+) -->
