@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): Observable<boolean> {
     console.log('AuthGuard: Checking authentication...');
-    
+
     return this.apiService.getUserdataFromGoogle().pipe(
       tap(response => {
         console.log('AuthGuard: Authentication successful:', response);
@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
         return true; // ถ้า API เรียกสำเร็จ แสดงว่ามี authentication
       }),
       catchError((error) => {
-        console.error('AuthGuard: Authentication failed:', error);
+        // console.error('AuthGuard: Authentication failed:', error);
         // ถ้า API เรียกไม่สำเร็จ ให้ redirect ไปหน้า home
         console.log('AuthGuard: Redirecting to home page');
         this.router.navigate(['/']);
@@ -33,4 +33,4 @@ export class AuthGuard implements CanActivate {
       })
     );
   }
-} 
+}
