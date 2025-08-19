@@ -2,12 +2,12 @@
   class="grid gap-4 max-w-6xl mx-auto"
 >
   <div
-    class="p-4 rounded-lg border border-gray-200 bg-white cursor-pointer transition-all duration-300 ease-in-out"
+    class="p-4 rounded-3xl border border-gray-200 bg-white cursor-pointer transition-all duration-300 ease-in-out"
   >
     <!-- Photo container -->
     <div class="w-full rounded-lg mb-3 relative">
       <div
-        class="w-full bg-gray-100 flex items-center justify-center aspect-[4/3] md:aspect-[16/9] overflow-hidden"
+        class="w-full rounded-3xl bg-gray-100 flex items-center justify-center aspect-[4/3] md:aspect-[16/9] overflow-hidden"
         tabindex="0"
         (touchstart)="onTouchStart($event)"
         (touchend)="onTouchEnd($event)"
@@ -42,14 +42,12 @@
       >
         ▶
       </button>
-
       <!-- Counter -->
       <div *ngIf="(photos?.length ?? 0) > 0" class="absolute bottom-3 left-1/2 -translate-x-1/2">
         <span class="px-2 py-1 text-xs rounded-full bg-black/60 text-white shadow">
           {{ currentIndex + 1 }} / {{ photos?.length ?? 0 }}
         </span>
       </div>
-
       <!-- No photo state -->
       <ng-template #noPhoto>
         <div class="flex flex-col items-center justify-center text-gray-400 py-12">
@@ -61,12 +59,12 @@
       </ng-template>
     </div>
     <!-- Date -->
-    <div class="text-sm font-medium text-gray-700 mb-1 mt-4">{{ date }}</div>
+    <div class="badge badge-neutral rounded-2xl px-5">{{ date }}</div>
 
     <!-- Details / Title -->
-    <div class="text-sm text-gray-600">
-      <div class="truncate">{{ line1 }}</div>
-      <div>{{mood}}</div>
+    <div class="text-sm">
+      <div class="truncate py-1">{{ line1 }}</div>
+      <div class="badge badge-soft badge-info rounded-2xl px-5">{{mood}}</div>
     </div>
   </div>
 </div>

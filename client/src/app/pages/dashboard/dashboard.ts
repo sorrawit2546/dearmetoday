@@ -20,11 +20,12 @@ import { NoteCardAll } from '../../note-card-all/note-card-all';
 import { NoteCardComponent } from '../../note-card/note-card';
 import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
+import { Header } from '../../components/header/header';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, NoteForm, NoteCardComponent, NoteCardAll],
+  imports: [CommonModule, NoteForm, NoteCardComponent, NoteCardAll, Header],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
@@ -106,9 +107,7 @@ export class Dashboard implements OnInit, OnDestroy {
     // Effect ที่ใช้ computed signal สำหรับ refresh data
     effect(() => {
       const shouldRefresh = this.shouldRefresh();
-
       if (shouldRefresh) {
-        console.log('Refreshing data via computed signal');
         this.loadNotesCount();
         this.loadRecentNote();
       }
@@ -120,9 +119,6 @@ export class Dashboard implements OnInit, OnDestroy {
     if (!currentUser) {
       this.authService.checkAuthState();
     }
-
-    // Debug: ดูว่า notes resource ได้ข้อมูลอะไร
-    console.log('Notes resource:', this.notes);
   }
 
   ngOnDestroy(): void {
@@ -149,7 +145,6 @@ export class Dashboard implements OnInit, OnDestroy {
           const note = response as Partial<entryNote> & {
             createdAt?: string | Date;
           };
-
           const updatedNote: entryNote = {
             id: note.id ?? '',
             email: note.email ?? '',
@@ -214,16 +209,5 @@ export class Dashboard implements OnInit, OnDestroy {
   retry(): void {
     this.retryCount.set(0);
     this.authService.checkAuthState();
-  }
-
-  logout(): void {
-    this.authService.logout().subscribe({
-      next: () => {
-        this.router.navigate(['/']);
-      },
-      error: (err: any) => {
-        this.router.navigate(['/']);
-      },
-    });
   }
 }
