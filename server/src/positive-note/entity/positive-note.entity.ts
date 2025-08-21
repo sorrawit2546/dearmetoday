@@ -15,3 +15,15 @@ export interface getAllNoteSendByIdResponse {
     countNote: number;
   };
 }
+
+export interface user {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl: string;
+}
+
+export interface getAllNotesCommunity {
+  notesCommunity: getAllNoteSendById;
+  users: user;
+}

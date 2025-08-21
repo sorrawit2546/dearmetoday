@@ -6,11 +6,31 @@ import {
   CreatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
-import { noop } from 'rxjs';
 
 @Injectable()
 export class PositiveNoteRepository {
   constructor(private prisma: PrismaService) {}
+
+  async getAllNotesCommunity() {
+    return await this.prisma.entry.findMany({
+      where: {
+        showMessage: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+  }
 
   async createPositiveNote(
     createPositiveNoteDto: CreatePositiveNoteDto | CreatePositiveNoteAuthDto,
