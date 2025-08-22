@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
   ChangeDetectorRef,
   Component,
@@ -25,7 +26,14 @@ import { Header } from '../../components/header/header';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, NoteForm, NoteCardComponent, NoteCardAll, Header],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NoteForm,
+    NoteCardComponent,
+    NoteCardAll,
+    Header,
+  ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
@@ -44,10 +52,26 @@ export class Dashboard implements OnInit, OnDestroy {
   retryCount = signal<number>(0);
   maxRetries = 3;
   countNote = signal<number>(0);
+  itemsNoteSearch = signal<entryNote[]>([]);
+  searchTerm = signal('');
+  searchDate = signal('');
+
+  filteredItems = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    const date = this.searchDate().trim();
+
+    return this.itemsNoteSearch().filter((item) => {
+      const matchText =
+        !term ||
+        item.line1.toLowerCase().includes(term) ||
+        item.mood?.toLowerCase().includes(term);
+      return matchText;
+    });
+  });
 
   // Trigger signal สำหรับ refresh data
   private refreshTrigger = signal<number>(0);
-
+ 
   // Signal-based recent note
   entry_recent_note = signal<entryNote>({
     id: '',
@@ -102,6 +126,12 @@ export class Dashboard implements OnInit, OnDestroy {
       } else if (!this.isLoading()) {
         this.router.navigate(['/']);
       }
+    });
+
+    effect(() => {
+      this.apiService.getAllNoteByUserId().subscribe({
+        next: (res) => this.itemsNoteSearch.set(res),
+      });
     });
 
     // Effect ที่ใช้ computed signal สำหรับ refresh data
@@ -201,9 +231,16 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   onNoteCreated(): void {
-    console.log('Note created successfully, refreshing data...');
-    // Refresh data เมื่อ note ถูกสร้างสำเร็จ
-    this.refreshData();
+    // อัปเดต notes list โดยตรงโดยไม่ refresh ทั้งหมด
+    this.apiService.getAllNoteByUserId().subscribe({
+      next: (res) => {
+        this.itemsNoteSearch.set(res);
+        this.loadNotesCount(); // อัปเดตจำนวน notes
+      },
+      error: (err) => {
+        console.error('Error updating notes after creation:', err);
+      }
+    });
   }
 
   retry(): void {
