@@ -11,10 +11,13 @@ import {
   CreatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import {
+  getAllNotesCommunity,
   getAllNoteSendById,
   getAllNoteSendByIdResponse,
 } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
+import { error } from 'console';
+import { map } from 'rxjs';
 
 @Injectable()
 export class PositiveNoteService {
@@ -23,6 +26,30 @@ export class PositiveNoteService {
     private readonly sendgridService: SendgridService,
   ) {}
 
+  async getAllCommunityNote(): Promise<getAllNotesCommunity[]> {
+    // throw new Error('Method not implemented yet');
+    const rawData = await this.repositoryPositiveNote.getAllNotesCommunity();
+    const result: getAllNotesCommunity[] = rawData.map((data) => ({
+      id: data.id,
+      email: data.email,
+      line1: data.line1,
+      line2: data.line2 ?? null,
+      line3: data.line3 ?? null,
+      imageUrls: data.imageUrls ?? [],
+      mood: data.mood,
+      showMessage: data.showMessage,
+      isDelete: data.isDelete,
+      createdAt: data.createdAt,
+      userId: data.userId,
+      user: {
+        id: data.user.id,
+        name: data.user.name,
+        email: data.user.email,
+        avatarUrl: data.user.avatarUrl,
+      },
+    }));
+    return result;
+  }
   async createPositiveNote(
     createEntryDto: CreatePositiveNoteDto | CreatePositiveNoteAuthDto,
   ): Promise<Entry> {

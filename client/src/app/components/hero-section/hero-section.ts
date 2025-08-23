@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Login } from '../../pages/login/login';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-hero-section',
-  imports: [],
+  imports: [Login, RouterLink],
   templateUrl: './hero-section.html',
   styleUrl: './hero-section.css'
 })

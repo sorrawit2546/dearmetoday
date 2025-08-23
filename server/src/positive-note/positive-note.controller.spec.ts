@@ -45,6 +45,7 @@ describe('PositiveNoteController', () => {
             getAllNoteByUserId: jest.fn(),
             recentNoteByUserId: jest.fn(),
             getAllpositiveNotesWithoutLatest: jest.fn(),
+            getAllCommunityNote: jest.fn(),
           },
         },
       ],
@@ -59,6 +60,61 @@ describe('PositiveNoteController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('should get all community note', async () => {
+    //Arrange
+    const mockResult = [
+      {
+        id: 'note-1',
+        email: 'user1@example.com',
+        line1: 'First note',
+        line2: null,
+        line3: null,
+        imageUrls: ['https://example.com/img1.png'],
+        mood: 'happy' as Mood,
+        showMessage: true,
+        isDelete: false,
+        createdAt: new Date(),
+        userId: 'user-1',
+        user: {
+          id: 'user-1',
+          name: 'Alice',
+          email: 'user1@example.com',
+          avatarUrl: 'https://example.com/avatar1.png',
+        },
+      },
+      {
+        id: 'note-2',
+        email: 'user2@example.com',
+        line1: 'Second note',
+        line2: null,
+        line3: null,
+        imageUrls: [
+          'https://example.com/img2.png',
+          'https://example.com/img3.png',
+        ],
+        mood: 'sad' as Mood,
+        showMessage: true,
+        isDelete: false,
+        createdAt: new Date(),
+        userId: 'user-2',
+        user: {
+          id: 'user-2',
+          name: 'Bob',
+          email: 'user2@example.com',
+          avatarUrl: 'https://example.com/avatar2.png',
+        },
+      },
+    ];
+    //Act
+    mockService.getAllCommunityNote = jest.fn().mockReturnValue(mockResult);
+    const result = await controller.getAllCommunityNote();
+    //Assert
+    expect(result).toEqual(mockResult);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockService.getAllCommunityNote).toHaveBeenCalledTimes(1);
+    expect(result).toBeInstanceOf(200);
   });
 
   it('should create a positive note and return it', async () => {

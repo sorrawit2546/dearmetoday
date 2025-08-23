@@ -2,6 +2,7 @@ import {
   BadGatewayException,
   Body,
   Controller,
+  Get,
   Post,
   Req,
   UnauthorizedException,
@@ -20,7 +21,10 @@ import {
   CreatePositiveNoteAuthDto,
   CreatePositiveNoteDto,
 } from './Dto/create-positive-note';
-import { getAllNoteSendById } from './entity/positive-note.entity';
+import {
+  getAllNotesCommunity,
+  getAllNoteSendById,
+} from './entity/positive-note.entity';
 import { PositiveNoteService } from './positive-note.service';
 
 interface JwtUser {
@@ -180,5 +184,10 @@ export class PositiveNoteController {
     } catch (error) {
       throw new BadGatewayException(['Bad Gateway Exception']);
     }
+  }
+
+  @Get('community-notes')
+  async getAllCommunityNote(): Promise<getAllNotesCommunity[]> {
+    return await this.positivenoteService.getAllCommunityNote();
   }
 }

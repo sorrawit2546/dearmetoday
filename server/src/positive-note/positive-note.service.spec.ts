@@ -13,6 +13,7 @@ describe('PositiveNoteService', () => {
     getAllNoteById: jest.fn(),
     recentNoteByUserId: jest.fn(),
     getAllpositiveNotesWithoutLatest: jest.fn(),
+    getAllNotesCommunity: jest.fn(),
   };
 
   const mockSendgridService = {
@@ -39,6 +40,61 @@ describe('PositiveNoteService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should get all community note', async () => {
+    //Arrange
+    const mockResult = [
+      {
+        id: 'note-1',
+        email: 'user1@example.com',
+        line1: 'First note',
+        line2: null,
+        line3: null,
+        imageUrls: ['https://example.com/img1.png'],
+        mood: 'happy' as Mood,
+        showMessage: true,
+        isDelete: false,
+        createdAt: new Date(),
+        userId: 'user-1',
+        user: {
+          id: 'user-1',
+          name: 'Alice',
+          email: 'user1@example.com',
+          avatarUrl: 'https://example.com/avatar1.png',
+        },
+      },
+      {
+        id: 'note-2',
+        email: 'user2@example.com',
+        line1: 'Second note',
+        line2: null,
+        line3: null,
+        imageUrls: [
+          'https://example.com/img2.png',
+          'https://example.com/img3.png',
+        ],
+        mood: 'sad' as Mood,
+        showMessage: true,
+        isDelete: false,
+        createdAt: new Date(),
+        userId: 'user-2',
+        user: {
+          id: 'user-2',
+          name: 'Bob',
+          email: 'user2@example.com',
+          avatarUrl: 'https://example.com/avatar2.png',
+        },
+      },
+    ];
+    //Act
+    mockRepository.getAllNotesCommunity = jest
+      .fn()
+      .mockResolvedValue(mockResult);
+    const result = await service.getAllCommunityNote();
+    //Assert
+    expect(result).toEqual(mockResult);
+    expect(mockRepository.getAllNotesCommunity).toHaveBeenCalledTimes(1);
   });
 
   it('should be create positiveNote', async () => {

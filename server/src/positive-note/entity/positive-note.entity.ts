@@ -24,6 +24,19 @@ export interface user {
 }
 
 export interface getAllNotesCommunity {
-  notesCommunity: getAllNoteSendById;
-  users: user;
+  id: string;
+  email: string;
+  line1: string;
+  imageUrls: string[];
+  mood: Mood;
+  showMessage: boolean;
+  isDelete: boolean;
+  createdAt: Date;
+  userId: string | null;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    avatarUrl: string;
+  };
 }
