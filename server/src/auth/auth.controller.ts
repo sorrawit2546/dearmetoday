@@ -37,6 +37,7 @@ export class AuthController {
     const { accessToken } = await this.authService.loginWithGoogle(
       req.user as GoogleUser,
     );
+    const googleAccessToken = (req.user as GoogleUser).accessToken;
 
     console.log(
       'AuthController: Access token generated:',
@@ -51,6 +52,15 @@ export class AuthController {
       path: '/', // เพิ่ม path
       domain: 'localhost', // ระบุ domain
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 วัน
+    });
+
+    res.cookie('google_access_token', googleAccessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false,
+      path: '/',
+      domain: 'localhost',
+      maxAge: 60 * 60 * 1000, // 1 ชั่วโมง (เท่ากับอายุ access_token)
     });
 
     console.log('AuthController: Cookie set, redirecting to dashboard');

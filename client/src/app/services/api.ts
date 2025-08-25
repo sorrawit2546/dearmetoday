@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, resource } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthResponse } from '../model/api-data';
@@ -10,6 +10,10 @@ import { AuthResponse } from '../model/api-data';
 export class Api {
   constructor(private http: HttpClient) {}
 
+
+  getAllCommunityPost(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/positive-note/community-notes`)
+  }
   getPositiveNotes(): Observable<any> {
     return this.http.get(`${environment.apiUrl}/positive-note`);
   }

@@ -10,6 +10,8 @@ import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 import { PositiveNoteModule } from './positive-note/positive-note.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
+import { CalendarService } from './calendar/calendar.service';
+import { CalendarModule } from './calendar/calendar.module';
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
           ? '.env.production'
           : '.env.local',
     }),
+    CalendarModule,
   ],
   controllers: [AppController],
   providers: [
@@ -36,6 +39,7 @@ import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
     },
+    CalendarService,
   ],
 })
 export class AppModule {

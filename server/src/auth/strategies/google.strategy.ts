@@ -14,7 +14,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL,
-      scope: ['email', 'profile'],
+      scope: [
+        'email',
+        'profile',
+        'https://www.googleapis.com/auth/calendar.events',
+        'https://www.googleapis.com/auth/calendar.readonly',
+      ],
     });
   }
 
@@ -29,6 +34,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       name: profile.displayName,
       avatar: profile.photos[0].value,
       provider: 'google',
+      accessToken, // <- Google access_token จริง
     };
   }
 }

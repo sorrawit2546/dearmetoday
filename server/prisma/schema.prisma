@@ -44,8 +44,8 @@ model Entry {
   imageUrls   String[] @default([]) @map("image_urls")
 
   // Relation fields
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String? @map("user_id") // Foreign key
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id") // Foreign key
 
   // Map Model name "Entry" to table name "entries"
   @@map("entries")

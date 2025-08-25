@@ -1,6 +1,4 @@
-<div
-  class="grid gap-4 max-w-6xl mx-auto"
->
+<div class="grid gap-4 max-w-6xl mx-auto">
   <div
     class="p-4 rounded-3xl border border-gray-200 bg-white cursor-pointer transition-all duration-300 ease-in-out"
   >
@@ -29,30 +27,42 @@
       <button
         *ngIf="(photos?.length ?? 0) > 1"
         class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg"
-        (click)="prevPhoto()"
+        (click)="prevPhoto(); $event.stopPropagation()"
         aria-label="Previous photo"
       >
         ◀
       </button>
+
       <button
         *ngIf="(photos?.length ?? 0) > 1"
         class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg"
-        (click)="nextPhoto()"
+        (click)="nextPhoto(); $event.stopPropagation()"
         aria-label="Next photo"
       >
         ▶
       </button>
       <!-- Counter -->
-      <div *ngIf="(photos?.length ?? 0) > 0" class="absolute bottom-3 left-1/2 -translate-x-1/2">
-        <span class="px-2 py-1 text-xs rounded-full bg-black/60 text-white shadow">
+      <div
+        *ngIf="(photos?.length ?? 0) > 0"
+        class="absolute bottom-3 left-1/2 -translate-x-1/2"
+      >
+        <span
+          class="px-2 py-1 text-xs rounded-full bg-black/60 text-white shadow"
+        >
           {{ currentIndex + 1 }} / {{ photos?.length ?? 0 }}
         </span>
       </div>
       <!-- No photo state -->
       <ng-template #noPhoto>
-        <div class="flex flex-col items-center justify-center text-gray-400 py-12">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-10 h-10 mb-2">
-            <path d="M1.5 6A2.25 2.25 ..."/>
+        <div
+          class="flex flex-col items-center justify-center text-gray-400 py-12"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            class="w-10 h-10 mb-2"
+          >
+            <path d="M1.5 6A2.25 2.25 ..." />
           </svg>
           <span class="text-sm">ไม่มีรูปภาพ</span>
         </div>
@@ -60,10 +70,28 @@
     </div>
     <!-- Date -->
     <div class="badge badge-neutral rounded-2xl px-5">{{ date }}</div>
+    <div class="space-x-1">
+      @if(name || avatarUrl){
+      <div class="flex flex-row items-center space-x-2 mt-2">
+        <img
+          *ngIf="avatarUrl"
+          [src]="avatarUrl"
+          class="h-10 w-10 rounded-full"
+        />
+        <span class="text-sm" *ngIf="name">{{ name }}</span>
+      </div>
+      }
+    </div>
 
     <!-- Details / Title -->
     <div class="text-sm">
-      <div class="truncate py-1">{{ line1 }}</div>
+      <div class="py-1 whitespace-pre-line mt-2">
+        {{ isActive
+          ? (line1 ?? '')
+          : ((line1?.length ?? 0) > 50
+              ? (line1 | slice:0:50) + '...'
+              : (line1 ?? '')) }}
+      </div>
       <div class="badge badge-soft badge-info rounded-2xl px-5">{{mood}}</div>
     </div>
   </div>

@@ -4,6 +4,7 @@ export interface GoogleUser {
   avatar: string;
   provider: string; // "google"
   id: string; // Google ID
+  accessToken?: string;
 }
 
 export interface User {

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, input, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
+import { sign } from 'node:crypto';
 
 @Component({
   selector: 'app-note-card-all',
@@ -9,21 +10,17 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
   styleUrls: ['./note-card-all.css'],
 })
 export class NoteCardAll implements OnChanges {
+  // date = input<string>;
   @Input() date!: string;
-  @Input() line1!: string;
+  @Input() line1: string = '';
   @Input() mood!: string;
   @Input() email!: string;
   @Input() photos: string[] = [];
-
-  ngOnInit() {
-    console.log('NoteCardAll Inputs:', {
-      date: this.date,
-      line1: this.line1,
-      mood: this.mood,
-      email: this.email,
-      photos: this.photos,
-    });
-  }
+  //optional
+  @Input() name?: string;
+  @Input() avatarUrl?: string;
+  //
+  @Input() isActive = false;
 
   ngOnChanges(changes: SimpleChanges) {
     console.log('NoteCardAll ngOnChanges:', changes);

@@ -18,12 +18,14 @@ import {
 import { PositiveNoteRepository } from './positive-note.repository';
 import { error } from 'console';
 import { map } from 'rxjs';
+import { CalendarService } from 'src/calendar/calendar.service';
 
 @Injectable()
 export class PositiveNoteService {
   constructor(
     private readonly repositoryPositiveNote: PositiveNoteRepository,
     private readonly sendgridService: SendgridService,
+    private readonly calendarService: CalendarService,
   ) {}
 
   async getAllCommunityNote(): Promise<getAllNotesCommunity[]> {
@@ -52,6 +54,7 @@ export class PositiveNoteService {
   }
   async createPositiveNote(
     createEntryDto: CreatePositiveNoteDto | CreatePositiveNoteAuthDto,
+    accessToken?: string,
   ): Promise<Entry> {
     try {
       const result =
@@ -78,6 +81,25 @@ export class PositiveNoteService {
           // ไม่ throw error เพื่อให้บันทึกข้อมูลได้แม้ส่งเมลไม่สำเร็จ
         }
       }
+
+      // if (createEntryDto.email) {
+      //   try {
+      //     const description =
+      //       `💡 ${createEntryDto.line1}\n\n` +
+      //       (createEntryDto.imageUrls?.length
+      //         ? createEntryDto.imageUrls
+      //             .map((url, i) => `📷 Image ${i + 1}: ${url}`)
+      //             .join('\n')
+      //         : '');
+      //     await this.calendarService.createPositiveNoteEvent(accessToken, {
+      //       line1: description,
+      //       mood: createEntryDto.mood,
+      //       imageUrl: createEntryDto.imageUrls ?? [],
+      //     });
+      //   } catch (error) {
+      //     throw new BadGatewayException(error);
+      //   }
+      // }
 
       return result;
     } catch (error) {

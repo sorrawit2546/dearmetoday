@@ -1,0 +1,42 @@
+<div *ngIf="user()" class="">
+  <app-header></app-header>
+  <div class="flex flex-col justify-center items-center mt-7">
+    <div class="w-full max-w-6xl justify-start text-2xl">
+      <div class="flex flex-row mb-6">
+        <img
+          class="w-[30px] h-[30px]"
+          src="assets/images/mail.png"
+          alt=""
+        />
+        <span class="pl-1.5 font-bold">Community Section</span>
+      </div>
+
+      <!-- ใช้ CSS columns -->
+      <div class="grid grid-cols-12 gap-4 max-w-7xl mx-auto">
+        <div
+          *ngFor="let note of communityPost.value(); let i = index"
+          [ngClass]="{
+            'col-span-12': activeCard === i,
+            'col-span-4': activeCard !== i
+          }"
+          class="transition-all duration-300"
+          (click)="toggleCard(i)"
+        >
+          <app-note-card-all
+            [date]="(note.createdAt | date:'dd MMM yyyy') ?? ''"
+            [line1]="note.line1"
+            [mood]="note.mood"
+            [email]="note.email"
+            [photos]="note.imageUrls"
+            [name]="note.user?.name"
+            [avatarUrl]="note.user?.avatarUrl"
+            [isActive]="activeCard === i"
+          >
+          </app-note-card-all>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
