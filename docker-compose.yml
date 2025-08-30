@@ -58,7 +58,6 @@ services:
       - app-network
     volumes:
       - ./server:/app
-      - /app/node_modules
       - ./server/uploads:/app/uploads
     restart: unless-stopped
 

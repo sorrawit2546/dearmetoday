@@ -57,23 +57,45 @@
           />
         </svg>
       </div>
-
       <h1 class="text-4xl md:text-5xl font-bold text-[#000000] mb-2">
         Dear me, Today..
       </h1>
       <h2 class="text-3xl md:text-4xl font-bold text-[#000000] mb-4">
-        Keep <span class="text-blue-600">positive</span> thinking!
+        Keep smiling and stay <span class="text-blue-600">positive!</span>
       </h2>
       <p class="text-[#323330] text-lg mb-8 w-full">
         วันนี้เหนื่อยไหม มีอะไรดี ๆ เกิดขึ้นบ้างนะ ลองเขียนเก็บไว้ดูไหมครับ
         :)
       </p>
-
       <button (click)="navigateToGoogleProvide()"
         class="btn btn-primary px-8 py-3 text-lg rounded-md"
       >
         เริ่มบันทึกเรื่องราวดี ๆ ของคุณ
       </button>
+      <div class="flex w-lg flex-col">
+        <div class="divider">or</div>
+      </div>
+      <div class="join">
+        <div>
+          <label class="input validator join-item rounded-l-lg ">
+            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <g
+                stroke-linejoin="round"
+                stroke-linecap="round"
+                stroke-width="2.5"
+                fill="none"
+                stroke="currentColor"
+              >
+                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </g>
+            </svg>
+            <input class="placeholder:text-blue-300 text-blue-500" type="input" placeholder="สิ่งที่อยากขอบคุณในวันนี้" required />
+          </label>
+          <div class="validator-hint hidden">Enter valid input</div>
+        </div>
+        <button class="btn btn-neutral join-item rounded-r-lg">Send</button>
+      </div>
     </div>
   </div>
 

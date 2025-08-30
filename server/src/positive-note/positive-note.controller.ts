@@ -69,17 +69,22 @@ export class PositiveNoteController {
     const user = req.user as JwtUser;
     let emailToUse = body.email; // ใช้ email จาก body เป็นค่าเริ่มต้น
 
+    const access_token_google = req.cookies as { google_access_token?: string };
+    const token = access_token_google?.google_access_token;
     // ถ้ามี token ให้ใช้ email จาก token แทน
     if (user?.email) {
       emailToUse = user.email;
     }
 
-    return this.positivenoteService.createPositiveNote({
-      ...body,
-      email: emailToUse,
-      imageUrls: imageUrls,
-      showMessage: Boolean(body.showMessage),
-    });
+    return this.positivenoteService.createPositiveNote(
+      {
+        ...body,
+        email: emailToUse,
+        imageUrls: imageUrls,
+        showMessage: Boolean(body.showMessage),
+      },
+      token ?? '',
+    );
   }
 
   @Post('create-auth')

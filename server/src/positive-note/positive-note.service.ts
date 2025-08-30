@@ -3,6 +3,7 @@ import {
   BadGatewayException,
   BadRequestException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Entry } from '@prisma/client';
 import { SendgridService } from '../third-party/sendgrid/sendgrid.service';
@@ -16,8 +17,6 @@ import {
   getAllNoteSendByIdResponse,
 } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
-import { error } from 'console';
-import { map } from 'rxjs';
 import { CalendarService } from 'src/calendar/calendar.service';
 
 @Injectable()
@@ -81,25 +80,29 @@ export class PositiveNoteService {
           // ไม่ throw error เพื่อให้บันทึกข้อมูลได้แม้ส่งเมลไม่สำเร็จ
         }
       }
-
-      // if (createEntryDto.email) {
-      //   try {
-      //     const description =
-      //       `💡 ${createEntryDto.line1}\n\n` +
-      //       (createEntryDto.imageUrls?.length
-      //         ? createEntryDto.imageUrls
-      //             .map((url, i) => `📷 Image ${i + 1}: ${url}`)
-      //             .join('\n')
-      //         : '');
-      //     await this.calendarService.createPositiveNoteEvent(accessToken, {
-      //       line1: description,
-      //       mood: createEntryDto.mood,
-      //       imageUrl: createEntryDto.imageUrls ?? [],
-      //     });
-      //   } catch (error) {
-      //     throw new BadGatewayException(error);
-      //   }
-      // }
+      if (!accessToken) {
+        throw new UnauthorizedException('No access token provided');
+      }
+      if (accessToken) {
+        try {
+          const description =
+            `💡 ${createEntryDto.line1}\n\n` +
+            (createEntryDto.imageUrls?.length
+              ? createEntryDto.imageUrls
+                  .map((url, i) => `📷 Image ${i + 1}: ${url}`)
+                  .join('\n')
+              : '');
+          await this.calendarService.createPositiveNoteEvent(accessToken, {
+            line1: description,
+            mood: createEntryDto.mood,
+            imageUrl: createEntryDto.imageUrls ?? [],
+          });
+        } catch (error) {
+          throw new BadGatewayException(error);
+        }
+      } else {
+        console.log('Skip Calendar');
+      }
 
       return result;
     } catch (error) {

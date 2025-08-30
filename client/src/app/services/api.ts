@@ -19,7 +19,9 @@ export class Api {
   }
 
   createPositiveNote(data: FormData): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/positive-note/create`, data);
+    return this.http.post(`${environment.apiUrl}/positive-note/create`, data , {
+      withCredentials: true
+    });
   }
 
   getUserdataFromGoogle(): Observable<AuthResponse> {
