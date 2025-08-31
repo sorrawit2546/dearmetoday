@@ -12,6 +12,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
 import { CalendarService } from './calendar/calendar.service';
 import { CalendarModule } from './calendar/calendar.module';
+import { QuickNoteModule } from './src/quick-note/quick-note.module';
+import { QuickNoteModule } from './quick-note/quick-note.module';
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { CalendarModule } from './calendar/calendar.module';
           : '.env.local',
     }),
     CalendarModule,
+    QuickNoteModule,
   ],
   controllers: [AppController],
   providers: [
