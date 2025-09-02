@@ -90,7 +90,7 @@
         slice:0:50) + '...' : (line1 ?? '')) }}
       </div>
       <div class="badge badge-soft badge-info rounded-2xl px-5">{{mood}}</div>
-      <div class="flex flex-row mt-3 badge badge-soft badge-info rounded-2xl px-5 h-11">
+      <div class="flex flex-row mt-3 badge badge-soft badge-info rounded-2xl px-5 h-11" *ngIf="!isCommunity">
         <img src="assets/images/public.svg" alt="" class="w-6 h-6 ">
           <label class="relative inline-flex  items-center cursor-pointer">
             <input type="checkbox" class="sr-only peer" [checked]="isActive" />

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, input, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import { sign } from 'node:crypto';
 
 @Component({
@@ -21,6 +22,12 @@ export class NoteCardAll implements OnChanges {
   @Input() avatarUrl?: string;
   //
   @Input() isActive = false;
+
+  isCommunity = false;
+
+  constructor(private router: Router) {
+    this.isCommunity = this.router.url.includes('/community');
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     console.log('NoteCardAll ngOnChanges:', changes);

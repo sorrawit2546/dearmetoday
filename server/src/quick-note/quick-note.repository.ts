@@ -31,7 +31,7 @@ export class QuickNoteRepository {
     }
   }
 
-  async getQuickNote(userId: string): Promise<ThankMessage[]> {
+  async getAllQuickNote(userId: string): Promise<ThankMessage[]> {
     return this.prisma.thankMessage.findMany({
       where: {
         userId: userId,

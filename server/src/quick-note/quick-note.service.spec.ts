@@ -8,6 +8,7 @@ describe('QuickNoteService', () => {
   let repository: QuickNoteRepository;
   const mockRepository = {
     createQuickNote: jest.fn(),
+    getAllQuickNote: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -63,5 +64,29 @@ describe('QuickNoteService', () => {
       quickNoteDto,
     );
     expect(mockRepository.createQuickNote).toHaveBeenCalledTimes(1);
+  });
+  it('should get all wuick-note message', async () => {
+    const mockUserId = 'user-123';
+    const mockResult = [
+      {
+        id: 'quick-note-1',
+        thankMessage: 'thank-message!',
+        isDelete: false, // ใช้ boolean ดีกว่า string
+        createdAt: '1-10-2568',
+        user_id: 'user-123',
+      },
+      {
+        id: 'quick-note-2',
+        thankMessage: 'thank-message!',
+        isDelete: false,
+        createdAt: '1-10-2568',
+        user_id: 'user-123',
+      },
+    ];
+    mockRepository.getAllQuickNote = jest.fn().mockReturnValue(mockResult);
+    const result = await service.getAllQuickNote(mockUserId);
+    expect(result).toEqual(mockResult);
+    expect(mockRepository.getAllQuickNote).toHaveBeenCalledTimes(1);
+    expect(mockRepository.getAllQuickNote).toHaveBeenCalledWith(mockUserId);
   });
 });

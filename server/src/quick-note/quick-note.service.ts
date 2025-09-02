@@ -17,5 +17,5 @@ export class QuickNoteService {
     );
   }
 
-  async getQuickNote(userId: string) {}
+  async getAllQuickNote(userId: string) {}
 }
