@@ -86,13 +86,22 @@
     <!-- Details / Title -->
     <div class="text-sm">
       <div class="py-1 whitespace-pre-line mt-2">
-        {{ isActive
-          ? (line1 ?? '')
-          : ((line1?.length ?? 0) > 50
-              ? (line1 | slice:0:50) + '...'
-              : (line1 ?? '')) }}
+        {{ isActive ? (line1 ?? '') : ((line1?.length ?? 0) > 50 ? (line1 |
+        slice:0:50) + '...' : (line1 ?? '')) }}
       </div>
       <div class="badge badge-soft badge-info rounded-2xl px-5">{{mood}}</div>
+      <div class="flex flex-row mt-3 badge badge-soft badge-info rounded-2xl px-5 h-11">
+        <img src="assets/images/public.svg" alt="" class="w-6 h-6 ">
+          <label class="relative inline-flex  items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" [checked]="isActive" />
+            <div
+              class="w-12 h-6 bg-red-400 rounded-full peer peer-checked:bg-blue-500 transition-colors duration-300"
+            ></div>
+            <span
+              class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6"
+            ></span>
+          </label>
+      </div>
     </div>
   </div>
 </div>

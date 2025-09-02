@@ -22,7 +22,8 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  entries Entry[]
+  entries      Entry[]
+  ThankMessage ThankMessage[]
 
   // Map Model name "User" to table name "users"
   @@map("users")
@@ -49,6 +50,17 @@ model Entry {
 
   // Map Model name "Entry" to table name "entries"
   @@map("entries")
+}
+
+model ThankMessage {
+  id           String   @id @default(uuid())
+  thankMessage String   @map("thank_message")
+  isDelete     Boolean  @default(false) @map("is_delete")
+  createdAt    DateTime @default(now()) @map("created_at")
+  // Relation fields
+  user         User?    @relation(fields: [userId], references: [id])
+  userId       String?  @map("user_id") // Foreign key
+  @@map("thank_messages")
 }
 
 // ## Enum สำหรับอารมณ์

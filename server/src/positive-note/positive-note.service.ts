@@ -66,6 +66,8 @@ export class PositiveNoteService {
             createEntryDto.email,
             createEntryDto.imageUrls,
             createEntryDto.line1,
+            createEntryDto?.line2,
+            createEntryDto?.line3,
           );
         } catch (emailError: unknown) {
           const error = emailError as Error & {
@@ -85,20 +87,28 @@ export class PositiveNoteService {
       }
       if (accessToken) {
         try {
-          const description =
-            `💡 ${createEntryDto.line1}\n\n` +
-            (createEntryDto.imageUrls?.length
+          const description = [
+            `💡 ${createEntryDto.line1}`,
+            createEntryDto.line2 && `📝 ${createEntryDto.line2}`,
+            createEntryDto.line3 && `📝 ${createEntryDto.line3}`,
+            createEntryDto.imageUrls?.length
               ? createEntryDto.imageUrls
                   .map((url, i) => `📷 Image ${i + 1}: ${url}`)
                   .join('\n')
-              : '');
+              : null,
+          ]
+            .filter(Boolean)
+            .join('\n\n');
           await this.calendarService.createPositiveNoteEvent(accessToken, {
             line1: description,
             mood: createEntryDto.mood,
             imageUrl: createEntryDto.imageUrls ?? [],
           });
         } catch (error) {
-          throw new BadGatewayException(error);
+          console.warn(
+            'Calendar create event failed, continue without calendar:',
+            error,
+          );
         }
       } else {
         console.log('Skip Calendar');

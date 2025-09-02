@@ -1,16 +1,34 @@
 <div class="navbar bg-base-100 shadow-sm">
+  <a href="" class="justify-center items-center ml-16">
+    <img src="assets/images/dearme,logo.png" alt="" class=" h-14 w-14">
+  </a>
   <div class="flex-1 space-x-10">
-    <a class="btn btn-ghost text-xl">Dear Me, Today</a>
     <a
       routerLink="/dashboard"
       routerLinkActive="active-tab"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="text-xl font-bold px-3 py-2 rounded-lg transition-colors hover:bg-purple-100 pr-3  "
+      class="text-xl font-bold px-3 py-2 rounded-lg transition-colors hover:bg-purple-100 pr-3"
       >Dashboard</a
     >
     <a href="/community" class="text-xl font-bold">Community</a>
   </div>
   <div class="flex gap-2">
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost m-1 rounded-2xl">
+        <img
+          src="assets/images/freeze-message-box-snow-svgrepo-com.svg"
+          alt="freez-message"
+          alt="error icon"
+          class="swap-off fill-current h-10 w-10"
+        />
+      </div>
+      <ul
+        tabindex="0"
+        class="dropdown-content menu bg-base-100 rounded-xl z-1 w-52 p-2 shadow-sm"
+      >
+        <li><a>Item 1</a></li>
+      </ul>
+    </div>
     <div class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 rounded-full">

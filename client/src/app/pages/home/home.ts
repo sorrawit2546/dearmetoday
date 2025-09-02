@@ -4,7 +4,7 @@ import { NoteForm } from '../../components/note-form/note-form';
 
 @Component({
   selector: 'app-home',
-  imports: [HeroSection, NoteForm],
+  imports: [HeroSection],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

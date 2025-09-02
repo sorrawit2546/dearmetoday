@@ -34,6 +34,8 @@ export class SendgridService {
     toEmail: string,
     imageUrls: string[],
     message: string,
+    message2: string,
+    message3: string,
   ) {
     // ตรวจสอบ environment variables
     const mailFrom = process.env.MAIL_FROM;
@@ -99,6 +101,8 @@ export class SendgridService {
         ข้อความ Positive Note ของคุณ:
 
         "${message}"
+        "${message2}"
+        "${message3}"
 
         ภาพประกอบของคุณ:
         ${imageUrls.map((_, i) => `รูปภาพ ${i + 1} แนบมาด้วย`).join('\n')}
@@ -106,24 +110,65 @@ export class SendgridService {
         -- 
         ส่งจาก DearMeToday App
         `,
-        html: `
-        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; padding: 24px; background-color: #ffffff; color: #333;">
-          <h2 style="color: #2c3e50; font-size: 20px; margin-bottom: 12px;">🌱 Your Positive Note</h2>
-          
-          <blockquote style="font-style: italic; background: #f9f9f9; padding: 16px; border-left: 4px solid #7f8c8d; margin-bottom: 24px; line-height: 1.6;">
-            ${message}
-          </blockquote>
-          
-          <h3 style="font-size: 16px; color: #2c3e50; margin-bottom: 8px;">📸 Attached Image${imageUrls.length > 1 ? 's' : ''}</h3>
-          <div style="display: flex; flex-direction: column; gap: 16px;">
-            ${imageUrls.map((_, i) => `<img src="cid:img${i}" width="100%" style="max-width: 300px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" alt="Image ${i + 1}" />`).join('')}
-          </div>
-      
-          <p style="font-size: 12px; color: #888; margin-top: 32px;">
-            Sent via <strong>DearMeToday App</strong><br/>
-            If you did not request this note, please ignore this email.
-          </p>
-        </div>
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 640px; 
+            margin: auto; 
+            padding: 32px; 
+            background-color: #eaf4fb; 
+            background-image: linear-gradient(180deg, #f0f6fb, #eaf4fb);
+            color: #2c3e50;
+            border-radius: 16px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);">
+
+  <!-- Envelope flap -->
+  <div style="width: 0; height: 0; 
+              border-left: 320px solid transparent; 
+              border-right: 320px solid transparent; 
+              border-bottom: 120px solid #b3d3eb; 
+              margin: -32px auto 0 auto; 
+              border-radius: 8px 8px 0 0;">
+  </div>
+
+  <!-- Letter body -->
+  <div style="background: #ffffff; 
+              padding: 28px; 
+              border-radius: 12px; 
+              border: 1px solid #d0e3f0;
+              margin-top: -60px;
+              box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+
+    <h2 style="color: #2c3e50; font-size: 22px; margin-bottom: 20px; text-align: center;">
+      ✉️ Dear Me, Today
+    </h2>
+    
+    <h3 style="color: #2c3e50; font-size: 18px; margin-bottom: 10px;">🌱 เรื่องราวดี ๆ ที่อยากขอบคุณ...</h3>
+    <blockquote style="font-style: italic; background: #f9fbfd; padding: 16px; border-left: 4px solid #4a90e2; margin-bottom: 24px; line-height: 1.6; border-radius: 6px;">
+      ${message}
+    </blockquote>
+    
+    <h3 style="color: #2c3e50; font-size: 18px; margin-bottom: 10px;">🌱 สิ่งเล็ก ๆ ที่ทำให้คุณยิ้มได้...</h3>
+    <blockquote style="font-style: italic; background: #f9fbfd; padding: 16px; border-left: 4px solid #4a90e2; margin-bottom: 24px; line-height: 1.6; border-radius: 6px;">
+      ${message2}
+    </blockquote>
+    
+    <h3 style="color: #2c3e50; font-size: 18px; margin-bottom: 10px;">🌱 เรื่องราวที่ทำให้คุณภูมิใจ...</h3>
+    <blockquote style="font-style: italic; background: #f9fbfd; padding: 16px; border-left: 4px solid #4a90e2; margin-bottom: 24px; line-height: 1.6; border-radius: 6px;">
+      ${message3}
+    </blockquote>
+
+    <h3 style="font-size: 16px; color: #2c3e50; margin-bottom: 8px;">📸 ภาพประกอบ</h3>
+    <div style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
+      ${imageUrls.map((_, i) => `<img src="cid:img${i}" width="100%" style="max-width: 320px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" alt="Image ${i + 1}" />`).join('')}
+    </div>
+    
+    <p style="font-size: 12px; color: #555; margin-top: 32px; text-align: center;">
+      Sent with warmth ❄️ via <strong>DearMeToday App</strong><br/>
+      If you did not request this note, please ignore this email.
+    </p>
+  </div>
+</div>
+
       `,
       attachments,
     };

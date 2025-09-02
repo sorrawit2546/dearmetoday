@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   ChangeDetectorRef,
@@ -6,6 +6,7 @@ import {
   NgZone,
   OnDestroy,
   OnInit,
+  PLATFORM_ID,
   computed,
   effect,
   inject,
@@ -22,6 +23,7 @@ import { NoteCardComponent } from '../../note-card/note-card';
 import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
 import { Header } from '../../components/header/header';
+import { HeroSection } from '../../components/hero-section/hero-section';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,14 +43,20 @@ export class Dashboard implements OnInit, OnDestroy {
   private authSubscription: Subscription | null = null;
   private authService = inject(AuthService);
   private apiService = inject(Api);
+  private platformId = inject(PLATFORM_ID);
   private router = inject(Router);
   private ngZone = inject(NgZone);
   private cdr = inject(ChangeDetectorRef);
 
   // Modern Signal-based state management
   user = toSignal(this.authService.currentUser$, { initialValue: null });
+  isAuthed = computed(() => !!this.user());
+  quickNoteFromLocalStorage = signal<string>('');
+  pending = signal<boolean>(false);
   error = signal<string | null>(null);
   isLoading = signal<boolean>(true);
+  toastError = signal<boolean>(false);
+  toastMessage = signal<string | null>(null);
   retryCount = signal<number>(0);
   maxRetries = 3;
   countNote = signal<number>(0);
@@ -71,7 +79,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   // Trigger signal สำหรับ refresh data
   private refreshTrigger = signal<number>(0);
- 
+
   // Signal-based recent note
   entry_recent_note = signal<entryNote>({
     id: '',
@@ -80,6 +88,7 @@ export class Dashboard implements OnInit, OnDestroy {
     imageUrls: [],
     mood: '',
     createdAt: new Date(),
+    showMessage: false,
   });
 
   entry_all_note = signal<entryNote>({
@@ -89,6 +98,7 @@ export class Dashboard implements OnInit, OnDestroy {
     imageUrls: [],
     mood: '',
     createdAt: new Date(),
+    showMessage: false,
   });
 
   // Computed values
@@ -149,6 +159,12 @@ export class Dashboard implements OnInit, OnDestroy {
     if (!currentUser) {
       this.authService.checkAuthState();
     }
+    this.saveThankInLocalStorage();
+    setTimeout(() => {
+      if (isPlatformBrowser(this.platformId) && this.isAuthed()) {
+        this.flushFromLocal();
+      }
+    }, 100);
   }
 
   ngOnDestroy(): void {
@@ -160,6 +176,43 @@ export class Dashboard implements OnInit, OnDestroy {
   notes = resource({
     loader: () => firstValueFrom(this.apiService.getAllNoteByUserId()),
   });
+
+  saveThankInLocalStorage() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.quickNoteFromLocalStorage.set(
+        localStorage.getItem('quick-note') ?? ''
+      );
+    }
+  }
+
+  public flushFromLocal() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const saved = localStorage.getItem('quick-note');
+    if (!saved?.trim()) return;
+    this.flush(saved.trim());
+  }
+
+  private flush(msg: string | undefined) {
+    if (!msg) return;
+    this.pending.set(true);
+    this.error.set(null);
+    this.apiService.createQuickNote({ thankMessage: msg }).subscribe({
+      next: (res) => {
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.removeItem('quick-note');
+        }
+        this.pending.set(false);
+        this.showToast(
+          'เก็บคำขอบคุณอันมีค่าเรียบร้อย! :)',
+          false
+        );
+      },
+      error: (err) => {
+        // ส่งไม่สำเร็จ → ค้างไว้ใน local ให้ลองใหม่
+        this.error.set('ส่งไม่สำเร็จ—เก็บไว้ในเครื่องแล้ว');
+      },
+    });
+  }
 
   // Method สำหรับ refresh data
   refreshData(): void {
@@ -182,6 +235,7 @@ export class Dashboard implements OnInit, OnDestroy {
             imageUrls: Array.isArray(note.imageUrls) ? note.imageUrls : [],
             mood: (note as any).mood ?? '',
             createdAt: note.createdAt ? new Date(note.createdAt) : new Date(),
+            showMessage: note.showMessage ?? false,
           };
 
           console.log('Updated entry_recent_note:', updatedNote);
@@ -197,6 +251,7 @@ export class Dashboard implements OnInit, OnDestroy {
             imageUrls: [],
             mood: '',
             createdAt: new Date(),
+            showMessage:false
           });
         });
       },
@@ -246,5 +301,18 @@ export class Dashboard implements OnInit, OnDestroy {
   retry(): void {
     this.retryCount.set(0);
     this.authService.checkAuthState();
+  }
+
+  showToast(message: string, isError = false) {
+    console.log('showToast called:', message, isError);
+    console.log('Before setting toastMessage:', this.toastMessage());
+    this.toastMessage.set(message);
+    console.log('After setting toastMessage:', this.toastMessage());
+    this.toastError.set(isError);
+
+    setTimeout(() => {
+      console.log('Clearing toast');
+      this.toastMessage.set(null);
+    }, 3000);
   }
 }

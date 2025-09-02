@@ -1,4 +1,43 @@
-import { Controller } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Request } from 'express';
+import * as jwt from 'jsonwebtoken';
+// import { quickNoteResult } from './Entity/quick-note.entity';
+import { QuickNoteService } from './quick-note.service';
+import { ThankMessage } from '@prisma/client';
+import { quickNoteDto } from './Dto/quick-note.dto';
 
 @Controller('quick-note')
-export class QuickNoteController {}
+export class QuickNoteController {
+  constructor(private readonly quickNoteService: QuickNoteService) {}
+  @Post()
+  async createQuickNote(
+    @Req() req: Request,
+    @Body() thankMessageDto: quickNoteDto,
+  ): Promise<Partial<ThankMessage>> {
+    const token = (req.cookies as { [key: string]: string })?.access_token;
+    console.log(token);
+    let userId: string | null = null;
+    const secret = process.env.JWT_SECRET;
+    if (token) {
+      try {
+        const payload = jwt.verify(token, secret) as {
+          sub: string;
+        };
+        userId = payload.sub;
+      } catch (error) {
+        throw new UnauthorizedException('Token is invalid!', error);
+      }
+    }
+    const result = await this.quickNoteService.createQuickNote(
+      userId,
+      thankMessageDto,
+    );
+    return result;
+  }
+}

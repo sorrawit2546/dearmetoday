@@ -5,4 +5,5 @@ export interface entryNote{
   imageUrls: string[];
   mood: string;
   createdAt: Date;
+  showMessage: boolean;
 }

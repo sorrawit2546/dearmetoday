@@ -1,7 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import * as jwt from 'jsonwebtoken';
 import { QuickNoteController } from './quick-note.controller';
 import { QuickNoteService } from './quick-note.service';
-import * as jwt from 'jsonwebtoken';
+import { quickNoteDto } from './Dto/quick-note.dto';
+
+jest.mock('jsonwebtoken', () => ({
+  verify: jest.fn(),
+}));
 interface ReqCookie {
   user?: unknown;
   cookies?: Record<string, string>;
@@ -13,9 +18,6 @@ describe('QuickNoteController', () => {
   const mockServiceFunction = {
     createQuickNote: jest.fn(),
   };
-  jest.mock('jsonwebtoken', () => ({
-    verify: jest.fn(),
-  }));
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [QuickNoteController],
@@ -40,14 +42,44 @@ describe('QuickNoteController', () => {
   });
 
   describe('create quick-not', () => {
-    it('Should be create quick-note', () => {
-      let mockQuickNote = 'test thank message!!!';
-      const mockResult = [
-        {
-          id: 'quick-note-1',
-          thankMessage: 'thank-message!',
+    it('Should be create quick-note', async () => {
+      const mockReq: ReqCookie = {
+        cookies: {
+          access_token: 'mock-token',
         },
-      ];
+      };
+      const mockUserId = 'user-123';
+      const mockQuickNote = 'test thank message!!!';
+      const quickNoteDto: quickNoteDto = {
+        id: 'quick-note-1',
+        thankMessage: 'thank-message!',
+        isDelete: false,
+        createdAt: new Date(),
+        userId: 'user-123',
+      };
+      const mockResult = {
+        id: 'quick-note-1',
+        thankMessage: 'thank-message!',
+        isDelete: 'false',
+        createdAt: '1-10-2568',
+        user_id: 'user-123',
+      };
+      // Mock jwt.verify ให้คืนค่า payload ที่ต้องการ
+      (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-123' });
+      //act
+      mockServiceFunction.createQuickNote = jest.fn().mockReturnValue({
+        id: 'quick-note-1',
+        thankMessage: 'thank-message!',
+        isDelete: 'false',
+        createdAt: '1-10-2568',
+        user_id: 'user-123',
+      });
+      const result = await controller.createQuickNote(
+        mockReq as any,
+        quickNoteDto,
+      );
+      expect(result).toEqual(mockResult);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
     });
   });
 });

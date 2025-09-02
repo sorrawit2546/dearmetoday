@@ -6,6 +6,7 @@ import {
   EventEmitter,
   NgZone,
   Output,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -23,14 +24,16 @@ export class NoteForm {
   @ViewChild('confirmDialog') confirmDialog!: ElementRef<HTMLDialogElement>;
   @Output() noteCreated = new EventEmitter<void>();
 
-  toastError = false;
-  toastMessage: string | null = null;
+  toastError = signal<boolean>(false);
+  toastMessage = signal<string | null>(null);
   isLoading = false;
   showErrorToast = false;
   previewImages: string[] = [];
   isDragging = false;
   email = '';
   note = '';
+  note2= '';
+  note3= '';
   mood = 'happy';
   formattedDate: string = '';
   showMessage = false;
@@ -135,6 +138,8 @@ export class NoteForm {
     const formData = new FormData();
     formData.append('email', this.email);
     formData.append('line1', this.note);
+    formData.append('line2', this.note2);
+    formData.append('line3', this.note3);
     formData.append('mood', this.mood);
     formData.append('showMessage', this.showMessage ? 'true' : 'false');
 
@@ -205,16 +210,22 @@ export class NoteForm {
   private resetForm(): void {
     this.email = '';
     this.note = '';
+    this.note2 = '';
+    this.note3 = '';
     // this.mood = ''; // ไม่ reset mood เพื่อให้ toast ทำงานได้
     this.previewImages = [];
   }
 
   showToast(message: string, isError = false) {
-    this.toastMessage = message;
-    this.toastError = isError;
+    console.log('showToast called:', message, isError);
+    console.log('Before setting toastMessage:', this.toastMessage());
+    this.toastMessage.set(message);
+    console.log('After setting toastMessage:', this.toastMessage());
+    this.toastError.set(isError);
 
     setTimeout(() => {
-      this.toastMessage = null;
+      console.log('Clearing toast');
+      this.toastMessage.set(null);
     }, 3000);
   }
 }

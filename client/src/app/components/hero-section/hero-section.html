@@ -64,10 +64,10 @@
         Keep smiling and stay <span class="text-blue-600">positive!</span>
       </h2>
       <p class="text-[#323330] text-lg mb-8 w-full">
-        วันนี้เหนื่อยไหม มีอะไรดี ๆ เกิดขึ้นบ้างนะ ลองเขียนเก็บไว้ดูไหมครับ
-        :)
+        วันนี้เหนื่อยไหม มีอะไรดี ๆ เกิดขึ้นบ้างนะ ลองเขียนเก็บไว้ดูไหมครับ :)
       </p>
-      <button (click)="navigateToGoogleProvide()"
+      <button
+        (click)="navigateToGoogleProvide()"
         class="btn btn-primary px-8 py-3 text-lg rounded-md"
       >
         เริ่มบันทึกเรื่องราวดี ๆ ของคุณ
@@ -77,8 +77,12 @@
       </div>
       <div class="join">
         <div>
-          <label class="input validator join-item rounded-l-lg ">
-            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <label class="input validator join-item rounded-l-lg">
+            <svg
+              class="h-[1em] opacity-50"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
               <g
                 stroke-linejoin="round"
                 stroke-linecap="round"
@@ -90,11 +94,73 @@
                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
               </g>
             </svg>
-            <input class="placeholder:text-blue-300 text-blue-500" type="input" placeholder="สิ่งที่อยากขอบคุณในวันนี้" required />
+            <input
+              [ngModel]="quickNoteFromLocalStorage()"
+              (ngModelChange)="quickNoteFromLocalStorage.set($event)"
+              class="placeholder:text-blue-300 text-blue-500"
+              type="input"
+              placeholder="สิ่งที่อยากขอบคุณในวันนี้"
+              required
+            />
           </label>
           <div class="validator-hint hidden">Enter valid input</div>
         </div>
-        <button class="btn btn-neutral join-item rounded-r-lg">Send</button>
+        <button
+          (click)="sendThankMessage()"
+          class="btn btn-neutral join-item rounded-r-lg"
+        >
+          Send
+        </button>
+      </div>
+      <!-- Toast แยกออกมา -->
+      <div
+        *ngIf="toastMessage()"
+        class="toast toast-top toast-end z-50 transition-all duration-500 ease-in-out"
+      >
+        <div
+          class="alert shadow-lg flex items-center gap-3 rounded-xl p-4"
+          [ngClass]="toastError() ? 'alert-error' : 'alert-success'"
+        >
+          <!-- Icon -->
+          <svg
+            *ngIf="toastError(); else successIcon"
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.054 0
+           1.986-.816 2.07-1.866L21.86 7.134A2.072
+           2.072 0 0019.79 5H4.21c-1.054 0-1.986.816-2.07
+           1.866l-1.072 12a2.072 2.072 0 002.07
+           2.134z"
+            />
+          </svg>
+          <ng-template #successIcon>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </ng-template>
+
+          <!-- Message -->
+          <span class="font-medium text-base">{{ toastMessage() }}</span>
+        </div>
       </div>
     </div>
   </div>
