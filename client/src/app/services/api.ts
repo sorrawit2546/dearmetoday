@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, resource } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, Subject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthResponse } from '../model/api-data';
-import { QuickNote,  QuickNoteDto } from '../model/quick-note';
+import { QuickNote, QuickNoteDto } from '../model/quick-note';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +11,20 @@ import { QuickNote,  QuickNoteDto } from '../model/quick-note';
 export class Api {
   constructor(private http: HttpClient) {}
 
-  createQuickNote(Dto: QuickNoteDto): Observable<QuickNote> {
-    return this.http.post<QuickNote>(`${environment.apiUrl}/quick-note`, Dto, {
+  // Emits when quick notes are created/updated/deleted
+  quickNoteChanged$ = new Subject<void>();
+
+  getAllQuickNote(): Observable<QuickNote[]> {
+    return this.http.get<QuickNote[]>(`${environment.apiUrl}/quick-note`, {
       withCredentials: true,
     });
+  }
+  createQuickNote(Dto: QuickNoteDto): Observable<QuickNote> {
+    return this.http
+      .post<QuickNote>(`${environment.apiUrl}/quick-note`, Dto, {
+        withCredentials: true,
+      })
+      .pipe(tap(() => this.quickNoteChanged$.next()));
   }
 
   getAllCommunityPost(): Observable<any> {

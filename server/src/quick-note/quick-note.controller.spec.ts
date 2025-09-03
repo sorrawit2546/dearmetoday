@@ -17,6 +17,7 @@ describe('QuickNoteController', () => {
   let service: QuickNoteService;
   const mockServiceFunction = {
     createQuickNote: jest.fn(),
+    getAllQuickNote: jest.fn(),
   };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -41,7 +42,7 @@ describe('QuickNoteController', () => {
     expect(service).toBeDefined();
   });
 
-  describe('create quick-not', () => {
+  describe('quick-not', () => {
     it('Should be create quick-note', async () => {
       const mockReq: ReqCookie = {
         cookies: {
@@ -80,6 +81,42 @@ describe('QuickNoteController', () => {
       );
       expect(result).toEqual(mockResult);
       // eslint-disable-next-line @typescript-eslint/unbound-method
+    });
+
+    it('should get all quick-note', async () => {
+      const mockReq: ReqCookie = {
+        cookies: {
+          access_token: 'mock-token',
+        },
+      };
+      // Mock jwt.verify ให้คืนค่า payload ที่ต้องการ
+      (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-123' });
+      const mockResult = [
+        {
+          id: 'quick-note-1',
+          thankMessage: 'thank-message!',
+          isDelete: false, // ใช้ boolean ดีกว่า string
+          createdAt: '1-10-2568',
+          user_id: 'user-123',
+        },
+        {
+          id: 'quick-note-2',
+          thankMessage: 'thank-message!',
+          isDelete: false,
+          createdAt: '1-10-2568',
+          user_id: 'user-123',
+        },
+      ];
+      mockServiceFunction.getAllQuickNote = jest
+        .fn()
+        .mockReturnValue(mockResult);
+      //act
+      const result = await controller.getAllQuickNote(mockReq as any);
+      expect(result).toEqual(mockResult);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(service.getAllQuickNote).toHaveBeenCalledTimes(1);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(service.getAllQuickNote).toHaveBeenCalledWith('user-123');
     });
   });
 });

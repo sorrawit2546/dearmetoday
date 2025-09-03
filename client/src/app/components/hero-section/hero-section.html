@@ -95,18 +95,18 @@
               </g>
             </svg>
             <input
+              #msg="ngModel"
               [ngModel]="quickNoteFromLocalStorage()"
               (ngModelChange)="quickNoteFromLocalStorage.set($event)"
               class="placeholder:text-blue-300 text-blue-500"
-              type="input"
+              type="text"
               placeholder="สิ่งที่อยากขอบคุณในวันนี้"
               required
             />
           </label>
-          <div class="validator-hint hidden">Enter valid input</div>
         </div>
         <button
-          (click)="sendThankMessage()"
+          (click)="sendThankMessage(msg.value)"
           class="btn btn-neutral join-item rounded-r-lg"
         >
           Send

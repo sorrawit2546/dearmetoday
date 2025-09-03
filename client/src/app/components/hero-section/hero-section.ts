@@ -59,8 +59,8 @@ export class HeroSection implements OnInit {
     }
   }
 
-  sendThankMessage() {
-    const msg = this.quickNoteFromLocalStorage()?.trim();
+  sendThankMessage(current?: string) {
+    const msg = (current ?? this.quickNoteFromLocalStorage())?.trim();
     if (!msg) return;
     const messageToSend = msg;
     if (isPlatformBrowser(this.platformId)) {
@@ -74,8 +74,6 @@ export class HeroSection implements OnInit {
     if (this.isAuthed()) {
       console.log('Sending message:', messageToSend);
       this.flush(msg);
-    }else{
-      this.quickNoteFromLocalStorage.set('');
     }
   }
 

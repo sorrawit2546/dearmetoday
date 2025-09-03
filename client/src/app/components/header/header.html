@@ -1,4 +1,4 @@
-<div class="navbar bg-base-100 shadow-sm">
+<div class="navbar bg-base-100 shadow-sm pl-24 pr-24">
   <a href="" class="justify-center items-center ml-16">
     <img src="assets/images/dearme,logo.png" alt="" class=" h-14 w-14">
   </a>
@@ -14,19 +14,34 @@
   </div>
   <div class="flex gap-2">
     <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost m-1 rounded-2xl">
-        <img
-          src="assets/images/freeze-message-box-snow-svgrepo-com.svg"
-          alt="freez-message"
-          alt="error icon"
-          class="swap-off fill-current h-10 w-10"
-        />
+      <div tabindex="0" role="button" class="btn btn-ghost m-1 rounded-2xl" (click)="markQuickNotesRead()" (focus)="markQuickNotesRead()">
+        <div class="relative">
+          <img
+            src="assets/images/freeze-message-box-snow-svgrepo-com.svg"
+            alt="freez-message"
+            alt="error icon"
+            class="swap-off fill-current h-10 w-10"
+          />
+          @if (unreadQuickNotes()) {
+            <span class="status status-info animate-bounce absolute -top-1 -right-1 h-3 w-3 rounded-full"></span>
+          }
+        </div>
       </div>
       <ul
         tabindex="0"
         class="dropdown-content menu bg-base-100 rounded-xl z-1 w-52 p-2 shadow-sm"
+        (mouseenter)="markQuickNotesRead()"
       >
-        <li><a>Item 1</a></li>
+      @if(quickNoteMessage() ; as quickNotes){
+        @for(quicknote of quickNotes; track quicknote.id){
+          <div class="border-dashed border-1 rounded-lg my-1 border-accent">
+            <li class="">
+              <a>{{quicknote.thankMessage}}</a>
+              <span class="badge badge-soft badge-info rounded-lg h-8 px-2">{{quicknote.createdAt | date:'EEEE d, MMMM'}}</span>
+            </li>
+          </div>
+        }
+      }
       </ul>
     </div>
     <div class="dropdown dropdown-end">

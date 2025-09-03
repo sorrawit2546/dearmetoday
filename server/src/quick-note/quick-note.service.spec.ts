@@ -65,7 +65,7 @@ describe('QuickNoteService', () => {
     );
     expect(mockRepository.createQuickNote).toHaveBeenCalledTimes(1);
   });
-  it('should get all wuick-note message', async () => {
+  it('should get all quick-note message', async () => {
     const mockUserId = 'user-123';
     const mockResult = [
       {

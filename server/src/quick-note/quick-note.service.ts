@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { QuickNoteRepository } from './quick-note.repository';
 import { ThankMessage } from '@prisma/client';
 import { quickNoteDto } from './Dto/quick-note.dto';
+import { quickNoteResult } from './Entity/quick-note.entity';
 
 @Injectable()
 export class QuickNoteService {
@@ -17,5 +18,10 @@ export class QuickNoteService {
     );
   }
 
-  async getAllQuickNote(userId: string) {}
+  async getAllQuickNote(userId: string): Promise<quickNoteResult[]> {
+    if (!userId) {
+      throw new UnauthorizedException(['User Id not found!']);
+    }
+    return await this.quickNoteRepository.getAllQuickNote(userId);
+  }
 }
