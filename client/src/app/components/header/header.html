@@ -1,16 +1,28 @@
-<div class="navbar bg-base-100 shadow-sm pl-24 pr-24">
-  <a href="" class="justify-center items-center ml-16">
-    <img src="assets/images/dearme,logo.png" alt="" class=" h-14 w-14">
+<div class="navbar bg-base-100 shadow-sm pl-4 pr-4 md:pl-24 md:pr-24">
+  <a href="" class="justify-center items-center ml-2 md:ml-16">
+    <img src="assets/images/dearme,logo.png" alt="" class="h-10 w-10 md:h-14 md:w-14">
   </a>
-  <div class="flex-1 space-x-10">
+  <div class="flex-1 justify-items-center space-x-4 md:space-x-10 hidden sm:flex">
     <a
       routerLink="/dashboard"
       routerLinkActive="active-tab"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="text-xl font-bold px-3 py-2 rounded-lg transition-colors hover:bg-purple-100 pr-3"
+      class="text-base md:text-xl font-bold px-2 md:px-3 py-2 rounded-lg transition-colors hover:bg-purple-100 pr-3"
       >Dashboard</a
     >
-    <a href="/community" class="text-xl font-bold">Community</a>
+    <a href="/community" class="text-base md:text-xl font-bold">Community</a>
+  </div>
+  <!-- Mobile menu button -->
+  <div class="sm:hidden">
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-square">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+      </div>
+      <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-xl z-20 w-48 p-2 shadow">
+        <li><a routerLink="/dashboard" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a></li>
+        <li><a href="/community">Community</a></li>
+      </ul>
+    </div>
   </div>
   <div class="flex gap-2">
     <div class="dropdown dropdown-end">
@@ -20,7 +32,7 @@
             src="assets/images/freeze-message-box-snow-svgrepo-com.svg"
             alt="freez-message"
             alt="error icon"
-            class="swap-off fill-current h-10 w-10"
+            class="swap-off fill-current h-8 w-8 md:h-10 md:w-10"
           />
           @if (unreadQuickNotes()) {
             <span class="status status-info animate-bounce absolute -top-1 -right-1 h-3 w-3 rounded-full"></span>
@@ -29,15 +41,23 @@
       </div>
       <ul
         tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-xl z-1 w-52 p-2 shadow-sm"
+        class="dropdown-content menu bg-base-100 rounded-xl z-10 w-64 sm:w-52 max-w-[90vw] p-2 shadow-sm"
         (mouseenter)="markQuickNotesRead()"
       >
-      @if(quickNoteMessage() ; as quickNotes){
-        @for(quicknote of quickNotes; track quicknote.id){
+      @if(quickNoteMessage(); as quickNotes){
+        @if(quickNotes.length > 0){
+          @for(quicknote of quickNotes; track quicknote.id){
+            <div class="border-dashed border-1 rounded-lg my-1 border-accent">
+              <li class="">
+                <a>{{quicknote.thankMessage}}</a>
+                <span class="badge badge-soft badge-info rounded-lg h-8 px-2">{{quicknote.createdAt | date:'EEEE d, MMMM'}}</span>
+              </li>
+            </div>
+          }
+        }@else{
           <div class="border-dashed border-1 rounded-lg my-1 border-accent">
             <li class="">
-              <a>{{quicknote.thankMessage}}</a>
-              <span class="badge badge-soft badge-info rounded-lg h-8 px-2">{{quicknote.createdAt | date:'EEEE d, MMMM'}}</span>
+              <a>No message!</a>
             </li>
           </div>
         }
@@ -46,7 +66,7 @@
     </div>
     <div class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-        <div class="w-10 rounded-full">
+        <div class="w-8 md:w-10 rounded-full">
           <img
             *ngIf="user()?.avatarUrl"
             [src]="user()?.avatarUrl"
@@ -56,9 +76,9 @@
       </div>
       <ul
         tabindex="0"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
+        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-44 md:w-52 p-2 shadow"
       >
-        <li class="menu-title">{{ user()?.name }}</li>
+        <li class="menu-title text-sm md:text-base">{{ user()?.name }}</li>
         <li><button (click)="logout()">Logout</button></li>
       </ul>
     </div>

@@ -66,6 +66,8 @@ model ThankMessage {
 // ## Enum สำหรับอารมณ์
 enum Mood {
   happy
-  sad
+  calm
   neutral
+  tired
+  sad
 }

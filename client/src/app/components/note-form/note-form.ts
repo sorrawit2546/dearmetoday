@@ -177,21 +177,30 @@ export class NoteForm {
           this.noteCreated.emit();
 
           if (this.mood === 'happy') {
-            console.log('Showing happy toast');
             this.showToast(
               'ดีใจด้วยนะ! ลองเก็บสิ่งดีๆ นี้ไว้ใช้ในวันที่รู้สึกเหนื่อยนะ :)',
               false
             );
           }
+          if (this.mood === 'calm') {
+            this.showToast(
+              'วันที่สงบ มักจะมากับความสบายใจ!',
+              false
+            );
+          }
+          if (this.mood === 'tired') {
+            this.showToast(
+              'สายลมเปลี่ยนแปลงเสมอ อย่าลืมไปหาของอร่อย ๆ กินนะ!',
+              false
+            );
+          }
           if (this.mood === 'sad') {
-            console.log('Showing sad toast');
             this.showToast(
               'แม้วันนี้จะไม่ง่าย แต่คุณยังเห็นแสงเล็กๆ อยู่ เก่งมากเลยนะ',
               false
             );
           }
           if (this.mood === 'neutral') {
-            console.log('Showing happy toast');
             this.showToast(
               'บางวันก็กลางๆ แบบนี้แหละ แต่คุณก็ยังเขียนถึงสิ่งดีๆ ได้ เยี่ยมเลย!',
               false
