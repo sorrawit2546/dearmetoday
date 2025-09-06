@@ -37,7 +37,8 @@ model Entry {
   line3 String?
   email String
   mood  Mood
-
+  // ✅ เก็บคะแนนเป็นตัวเลข (-2..+2)
+  moodScore Int      @db.SmallInt  @map("mood_score")
   // Map camelCase fields to snake_case columns
   showMessage Boolean  @default(false) @map("show_message")
   isDelete    Boolean  @default(false) @map("is_delete")
@@ -48,6 +49,8 @@ model Entry {
   user   User   @relation(fields: [userId], references: [id])
   userId String @map("user_id") // Foreign key
 
+  // ✅ ดัชนีสำหรับ query ตามผู้ใช้+ช่วงเวลา (สัปดาห์/เดือน)
+  @@index([userId, createdAt])
   // Map Model name "Entry" to table name "entries"
   @@map("entries")
 }

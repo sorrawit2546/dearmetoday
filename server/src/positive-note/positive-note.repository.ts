@@ -6,6 +6,7 @@ import {
   CreatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
+import { moodToScore } from './utils/positive-note.mood.utils';
 
 @Injectable()
 export class PositiveNoteRepository {
@@ -36,7 +37,7 @@ export class PositiveNoteRepository {
     createPositiveNoteDto: CreatePositiveNoteDto | CreatePositiveNoteAuthDto,
   ): Promise<Entry> {
     let userId: string | null = null;
-
+    const moodScore = moodToScore(createPositiveNoteDto.mood);
     // ใช้ email จาก DTO (ที่มาจาก token หรือ body)
     if (createPositiveNoteDto.email) {
       const user = await this.prisma.user.findUnique({
@@ -58,6 +59,7 @@ export class PositiveNoteRepository {
         line3: createPositiveNoteDto.line3,
         email: createPositiveNoteDto.email || '',
         mood: createPositiveNoteDto.mood,
+        moodScore: moodScore,
         showMessage: createPositiveNoteDto.showMessage,
         isDelete: createPositiveNoteDto.isDelete,
         imageUrls: createPositiveNoteDto.imageUrls || [],

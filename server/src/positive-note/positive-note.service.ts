@@ -58,7 +58,6 @@ export class PositiveNoteService {
     try {
       const result =
         await this.repositoryPositiveNote.createPositiveNote(createEntryDto);
-
       // ส่งอีเมลเฉพาะเมื่อมี email
       if (createEntryDto.email) {
         try {
