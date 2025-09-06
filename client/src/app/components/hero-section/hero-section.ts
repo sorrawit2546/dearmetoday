@@ -19,20 +19,20 @@ import { FormsModule } from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
+import { ToastComponent } from '../toast/toast.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-hero-section',
-  imports: [RouterLink, FormsModule, CommonModule],
+  imports: [RouterLink, FormsModule, CommonModule, ToastComponent],
   templateUrl: './hero-section.html',
   styleUrl: './hero-section.css',
 })
 export class HeroSection implements OnInit {
-  constructor(private router: Router, private apiService: Api) {}
+  constructor(private router: Router, private apiService: Api, private toastService: ToastService) {}
   private authService = inject(AuthService);
   private platformId = inject(PLATFORM_ID);
-  toastError = signal<boolean>(false);
-  toastMessage = signal<string | null>(null);
   quickNoteFromLocalStorage = signal<string>('');
   pending = signal<boolean>(false);
   error = signal<string | null>(null);
@@ -65,7 +65,7 @@ export class HeroSection implements OnInit {
     const messageToSend = msg;
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('quick-note', messageToSend);
-      this.showToast(
+      this.toastService.showToast(
         'เก็บคำขอบคุณอันมีค่าของคุณเมื่อสักครู่ เพียงแค่ Login เข้าสู่ระบบของเรา! :)',
         false
       );
@@ -102,16 +102,4 @@ export class HeroSection implements OnInit {
     });
   }
 
-  showToast(message: string, isError = false) {
-    console.log('showToast called:', message, isError);
-    console.log('Before setting toastMessage:', this.toastMessage());
-    this.toastMessage.set(message);
-    console.log('After setting toastMessage:', this.toastMessage());
-    this.toastError.set(isError);
-
-    setTimeout(() => {
-      console.log('Clearing toast');
-      this.toastMessage.set(null);
-    }, 3000);
-  }
 }

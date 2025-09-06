@@ -14,6 +14,8 @@ export class NoteCardAll implements OnChanges {
   // date = input<string>;
   @Input() date!: string;
   @Input() line1: string = '';
+  @Input() line2: string = '';
+  @Input() line3: string = '';
   @Input() mood!: string;
   @Input() email!: string;
   @Input() photos: string[] = [];

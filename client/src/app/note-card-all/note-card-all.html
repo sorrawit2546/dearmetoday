@@ -89,6 +89,14 @@
         {{ isActive ? (line1 ?? '') : ((line1?.length ?? 0) > 50 ? (line1 |
         slice:0:50) + '...' : (line1 ?? '')) }}
       </div>
+      <div class="py-1 whitespace-pre-line mt-2">
+        {{ isActive ? (line2 ?? '') : ((line2?.length ?? 0) > 50 ? (line2 |
+        slice:0:50) + '...' : (line2 ?? '')) }}
+      </div>
+      <div class="py-1 whitespace-pre-line mt-2">
+        {{ isActive ? (line3 ?? '') : ((line3?.length ?? 0) > 50 ? (line3 |
+        slice:0:50) + '...' : (line3 ?? '')) }}
+      </div>
       <div class="badge badge-soft badge-info rounded-2xl px-5">{{mood}}</div>
       <div class="flex flex-row mt-3 badge badge-soft badge-info rounded-2xl px-5 h-11" *ngIf="!isCommunity">
         <img src="assets/images/public.svg" alt="" class="w-6 h-6 ">

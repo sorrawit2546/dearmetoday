@@ -1,5 +1,7 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../services/toast.service';
+import { ToastComponent } from '../../components/toast/toast.component';
 import {
   ChangeDetectorRef,
   Component,
@@ -35,6 +37,7 @@ import { HeroSection } from '../../components/hero-section/hero-section';
     NoteCardComponent,
     NoteCardAll,
     Header,
+    ToastComponent,
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
@@ -55,8 +58,6 @@ export class Dashboard implements OnInit, OnDestroy {
   pending = signal<boolean>(false);
   error = signal<string | null>(null);
   isLoading = signal<boolean>(true);
-  toastError = signal<boolean>(false);
-  toastMessage = signal<string | null>(null);
   retryCount = signal<number>(0);
   maxRetries = 3;
   countNote = signal<number>(0);
@@ -72,6 +73,8 @@ export class Dashboard implements OnInit, OnDestroy {
       const matchText =
         !term ||
         item.line1.toLowerCase().includes(term) ||
+        item.line2.toLowerCase().includes(term) ||
+        item.line3.toLowerCase().includes(term) ||
         item.mood?.toLowerCase().includes(term);
       return matchText;
     });
@@ -85,6 +88,8 @@ export class Dashboard implements OnInit, OnDestroy {
     id: '',
     email: '',
     line1: '',
+    line2: '',
+    line3: '',
     imageUrls: [],
     mood: '',
     createdAt: new Date(),
@@ -95,6 +100,8 @@ export class Dashboard implements OnInit, OnDestroy {
     id: '',
     email: '',
     line1: '',
+    line2: '',
+    line3: '',
     imageUrls: [],
     mood: '',
     createdAt: new Date(),
@@ -121,7 +128,7 @@ export class Dashboard implements OnInit, OnDestroy {
   // Modal state
   showNoteForm = signal<boolean>(false);
 
-  constructor() {
+  constructor(private toastService: ToastService) {
     // Modern effect with automatic cleanup
     effect(() => {
       const u = this.user();
@@ -202,7 +209,7 @@ export class Dashboard implements OnInit, OnDestroy {
           localStorage.removeItem('quick-note');
         }
         this.pending.set(false);
-        this.showToast(
+        this.toastService.showToast(
           'เก็บคำขอบคุณอันมีค่าเรียบร้อย! :)',
           false
         );
@@ -232,6 +239,8 @@ export class Dashboard implements OnInit, OnDestroy {
             id: note.id ?? '',
             email: note.email ?? '',
             line1: note.line1 ?? '',
+            line2: note.line2 ?? '',
+            line3: note.line3 ?? '',
             imageUrls: Array.isArray(note.imageUrls) ? note.imageUrls : [],
             mood: (note as any).mood ?? '',
             createdAt: note.createdAt ? new Date(note.createdAt) : new Date(),
@@ -248,6 +257,8 @@ export class Dashboard implements OnInit, OnDestroy {
             id: '',
             email: '',
             line1: '',
+            line2: '',
+            line3: '',
             imageUrls: [],
             mood: '',
             createdAt: new Date(),
@@ -303,16 +314,4 @@ export class Dashboard implements OnInit, OnDestroy {
     this.authService.checkAuthState();
   }
 
-  showToast(message: string, isError = false) {
-    console.log('showToast called:', message, isError);
-    console.log('Before setting toastMessage:', this.toastMessage());
-    this.toastMessage.set(message);
-    console.log('After setting toastMessage:', this.toastMessage());
-    this.toastError.set(isError);
-
-    setTimeout(() => {
-      console.log('Clearing toast');
-      this.toastMessage.set(null);
-    }, 3000);
-  }
 }

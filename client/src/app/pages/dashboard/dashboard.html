@@ -64,6 +64,8 @@
         *ngIf="hasRecentNote()"
         [date]="(entry_recent_note().createdAt | date:'dd MMM yyyy') ?? ''"
         [line1]="entry_recent_note().line1"
+        [line2]="entry_recent_note().line2"
+        [line3]="entry_recent_note().line3"
         [mood]="entry_recent_note().mood"
         [email]="entry_recent_note().email"
         [photos]="entry_recent_note().imageUrls"
@@ -112,6 +114,8 @@
         <app-note-card-all
           [date]="(note.createdAt | date:'dd MMM yyyy') ?? ''"
           [line1]="note.line1"
+          [line2]="note.line2"
+          [line3]="note.line3"
           [mood]="note.mood"
           [photos]="note.imageUrls"
           [isActive]="note.showMessage"
@@ -147,52 +151,5 @@
     </div>
   </div>
 </div>
-<div
-        *ngIf="toastMessage()"
-        class="toast toast-top toast-end z-50 transition-all duration-500 ease-in-out"
-      >
-        <div
-          class="alert shadow-lg flex items-center gap-3 rounded-xl p-4"
-          [ngClass]="toastError() ? 'alert-error' : 'alert-success'"
-        >
-          <!-- Icon -->
-          <svg
-            *ngIf="toastError(); else successIcon"
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6 shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.054 0
-           1.986-.816 2.07-1.866L21.86 7.134A2.072
-           2.072 0 0019.79 5H4.21c-1.054 0-1.986.816-2.07
-           1.866l-1.072 12a2.072 2.072 0 002.07
-           2.134z"
-            />
-          </svg>
-          <ng-template #successIcon>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 shrink-0"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </ng-template>
-
-          <!-- Message -->
-          <span class="font-medium text-base">{{ toastMessage() }}</span>
-        </div>
-      </div>
+<!-- Toast Component -->
+<app-toast></app-toast>

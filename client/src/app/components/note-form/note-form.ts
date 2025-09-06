@@ -6,12 +6,12 @@ import {
   EventEmitter,
   NgZone,
   Output,
-  signal,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Api, AuthResponse } from '../../services/api';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-note-form',
@@ -24,10 +24,7 @@ export class NoteForm {
   @ViewChild('confirmDialog') confirmDialog!: ElementRef<HTMLDialogElement>;
   @Output() noteCreated = new EventEmitter<void>();
 
-  toastError = signal<boolean>(false);
-  toastMessage = signal<string | null>(null);
   isLoading = false;
-  showErrorToast = false;
   previewImages: string[] = [];
   isDragging = false;
   email = '';
@@ -42,7 +39,8 @@ export class NoteForm {
     private cd: ChangeDetectorRef,
     private ngZone: NgZone,
     private apiService: Api,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -177,31 +175,31 @@ export class NoteForm {
           this.noteCreated.emit();
 
           if (this.mood === 'happy') {
-            this.showToast(
+            this.toastService.showToast(
               'ดีใจด้วยนะ! ลองเก็บสิ่งดีๆ นี้ไว้ใช้ในวันที่รู้สึกเหนื่อยนะ :)',
               false
             );
           }
           if (this.mood === 'calm') {
-            this.showToast(
+            this.toastService.showToast(
               'วันที่สงบ มักจะมากับความสบายใจ!',
               false
             );
           }
           if (this.mood === 'tired') {
-            this.showToast(
+            this.toastService.showToast(
               'สายลมเปลี่ยนแปลงเสมอ อย่าลืมไปหาของอร่อย ๆ กินนะ!',
               false
             );
           }
           if (this.mood === 'sad') {
-            this.showToast(
+            this.toastService.showToast(
               'แม้วันนี้จะไม่ง่าย แต่คุณยังเห็นแสงเล็กๆ อยู่ เก่งมากเลยนะ',
               false
             );
           }
           if (this.mood === 'neutral') {
-            this.showToast(
+            this.toastService.showToast(
               'บางวันก็กลางๆ แบบนี้แหละ แต่คุณก็ยังเขียนถึงสิ่งดีๆ ได้ เยี่ยมเลย!',
               false
             );
@@ -209,9 +207,7 @@ export class NoteForm {
         },
         error: (err) => {
           console.error('Error:', err);
-          this.showErrorToast = true;
-          this.showToast('faile to send magic message! ', true);
-          setTimeout(() => (this.showErrorToast = false), 3000);
+          this.toastService.showToast('Failed to send magic message!', true);
         },
       });
   }
@@ -225,16 +221,4 @@ export class NoteForm {
     this.previewImages = [];
   }
 
-  showToast(message: string, isError = false) {
-    console.log('showToast called:', message, isError);
-    console.log('Before setting toastMessage:', this.toastMessage());
-    this.toastMessage.set(message);
-    console.log('After setting toastMessage:', this.toastMessage());
-    this.toastError.set(isError);
-
-    setTimeout(() => {
-      console.log('Clearing toast');
-      this.toastMessage.set(null);
-    }, 3000);
-  }
 }
