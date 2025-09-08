@@ -1,0 +1,82 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI/CD Pipeline
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  ci:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+       # ---- Backend (NestJS) ----
+      - name: Install server deps
+        run: cd server && npm ci
+
+      - name: Lint server
+        run: cd server && npm run lint
+
+      - name: Test server
+        run: cd server && npm run test -- --passWithNoTests
+
+      - name: Build backend
+        run: cd server && npm run build
+
+      # ---- Frontend (Angular) ----
+      - name: Install client deps
+        run: cd client && npm ci
+
+      - name: Build client
+        run: cd client && npm run build:production
+
+  # -------------------------
+  # CD: Deploy on push
+  # -------------------------
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && secrets.SSH_HOST != ''
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/www/dearmetoday
+            git pull origin main
+            docker-compose down
+            CLIENT_DOCKERFILE=Dockerfile APP_ENV=production NODE_ENV=production CLIENT_PORT=8080 docker compose up --build -d
+
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+            docker exec backend pg_dump $DATABASE_URL > /var/www/dearmetoday/db_backups/db_$TIMESTAMP.sql
+
+            docker exec backend npx prisma migrate deploy
+
+            docker exec backend npx prisma generate
+          

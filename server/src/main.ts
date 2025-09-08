@@ -8,10 +8,8 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const configService = app.get(ConfigService);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   const frontendUrl = configService.get<string>('FRONTEND_URL');
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -19,7 +17,6 @@ async function bootstrap() {
 
   // ปรับปรุง CORS configuration
   app.enableCors({
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     origin: frontendUrl,
     credentials: true, // ต้องเปิดเพื่อให้ cookie ทำงาน
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -40,7 +37,7 @@ async function bootstrap() {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   app.use(passport.initialize());
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+
   const port = configService.get<number>('PORT') || 3000;
   console.log(`🚀 Server running on port ${port}`);
   await app.listen(port);

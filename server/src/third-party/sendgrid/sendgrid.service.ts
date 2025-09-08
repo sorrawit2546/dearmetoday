@@ -20,7 +20,6 @@ export class SendgridService {
         return;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       sgMail.setApiKey(apiKey);
       console.log('SendGrid API key configured successfully');
     } catch (error) {
@@ -181,7 +180,6 @@ export class SendgridService {
     });
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       await sgMail.send(msg);
       console.log('Email sent successfully to:', toEmail);
     } catch (sendError) {

@@ -49,8 +49,6 @@ describe('QuickNoteController', () => {
           access_token: 'mock-token',
         },
       };
-      const mockUserId = 'user-123';
-      const mockQuickNote = 'test thank message!!!';
       const quickNoteDto: quickNoteDto = {
         id: 'quick-note-1',
         thankMessage: 'thank-message!',
@@ -80,7 +78,6 @@ describe('QuickNoteController', () => {
         quickNoteDto,
       );
       expect(result).toEqual(mockResult);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
     });
 
     it('should get all quick-note', async () => {
