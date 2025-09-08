@@ -132,7 +132,7 @@ export class PositiveNoteController {
   async getAllpositiveNoteById(@Req() req: Request) {
     // ดึง token จาก cookie (สมมติชื่อ cookie คือ accessToken)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const token = req.cookies?.access_token;
+    const token = (req.cookies as { [key: string]: string })?.access_token;
 
     if (!token) {
       throw new UnauthorizedException('Token not found');
@@ -154,7 +154,7 @@ export class PositiveNoteController {
 
   @Post('recent-note')
   async recentNote(@Req() req: Request): Promise<getAllNoteSendById> {
-    const token = req.cookies?.access_token;
+    const token = (req.cookies as { [key: string]: string })?.access_token;
     console.log(token);
     if (!token) {
       throw new UnauthorizedException('Token not found');
@@ -173,7 +173,7 @@ export class PositiveNoteController {
 
   @Post('all-note')
   async getAllpositiveNotesWithoutLatest(@Req() req: Request) {
-    const token = req.cookies?.access_token;
+    const token = (req.cookies as { [key: string]: string })?.access_token;
     if (!token) {
       throw new UnauthorizedException('Token not found');
     }

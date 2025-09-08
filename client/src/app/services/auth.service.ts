@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
 import { Api, AuthResponse} from './api';
 import { User } from '../model/api-data';
 
@@ -39,6 +39,16 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
-    return this.apiService.logout();
+    this.currentUserSubject.next(null);
+    return this.apiService.logout().pipe(
+      tap(() => {
+        console.log('AuthService : logout success')
+      }),
+      catchError((error) => {
+        console.log('AuthService: Logout error, but still clearing user state');
+        this.currentUserSubject.next(null);
+        return of(null);
+      })
+    );
   }
 }

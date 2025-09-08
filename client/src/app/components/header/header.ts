@@ -69,6 +69,7 @@ export class Header {
 
   // สร้าง signal user ขึ้นมา
   user = toSignal(this.authService.currentUser$, { initialValue: null });
+
   logout(): void {
     this.authService.logout().subscribe({
       next: () => {

@@ -7,10 +7,12 @@
       routerLink="/dashboard"
       routerLinkActive="active-tab"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="text-base md:text-xl font-bold px-2 md:px-3 py-2 rounded-lg transition-colors hover:bg-purple-100 pr-3"
+      class="text-base md:text-xl font-bold px-2 md:px-3 py-2 rounded-lg transition-colors hover:bg-blue-100 pr-3"
       >Dashboard</a
     >
-    <a href="/community" class="text-base md:text-xl font-bold">Community</a>
+    <a routerLink="/community"
+    routerLinkActive="active-tab"
+    [routerLinkActiveOptions]="{ exact: true }" class="text-base px-2 md:px-3 py-2 md:text-xl rounded-lg font-bold transition-colors hover:bg-blue-100">Community</a>
   </div>
   <!-- Mobile menu button -->
   <div class="sm:hidden">
@@ -26,7 +28,7 @@
   </div>
   <div class="flex gap-2">
     <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost m-1 rounded-2xl" (click)="markQuickNotesRead()" (focus)="markQuickNotesRead()">
+      <div tabindex="0" role="button" class="btn btn-ghost m-1 rounded-2xl hover:bg-blue-100 hover:border-none" (click)="markQuickNotesRead()" (focus)="markQuickNotesRead()">
         <div class="relative">
           <img
             src="assets/images/freeze-message-box-snow-svgrepo-com.svg"
@@ -76,10 +78,10 @@
       </div>
       <ul
         tabindex="0"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-44 md:w-52 p-2 shadow"
+        class="menu menu-sm dropdown-content bg-base-100 rounded-lg z-10 mt-3 w-44 md:w-52 p-2 shadow"
       >
-        <li class="menu-title text-sm md:text-base">{{ user()?.name }}</li>
-        <li><button (click)="logout()">Logout</button></li>
+        <li class="menu-title text-sm md:text-base text-blue-500">{{ user()?.name }}</li>
+        <li><button class="rounded-lg hover:not-even:bg-blue-100" (click)="logout()">Logout</button></li>
       </ul>
     </div>
   </div>

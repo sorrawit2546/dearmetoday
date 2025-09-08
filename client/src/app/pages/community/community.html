@@ -14,10 +14,10 @@
       <!-- ใช้ CSS columns -->
       <div class="grid grid-cols-12 gap-4 max-w-7xl mx-auto">
         <div
-          *ngFor="let note of communityPost.value(); let i = index"
+          *ngFor="let note of paginatedPosts(); let i = index"
           [ngClass]="{
-            'col-span-12': activeCard === i,
-            'col-span-4': activeCard !== i
+            'col-span-12': isCardActive(i),
+            'col-span-4': !isCardActive(i)
           }"
           class="transition-all duration-300"
           (click)="toggleCard(i)"
@@ -30,12 +30,50 @@
             [photos]="note.imageUrls"
             [name]="note.user?.name"
             [avatarUrl]="note.user?.avatarUrl"
-            [isActive]="activeCard === i"
+            [isActive]="isCardActive(i)"
           >
           </app-note-card-all>
         </div>
       </div>
 
+      <!-- Pagination Controls -->
+      <div *ngIf="totalPages() > 1" class="flex justify-center mt-8">
+        <div class="join">
+          <!-- Previous Button -->
+          <button
+            class="join-item btn btn-circle mr-2"
+            [disabled]="currentPage() === 1"
+            (click)="previousPage()"
+            aria-label="Previous page">
+            «
+          </button>
+
+          <!-- Page Numbers -->
+          <button
+            *ngFor="let page of getPageNumbers()"
+            class="join-item btn btn-circle mx-1"
+            [class.btn-active]="currentPage() === page"
+            (click)="goToPage(page)"
+            [attr.aria-label]="'Page ' + page">
+            {{ page }}
+          </button>
+
+          <!-- Next Button -->
+          <button
+            class="join-item btn btn-circle ml-2"
+            [disabled]="currentPage() === totalPages()"
+            (click)="nextPage()"
+            aria-label="Next page">
+            »
+          </button>
+        </div>
+      </div>
+
+      <!-- Page Info -->
+      <div *ngIf="totalPages() > 1" class="text-center mt-4 text-sm text-gray-600">
+        หน้า {{ currentPage() }} จาก {{ totalPages() }} หน้า
+        (แสดง {{ paginatedPosts().length }} รายการ)
+      </div>
 
     </div>
   </div>

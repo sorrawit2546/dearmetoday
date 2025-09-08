@@ -26,6 +26,7 @@ import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
 import { Header } from '../../components/header/header';
 import { HeroSection } from '../../components/hero-section/hero-section';
+import { Footer } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-dashboard',
@@ -38,6 +39,7 @@ import { HeroSection } from '../../components/hero-section/hero-section';
     NoteCardAll,
     Header,
     ToastComponent,
+    Footer
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],

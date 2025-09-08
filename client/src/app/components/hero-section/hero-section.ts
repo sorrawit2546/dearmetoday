@@ -44,11 +44,11 @@ export class HeroSection implements OnInit {
 
   ngOnInit() {
     this.saveThankInLocalStorage();
-    setTimeout(() => {
-      if (isPlatformBrowser(this.platformId) && this.isAuthed()) {
-        this.flushFromLocal();
-      }
-    }, 100);
+    // setTimeout(() => {
+    //   if (isPlatformBrowser(this.platformId) && this.isAuthed()) {
+    //     this.flushFromLocal();
+    //   }
+    // }, 100);
   }
 
   saveThankInLocalStorage() {
@@ -63,13 +63,16 @@ export class HeroSection implements OnInit {
     const msg = (current ?? this.quickNoteFromLocalStorage())?.trim();
     if (!msg) return;
     const messageToSend = msg;
+
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('quick-note', messageToSend);
       this.toastService.showToast(
         'เก็บคำขอบคุณอันมีค่าของคุณเมื่อสักครู่ เพียงแค่ Login เข้าสู่ระบบของเรา! :)',
         false
       );
-      this.quickNoteFromLocalStorage.set('');
+      if (!this.isAuthed()) {
+        this.quickNoteFromLocalStorage.set('');
+      }
     }
     if (this.isAuthed()) {
       console.log('Sending message:', messageToSend);
@@ -93,6 +96,7 @@ export class HeroSection implements OnInit {
         if (isPlatformBrowser(this.platformId)) {
           localStorage.removeItem('quick-note');
         }
+        this.quickNoteFromLocalStorage.set('');
         this.pending.set(false);
       },
       error: (err) => {

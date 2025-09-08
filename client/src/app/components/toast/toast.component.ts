@@ -9,7 +9,7 @@ import { ToastService } from '../../services/toast.service';
   template: `
     <div
       *ngIf="toastService.getToastMessage()()"
-      class="toast toast-top toast-end z-50 transition-all duration-500 ease-in-out"
+      class="toast toast-end z-50 transition-all duration-500 ease-in-out"
     >
       <div
         class="alert shadow-lg flex items-center gap-3 rounded-xl p-4"
@@ -31,7 +31,7 @@ import { ToastService } from '../../services/toast.service';
             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.054 0 1.986-.816 2.07-1.866L21.86 7.134A2.072 2.072 0 0019.79 5H4.21c-1.054 0-1.986.816-2.07 1.866l-1.072 12a2.072 2.072 0 002.07 2.134z"
           />
         </svg>
-        
+
         <!-- Success Icon -->
         <ng-template #successIcon>
           <svg

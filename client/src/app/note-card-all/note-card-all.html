@@ -1,7 +1,34 @@
 <div class="grid gap-4 max-w-6xl mx-auto">
   <div
-    class="p-4 rounded-3xl border border-gray-200 bg-white cursor-pointer transition-all duration-300 ease-in-out"
+    class="p-4 rounded-3xl border border-gray-200 bg-white cursor-pointer transition-all duration-300 ease-in-out "
   >
+  <div class="flex justify-end dropdown dropdown-right dropdown-end" *ngIf="!isCommunity">
+    <div tabindex="0" role="button" class="btn btn-ghost btn-circle dropdown-end">
+      <!-- จุด 3 จุด -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+           fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M6 12h.01M12 12h.01M18 12h.01" />
+      </svg>
+    </div>
+    <ul tabindex="0" class=" rounded-lg dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow">
+      <div class="flex flex-row ml-3 my-2">
+        <img src="assets/images/public.svg" alt="" class="w-6 h-6 mr-1 ">
+          <label class="relative inline-flex  items-center cursor-pointer flex flex-row">
+            <input type="checkbox" class="sr-only peer" [checked]="isActive" />
+            <div
+              class="w-12 h-6 bg-red-400 rounded-full peer peer-checked:bg-blue-500 transition-colors duration-300"
+            ></div>
+            <span
+              class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6"
+            ></span>
+          </label>
+      </div>
+          <li><a class="hover:rounded-lg">Edit</a></li>
+          <li><a class="hover:rounded-lg text-red-500">Delete</a></li>
+    </ul>
+  </div>
+
     <!-- Photo container -->
     <div class="w-full rounded-lg mb-3 relative">
       <div
@@ -85,31 +112,23 @@
 
     <!-- Details / Title -->
     <div class="text-sm">
+
       <div class="py-1 whitespace-pre-line mt-2">
+        <div class="text-blue-500">เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้ </div>
         {{ isActive ? (line1 ?? '') : ((line1?.length ?? 0) > 50 ? (line1 |
         slice:0:50) + '...' : (line1 ?? '')) }}
       </div>
-      <div class="py-1 whitespace-pre-line mt-2">
-        {{ isActive ? (line2 ?? '') : ((line2?.length ?? 0) > 50 ? (line2 |
-        slice:0:50) + '...' : (line2 ?? '')) }}
-      </div>
-      <div class="py-1 whitespace-pre-line mt-2">
-        {{ isActive ? (line3 ?? '') : ((line3?.length ?? 0) > 50 ? (line3 |
-        slice:0:50) + '...' : (line3 ?? '')) }}
-      </div>
+      @if(!isCommunity){
+        <div class="py-1 whitespace-pre-line mt-2">
+          <div class="text-blue-500">สิ่งเล็ก ๆ ที่ทำให้คุณยิ้มได้ในวันนี้ </div>
+          {{ isActive ? (line2 ?? '') : ((line2?.length ?? 0) > 50 ? (line2 | slice:0:50) + '...' : (line2 ?? '')) }}
+        </div>
+        <div class="py-1 whitespace-pre-line mt-2">
+          <div class="text-blue-500">เรื่องราวที่ทำให้รู้สึกภูมิใจ </div>
+          {{ isActive ? (line3 ?? '') : ((line3?.length ?? 0) > 50 ? (line3 | slice:0:50) + '...' : (line3 ?? '')) }}
+        </div>
+      }
       <div class="badge badge-soft badge-info rounded-2xl px-5">{{mood}}</div>
-      <div class="flex flex-row mt-3 badge badge-soft badge-info rounded-2xl px-5 h-11" *ngIf="!isCommunity">
-        <img src="assets/images/public.svg" alt="" class="w-6 h-6 ">
-          <label class="relative inline-flex  items-center cursor-pointer">
-            <input type="checkbox" class="sr-only peer" [checked]="isActive" />
-            <div
-              class="w-12 h-6 bg-red-400 rounded-full peer peer-checked:bg-blue-500 transition-colors duration-300"
-            ></div>
-            <span
-              class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6"
-            ></span>
-          </label>
-      </div>
     </div>
   </div>
 </div>
