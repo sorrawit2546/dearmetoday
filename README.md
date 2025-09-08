@@ -1,11 +1,6 @@
-DATABASE_URL="postgresql://myuser:mypassword@localhost:5432/mydb"
+#คำสั่งรัน docker-compose == development
+CLIENT_DOCKERFILE=Dockerfile.dev APP_ENV=development NODE_ENV=development CLIENT_PORT=4200 docker compose up --build
+#คำสั่งรัน docker-compose == prod
+CLIENT_DOCKERFILE=Dockerfile APP_ENV=production NODE_ENV=production CLIENT_PORT=8080 docker compose up --build -d
 
-SENDGRID_API_KEY="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"
-MAIL_FROM="no-reply.dearmetoday@outlook.com"
-
-GOOGLE_CLIENT_ID="503847175944-8umlv9ict7suo5ea965givirpa2fiumn.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET="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"
-PORT=3000
-FRONTEND_URL=http://localhost:4200
-SERVER_URL="http://localhost:3000/api"
-JWT_SECRET="DEARMETODAT_SUPER_SECRET"
+หรือ ./deploy.sh dev

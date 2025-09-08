@@ -4,9 +4,10 @@ import {
   Post,
   Req,
   Res,
-  UseGuards,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
@@ -19,7 +20,10 @@ interface RequestWithUser extends Request {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly config: ConfigService,
+  ) {}
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
@@ -45,26 +49,32 @@ export class AuthController {
     );
 
     // แก้ไข cookie configuration
+    const frontendUrl = this.config.get<string>('FRONTEND_URL');
+    const cookieDomain = this.config.get<string>('COOKIE_DOMAIN'); // e.g. localhost or your prod domain
+    const cookieSecure = this.config.get<string>('COOKIE_SECURE') === 'true';
+    const cookieSameSite = (this.config.get<string>('COOKIE_SAMESITE') ??
+      'lax') as 'lax' | 'strict' | 'none';
+
     res.cookie('access_token', accessToken, {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: false, // ต้อง false สำหรับ localhost
-      path: '/', // เพิ่ม path
-      domain: 'localhost', // ระบุ domain
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 วัน
+      sameSite: cookieSameSite,
+      secure: cookieSecure,
+      path: '/',
+      domain: cookieDomain,
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
     res.cookie('google_access_token', googleAccessToken, {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
+      sameSite: cookieSameSite,
+      secure: cookieSecure,
       path: '/',
-      domain: 'localhost',
+      domain: cookieDomain,
       maxAge: 60 * 60 * 1000, // 1 ชั่วโมง (เท่ากับอายุ access_token)
     });
 
     console.log('AuthController: Cookie set, redirecting to dashboard');
-    res.redirect('http://localhost:4200/dashboard');
+    res.redirect(`${frontendUrl}/dashboard`);
   }
 
   @Post('logout')
