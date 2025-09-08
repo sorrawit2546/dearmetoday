@@ -57,6 +57,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && secrets.SSH_HOST != ''
+    env:
+    SSH_HOST: ${{ secrets.SSH_HOST }}
+    SSH_USER: ${{ secrets.SSH_USER }}
+    SSH_KEY: ${{ secrets.SSH_KEY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -64,9 +68,9 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          key: ${{ env.SSH_KEY }}
           script: |
             cd /var/www/dearmetoday
             git pull origin main
