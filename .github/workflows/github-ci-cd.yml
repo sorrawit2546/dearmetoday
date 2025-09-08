@@ -56,32 +56,32 @@ jobs:
   # -------------------------
   deploy:
     runs-on: ubuntu-latest
-  if: github.event_name == 'push'
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Deploy via SSH (only if secrets exist)
-      if: env.SSH_HOST != ''
-      uses: appleboy/ssh-action@v0.1.10
-      env:
-        SSH_HOST: ${{ secrets.SSH_HOST }}
-        SSH_USER: ${{ secrets.SSH_USER }}
-        SSH_KEY: ${{ secrets.SSH_KEY }}
-      with:
-        host: ${{ env.SSH_HOST }}
-        username: ${{ env.SSH_USER }}
-        key: ${{ env.SSH_KEY }}
-        script: |
-          cd /var/www/dearmetoday
-          git pull origin main
-          docker-compose down
-          CLIENT_DOCKERFILE=Dockerfile APP_ENV=production NODE_ENV=production CLIENT_PORT=8080 docker compose up --build -d
+      - name: Deploy via SSH (only if secrets exist)
+        if: env.SSH_HOST != ''
+        uses: appleboy/ssh-action@v0.1.10
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+        with:
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          key: ${{ env.SSH_KEY }}
+          script: |
+            cd /var/www/dearmetoday
+            git pull origin main
+            docker-compose down
+            CLIENT_DOCKERFILE=Dockerfile APP_ENV=production NODE_ENV=production CLIENT_PORT=8080 docker compose up --build -d
 
-          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          docker exec backend pg_dump $DATABASE_URL > /var/www/dearmetoday/db_backups/db_$TIMESTAMP.sql
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+            docker exec backend pg_dump $DATABASE_URL > /var/www/dearmetoday/db_backups/db_$TIMESTAMP.sql
 
-          docker exec backend npx prisma migrate deploy
+            docker exec backend npx prisma migrate deploy
 
-          docker exec backend npx prisma generate
-          
+            docker exec backend npx prisma generate
+            
