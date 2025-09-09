@@ -1,4 +1,4 @@
-name: Client CI (pnpm)
+name: Client CI
 
 on:
   push:
@@ -33,7 +33,6 @@ jobs:
           version: 9
           run_install: false
 
-      # ถ้ามี lockfile ใช้ --frozen-lockfile เพื่อ reproducible builds
       - name: Install deps
         run: |
           if [ -f pnpm-lock.yaml ]; then
