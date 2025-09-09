@@ -1,4 +1,4 @@
-name: Client CI (pnpm)
+name: Client CI
 
 on:
   push:
@@ -20,39 +20,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Node + cache pnpm (ต้องมี client/pnpm-lock.yaml เพื่อใช้ cache)
-      - name: Setup Node.js
+      # ใช้ cache ต่อเมื่อมี lockfile เท่านั้น (กัน error "paths were not resolved")
+      - name: Setup Node.js (with cache)
+        if: hashFiles('client/package-lock.json') != ''
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
-          cache-dependency-path: client/pnpm-lock.yaml
+          cache: npm
+          cache-dependency-path: client/package-lock.json
 
-      # ติดตั้ง pnpm CLI (วิธี 1)
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup Node.js (no cache)
+        if: hashFiles('client/package-lock.json') == ''
+        uses: actions/setup-node@v4
         with:
-          version: 9
-          run_install: false
+          node-version: 20
 
-      # ยืนยันว่า pnpm พร้อมใช้งาน
-      - name: Verify pnpm
-        run: pnpm -v
-
-      # ติดตั้ง deps
       - name: Install deps
         run: |
-          if [ -f pnpm-lock.yaml ]; then
-            pnpm install --frozen-lockfile
-          else
-            pnpm install
-          fi
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Test
-        run: pnpm test -- --ci --passWithNoTests
+        run: npm test -- --ci --passWithNoTests
 
       - name: Build
-        run: pnpm run build:production
+        run: npm run build:production
 
       - name: Upload client dist
         if: success()
@@ -64,6 +55,7 @@ jobs:
   deploy:
     needs: client
     runs-on: ubuntu-latest
+    # ตรวจ event/branch ที่ระดับ job (ไม่อ้าง secrets ตรง ๆ ที่นี่)
     if: >
       github.event_name == 'push' &&
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development')
