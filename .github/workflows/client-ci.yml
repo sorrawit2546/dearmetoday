@@ -1,0 +1,88 @@
+name: Client CI
+
+on:
+  push:
+    paths:
+      - "client/**"
+      - ".github/workflows/client-ci.yml"
+  pull_request:
+    paths:
+      - "client/**"
+      - ".github/workflows/client-ci.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: client-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install deps (ci if lockfile exists)
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Build
+        run: npm run build:production
+
+      - name: Upload client dist
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-dist
+          path: client/dist
+
+  deploy:
+    # รันเฉพาะ push และต้องผ่าน job client ก่อน
+    if: >
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development') &&
+      secrets.SSH_HOST != '' && secrets.SSH_USER != '' && secrets.SSH_KEY != ''
+    needs: client
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo (for branch context)
+        uses: actions/checkout@v4
+
+      - name: Deploy client via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -euo pipefail
+            BRANCH="${{ github.ref_name }}"
+            APP_DIR="/var/www/dearmetoday"
+
+            cd "$APP_DIR"
+            git fetch origin "$BRANCH"
+            if git rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
+              git checkout "$BRANCH"
+            else
+              git checkout -b "$BRANCH"
+            fi
+            git pull origin "$BRANCH"
+
+            # รีบิลด์/รีสตาร์ทเฉพาะ service ฝั่ง client
+            export APP_ENV=production
+            export NODE_ENV=production
+            export CLIENT_PORT=8080
+
+            # ถ้าตั้งชื่อ service ใน compose ว่า "client"
+            docker compose pull client || true
+            docker compose build client
+            docker compose up -d client
