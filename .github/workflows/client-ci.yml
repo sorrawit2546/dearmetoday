@@ -1,4 +1,4 @@
-name: Client CI
+name: Client CI (pnpm)
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ติดตั้ง Node.js และ cache pnpm
+      # Node + cache pnpm (ต้องมี client/pnpm-lock.yaml เพื่อใช้ cache)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -28,14 +28,18 @@ jobs:
           cache: pnpm
           cache-dependency-path: client/pnpm-lock.yaml
 
-      # ติดตั้ง pnpm CLI ให้พร้อมใช้
+      # ติดตั้ง pnpm CLI (วิธี 1)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
           run_install: false
 
-      # ติดตั้ง dependencies
+      # ยืนยันว่า pnpm พร้อมใช้งาน
+      - name: Verify pnpm
+        run: pnpm -v
+
+      # ติดตั้ง deps
       - name: Install deps
         run: |
           if [ -f pnpm-lock.yaml ]; then
