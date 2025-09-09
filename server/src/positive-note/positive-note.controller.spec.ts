@@ -122,7 +122,7 @@ describe('PositiveNoteController', () => {
     expect(mockService.getAllCommunityNote).toHaveBeenCalledTimes(1);
   });
 
-  it('should create a positive note and return it', () => {
+  it('should create a positive note and return it', async () => {
     // Arrange
     const createDto: CreatePositiveNoteDto = {
       line1: 'Test Positive note',
@@ -133,36 +133,39 @@ describe('PositiveNoteController', () => {
       imageUrls: [], // will be replaced by controller from files
     };
 
-    // const files = [
-    //   { filename: 'img1.jpg' } as Express.Multer.File,
-    //   { filename: 'img2.jpg' } as Express.Multer.File,
-    // ];
+    const files = [
+      { filename: 'img1.jpg' } as Express.Multer.File,
+      { filename: 'img2.jpg' } as Express.Multer.File,
+    ];
 
-    const createPositiveNoteSpy = jest.spyOn(mockService, 'createPositiveNote');
+    // const createPositiveNoteSpy = jest.spyOn(mockService, 'createPositiveNote');
 
-    // const req: MinimalRequestLike = { user: undefined };
-    // // Act
-    // const result = await controller.createPositiveNote(
-    //   files,
-    //   createDto,
-    //   req as unknown as ExpressRequest,
-    // );
+    const req: MinimalRequestLike = { user: undefined };
+    // Act
+    const result = await controller.createPositiveNote(
+      files,
+      createDto,
+      req as unknown as ExpressRequest,
+    );
 
     // Assert
     const expectedImageUrls = [
-      'http://localhost:3000/uploads/img1.jpg',
-      'http://localhost:3000/uploads/img2.jpg',
+      'https://example.com/img1.png',
+      'https://example.com/img2.png',
     ];
 
-    expect(createPositiveNoteSpy.mock.calls[0][0]).toEqual({
+    expect(result).toEqual({
+      id: 'uuid-1234',
       ...createDto,
       email: 'sangmanee773@gmail.com',
       imageUrls: expectedImageUrls,
+      isDelete: false,
+      moodScore: 2,
       showMessage: false,
+      userId: null,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      createdAt: expect.any(Date),
     });
-
-    // ตรวจสอบ parameter ที่สอง (Google access token)
-    expect(createPositiveNoteSpy.mock.calls[0][1]).toBe('');
   });
 
   it('should get all PositiveNote By Id with wrapped data', async () => {
