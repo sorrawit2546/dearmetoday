@@ -17,7 +17,7 @@ import {
   getAllNoteSendByIdResponse,
 } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
-import { CalendarService } from 'src/calendar/calendar.service';
+import { CalendarService } from '../calendar/calendar.service';
 
 @Injectable()
 export class PositiveNoteService {

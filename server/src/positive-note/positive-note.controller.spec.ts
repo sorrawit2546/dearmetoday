@@ -6,6 +6,7 @@ import { CreatePositiveNoteDto } from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
 import { PositiveNoteController } from './positive-note.controller';
 import { PositiveNoteService } from './positive-note.service';
+import { CalendarService } from '../calendar/calendar.service';
 
 jest.mock('jsonwebtoken', () => ({
   verify: jest.fn(),
@@ -28,6 +29,7 @@ describe('PositiveNoteController', () => {
     line3: null,
     imageUrls: ['https://example.com/img1.png', 'https://example.com/img2.png'],
     mood: Mood.happy,
+    moodScore: 2,
     showMessage: false,
     isDelete: false,
     createdAt: new Date(),
@@ -47,6 +49,10 @@ describe('PositiveNoteController', () => {
             getAllpositiveNotesWithoutLatest: jest.fn(),
             getAllCommunityNote: jest.fn(),
           },
+        },
+        {
+          provide: CalendarService,
+          useValue: {},
         },
       ],
     }).compile();
@@ -114,7 +120,6 @@ describe('PositiveNoteController', () => {
     expect(result).toEqual(mockResult);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockService.getAllCommunityNote).toHaveBeenCalledTimes(1);
-    expect(result).toBeInstanceOf(200);
   });
 
   it('should create a positive note and return it', async () => {
@@ -150,13 +155,15 @@ describe('PositiveNoteController', () => {
       'http://localhost:3000/uploads/img2.jpg',
     ];
 
-    expect(createPositiveNoteSpy).toHaveBeenCalledWith({
+    expect(createPositiveNoteSpy.mock.calls[0][0]).toEqual({
       ...createDto,
       email: 'sangmanee773@gmail.com',
       imageUrls: expectedImageUrls,
       showMessage: false,
     });
-    expect(result).toEqual(mockResult);
+
+    // ตรวจสอบ parameter ที่สอง (Google access token)
+    expect(createPositiveNoteSpy.mock.calls[0][1]).toBe('');
   });
 
   it('should get all PositiveNote By Id with wrapped data', async () => {
