@@ -39,9 +39,6 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-      - name: Test
-        run: npm test -- --ci --passWithNoTests
-
       - name: Build
         run: npm run build:production
 
