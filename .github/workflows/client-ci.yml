@@ -35,6 +35,9 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
+      - name: Test
+        run: npm test -- --ci --passWithNoTests
+
       - name: Build
         run: npm run build:production
 
@@ -46,26 +49,40 @@ jobs:
           path: client/dist
 
   deploy:
-    # รันเฉพาะ push และต้องผ่าน job client ก่อน
-    if: >
-      github.event_name == 'push' &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development') &&
-      secrets.SSH_HOST != '' && secrets.SSH_USER != '' && secrets.SSH_KEY != ''
     needs: client
     runs-on: ubuntu-latest
+    # ตรวจเฉพาะ event/branch ที่ระดับ job (ห้ามใช้ secrets ที่นี่)
+    if: >
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development')
+    # ผูก secrets เป็น env ของทั้ง job เพื่อให้ step เรียกใช้ได้
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_KEY:  ${{ secrets.SSH_KEY }}
+      # (ถ้ามีปลายทาง/Path เป็นความลับ คุณสามารถสร้าง secret DEPLOY_PATH แล้วใช้แทนได้)
+      # DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+
     steps:
       - name: Checkout repo (for branch context)
         uses: actions/checkout@v4
 
+      # ข้ามอย่างนุ่มนวลถ้า secrets ยังไม่ครบ (ไม่ fail ทั้ง job)
       - name: Deploy client via SSH
+        if: >
+          env.SSH_HOST != '' &&
+          env.SSH_USER != '' &&
+          env.SSH_KEY  != ''
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          key: ${{ env.SSH_KEY }}
           script: |
             set -euo pipefail
+
             BRANCH="${{ github.ref_name }}"
+            # ปรับ path ให้ตรงกับเครื่องจริงของคุณ
             APP_DIR="/var/www/dearmetoday"
 
             cd "$APP_DIR"
@@ -77,12 +94,11 @@ jobs:
             fi
             git pull origin "$BRANCH"
 
-            # รีบิลด์/รีสตาร์ทเฉพาะ service ฝั่ง client
+            # รีบิลด์/รีสตาร์ทเฉพาะ service ฝั่ง client (แก้ชื่อ service ให้ตรง compose ของคุณ)
             export APP_ENV=production
             export NODE_ENV=production
             export CLIENT_PORT=8080
 
-            # ถ้าตั้งชื่อ service ใน compose ว่า "client"
             docker compose pull client || true
             docker compose build client
             docker compose up -d client

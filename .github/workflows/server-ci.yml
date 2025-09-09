@@ -52,13 +52,19 @@ jobs:
           path: server/dist
 
   deploy:
-    if: >
-      github.event_name == 'push' &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development') &&
-      secrets.SSH_HOST != '' && secrets.SSH_USER != '' && secrets.SSH_KEY != '' &&
-      secrets.DATABASE_URL != ''
     needs: server
     runs-on: ubuntu-latest
+    # เช็คเฉพาะเหตุการณ์/สาขาในระดับ job (ไม่อ้างอิง secrets ที่นี่)
+    if: >
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development')
+    # ผูก secrets เข้ามาเป็น env ของทั้ง job
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - name: Checkout repo (for branch context)
         uses: actions/checkout@v4
@@ -103,6 +109,3 @@ jobs:
             # Prisma migrate & generate
             docker exec backend npx prisma migrate deploy
             docker exec backend npx prisma generate
-
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
