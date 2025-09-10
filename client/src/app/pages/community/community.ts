@@ -14,10 +14,11 @@ import { CommunityPost } from '../../model/community-note';
 import { NoteCardAll } from '../../note-card-all/note-card-all';
 import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
+import { Footer } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-community',
-  imports: [Header, CommonModule, NoteCardAll],
+  imports: [Header, CommonModule, NoteCardAll, Footer],
   templateUrl: './community.html',
   styleUrl: './community.css',
 })

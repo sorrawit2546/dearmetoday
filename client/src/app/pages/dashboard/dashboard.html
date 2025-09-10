@@ -112,6 +112,7 @@
       <div class="grid grid-cols-3 max-w-6xl mb-5">
         @for (note of filteredItems(); track note.id) {
         <app-note-card-all
+          [id]="note.id"
           [date]="(note.createdAt | date:'dd MMM yyyy') ?? ''"
           [line1]="note.line1"
           [line2]="note.line2"

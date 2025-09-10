@@ -2,16 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, input, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { sign } from 'node:crypto';
+import { NoteForm } from '../components/note-form/note-form';
 
 @Component({
   selector: 'app-note-card-all',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NoteForm],
   templateUrl: './note-card-all.html',
   styleUrls: ['./note-card-all.css'],
 })
 export class NoteCardAll implements OnChanges {
   // date = input<string>;
+  @Input() id!: string;
   @Input() date!: string;
   @Input() line1: string = '';
   @Input() line2: string = '';
@@ -26,6 +28,12 @@ export class NoteCardAll implements OnChanges {
   @Input() isActive = false;
 
   isCommunity = false;
+  showNoteForm = signal<boolean>(false);
+  private refreshTrigger = signal<number>(0);
+  refreshData(): void {
+    this.refreshTrigger.update((trigger) => trigger + 1);
+  }
+
 
   constructor(private router: Router) {
     this.isCommunity = this.router.url.includes('/community');
@@ -38,6 +46,16 @@ export class NoteCardAll implements OnChanges {
   currentIndex = 0;
   isPortrait = false;
   private touchStartX: number | null = null;
+
+  openNoteForm(): void {
+    this.showNoteForm.set(true);
+  }
+
+  closeNoteForm(): void {
+    this.showNoteForm.set(false);
+    // Refresh data หลังจากปิด form
+    this.refreshData();
+  }
 
   prevPhoto() {
     this.currentIndex =

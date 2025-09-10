@@ -11,7 +11,7 @@
               d="M6 12h.01M12 12h.01M18 12h.01" />
       </svg>
     </div>
-    <ul tabindex="0" class=" rounded-lg dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow">
+    <ul tabindex="0" class="rounded-lg dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow">
       <div class="flex flex-row ml-3 my-2">
         <img src="assets/images/public.svg" alt="" class="w-6 h-6 mr-1 ">
           <label class="relative inline-flex  items-center cursor-pointer flex flex-row">
@@ -24,7 +24,7 @@
             ></span>
           </label>
       </div>
-          <li><a class="hover:rounded-lg">Edit</a></li>
+          <li><a (click)="openNoteForm()" class="hover:rounded-lg">Edit</a></li>
           <li><a class="hover:rounded-lg text-red-500">Delete</a></li>
     </ul>
   </div>
@@ -129,6 +129,20 @@
         </div>
       }
       <div class="badge badge-soft badge-info rounded-2xl px-5">{{mood}}</div>
+    </div>
+    <!-- Modal Overlay for Note Form -->
+    <div
+    *ngIf="showNoteForm()"
+    class="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/40"
+    (click)="closeNoteForm()"
+    >
+    <div
+      class="w-full md:w-auto md:min-w-[640px] max-w-full rounded-t-2xl md:rounded-2xl p-4 md:p-6"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="cat2"></div>
+      <app-note-form [noteId]="id"></app-note-form>
+    </div>
     </div>
   </div>
 </div>

@@ -74,6 +74,7 @@ export class Dashboard implements OnInit, OnDestroy {
     return this.itemsNoteSearch().filter((item) => {
       const matchText =
         !term ||
+        item.id.toLowerCase().includes(term) ||
         item.line1.toLowerCase().includes(term) ||
         item.line2.toLowerCase().includes(term) ||
         item.line3.toLowerCase().includes(term) ||
@@ -133,6 +134,8 @@ export class Dashboard implements OnInit, OnDestroy {
   constructor(private toastService: ToastService) {
     // Modern effect with automatic cleanup
     effect(() => {
+      const all = this.itemsNoteSearch();
+      console.log(all);
       const u = this.user();
       console.log('Effect triggered, user:', u);
 

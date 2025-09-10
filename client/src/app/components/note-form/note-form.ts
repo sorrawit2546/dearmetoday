@@ -4,7 +4,9 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  Input,
   NgZone,
+  OnChanges,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -12,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Api, AuthResponse } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
+import { entryNote } from '../../model/entry-note';
 
 @Component({
   selector: 'app-note-form',
@@ -20,9 +23,17 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './note-form.html',
   styleUrls: ['./note-form.css'],
 })
-export class NoteForm {
+export class NoteForm implements OnChanges {
   @ViewChild('confirmDialog') confirmDialog!: ElementRef<HTMLDialogElement>;
   @Output() noteCreated = new EventEmitter<void>();
+
+  @Input() noteId!: string;
+  ngOnChanges() {
+    console.log('NoteForm received id:', this.noteId);
+    // ตรงนี้คุณจะไป fetch data ตาม id ได้
+  }
+
+  noteById: entryNote | null = null;
 
   isLoading = false;
   previewImages: string[] = [];
@@ -66,6 +77,10 @@ export class NoteForm {
         });
       },
     });
+  }
+
+  loadNoteData(id:string){
+
   }
 
   handleImageUpload(event: Event): void {

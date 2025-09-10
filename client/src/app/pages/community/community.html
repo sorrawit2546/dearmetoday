@@ -70,11 +70,12 @@
       </div>
 
       <!-- Page Info -->
-      <div *ngIf="totalPages() > 1" class="text-center mt-4 text-sm text-gray-600">
+      <div *ngIf="totalPages() > 1" class="text-center mt-4 mb-4 text-sm text-gray-600">
         หน้า {{ currentPage() }} จาก {{ totalPages() }} หน้า
         (แสดง {{ paginatedPosts().length }} รายการ)
       </div>
 
     </div>
   </div>
+  <app-footer></app-footer>
 </div>
