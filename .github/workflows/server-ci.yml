@@ -8,7 +8,7 @@ on:
   pull_request:
     paths:
       - "server/**"
-      - ".github/workflows/server-ci.yml"
+      - ".github/workflows/server-ci.yml" 
   workflow_dispatch:
 
 concurrency:
@@ -54,7 +54,7 @@ jobs:
   deploy:
     needs: server
     runs-on: ubuntu-latest
-    # เช็คเฉพาะเหตุการณ์/สาขาในระดับ job (ไม่อ้างอิง secrets ที่นี่)
+    # เช็คเฉพาะเหตุการณ์/สาขาในระดับ job
     if: >
       github.event_name == 'push' &&
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development')
