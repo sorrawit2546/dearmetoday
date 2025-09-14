@@ -1,5 +1,16 @@
 import { Mood } from '@prisma/client';
 
+export interface IpositiveNoteByNoteId {
+  id: string;
+  email: string;
+  line1: string;
+  line2?: string;
+  line3?: string;
+  imageUrls: string[];
+  mood: Mood;
+  moodScore: number;
+  createdAt: Date;
+}
 export interface getAllNoteSendById {
   id: string;
   email: string;

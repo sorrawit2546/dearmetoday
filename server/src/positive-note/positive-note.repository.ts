@@ -12,6 +12,15 @@ import { moodToScore } from './utils/positive-note.mood.utils';
 export class PositiveNoteRepository {
   constructor(private prisma: PrismaService) {}
 
+  async getPositiveNoteById(noteId: string, userId: string): Promise<Entry> {
+    return await this.prisma.entry.findUnique({
+      where: {
+        userId: userId,
+        id: noteId,
+      },
+    });
+  }
+
   async getAllNotesCommunity() {
     return await this.prisma.entry.findMany({
       where: {

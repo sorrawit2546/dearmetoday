@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Mood } from '@prisma/client';
 import { SendgridService } from '../third-party/sendgrid/sendgrid.service';
-import { getAllNoteSendById } from './entity/positive-note.entity';
+import {
+  getAllNoteSendById,
+  IpositiveNoteByNoteId,
+} from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
 import { PositiveNoteService } from './positive-note.service';
 import { CalendarService } from '../calendar/calendar.service';
@@ -15,6 +18,7 @@ describe('PositiveNoteService', () => {
     recentNoteByUserId: jest.fn(),
     getAllpositiveNotesWithoutLatest: jest.fn(),
     getAllNotesCommunity: jest.fn(),
+    getPositiveNoteById: jest.fn(),
   };
 
   const mockSendgridService = {
@@ -49,6 +53,39 @@ describe('PositiveNoteService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should get positivenote by note id', async () => {
+    //data
+    const noteId = 'note-1';
+    const userId = 'user-1';
+
+    const mockResultData: IpositiveNoteByNoteId = {
+      id: 'user-1',
+      email: 'sangmanee773@gmail.com',
+      line1: 'ชอบท้องฟ้า',
+      line2: 'แมวววว',
+      line3: 'แมววววว',
+      imageUrls: [
+        'https://example.com/img2.png',
+        'https://example.com/img3.png',
+      ],
+      mood: 'sad' as Mood,
+      moodScore: 2,
+      createdAt: new Date(),
+    };
+
+    mockRepository.getPositiveNoteById = jest
+      .fn()
+      .mockResolvedValue(mockResultData);
+
+    const result = await service.getPositiveNoteById(noteId, userId);
+    expect(result).toEqual(mockResultData);
+    expect(mockRepository.getPositiveNoteById).toHaveBeenCalledWith(
+      noteId,
+      userId,
+    );
+    expect(mockRepository.getPositiveNoteById).toHaveBeenCalledTimes(1);
   });
 
   it('should get all community note', async () => {

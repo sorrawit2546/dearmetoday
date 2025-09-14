@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -24,6 +25,7 @@ import {
 import {
   getAllNotesCommunity,
   getAllNoteSendById,
+  IpositiveNoteByNoteId,
 } from './entity/positive-note.entity';
 import { PositiveNoteService } from './positive-note.service';
 
@@ -37,7 +39,28 @@ interface JwtUser {
 @Controller('positive-note')
 export class PositiveNoteController {
   constructor(private readonly positivenoteService: PositiveNoteService) {}
-  BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+  BASE_URL = process.env.BASE_URL;
+
+  @Get(':id')
+  async getPositiveNoteByNoteId(
+    @Req() req: Request,
+    @Param('id') id: string,
+  ): Promise<IpositiveNoteByNoteId> {
+    if (!req) {
+      throw new UnauthorizedException();
+    }
+    const token = (req.cookies as { [key: string]: string })?.access_token;
+
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
+    }
+    // ตรวจสอบและถอดรหัส
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+      sub: string;
+    };
+    const userId = decoded.sub;
+    return this.positivenoteService.getPositiveNoteById(userId, id);
+  }
 
   @Post('create')
   @UseInterceptors(

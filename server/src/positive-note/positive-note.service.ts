@@ -15,6 +15,7 @@ import {
   getAllNotesCommunity,
   getAllNoteSendById,
   getAllNoteSendByIdResponse,
+  IpositiveNoteByNoteId,
 } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
 import { CalendarService } from '../calendar/calendar.service';
@@ -26,6 +27,28 @@ export class PositiveNoteService {
     private readonly sendgridService: SendgridService,
     private readonly calendarService: CalendarService,
   ) {}
+
+  async getPositiveNoteById(
+    noteId: string,
+    userId: string,
+  ): Promise<IpositiveNoteByNoteId> {
+    try {
+      if (!noteId || !userId) {
+        throw new UnauthorizedException('UserId or NoteId Not found!');
+      }
+      const rawResult = await this.repositoryPositiveNote.getPositiveNoteById(
+        noteId,
+        userId,
+      );
+      return rawResult;
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      } else {
+        throw new BadRequestException(error);
+      }
+    }
+  }
 
   async getAllCommunityNote(): Promise<getAllNotesCommunity[]> {
     // throw new Error('Method not implemented yet');

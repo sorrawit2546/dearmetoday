@@ -48,6 +48,7 @@ describe('PositiveNoteController', () => {
             recentNoteByUserId: jest.fn(),
             getAllpositiveNotesWithoutLatest: jest.fn(),
             getAllCommunityNote: jest.fn(),
+            getPositiveNoteById: jest.fn(),
           },
         },
         {
@@ -66,6 +67,45 @@ describe('PositiveNoteController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('should get positiveNoteById', async () => {
+    const mockReq: MinimalRequestLike = {
+      cookies: {
+        access_token: 'mock-token',
+      },
+    };
+    const mockNoteId = 'note-1';
+    const mockResult = {
+      id: 'user-1',
+      email: 'sangmanee773@gmail.com',
+      line1: 'ชอบท้องฟ้า',
+      line2: 'แมวววว',
+      line3: 'แมววววว',
+      imageUrls: [
+        'https://example.com/img2.png',
+        'https://example.com/img3.png',
+      ],
+      mood: 'sad' as Mood,
+      moodScore: 2,
+      createdAt: new Date(),
+    };
+    // Mock jwt.verify ให้คืนค่า payload ที่ต้องการ
+    (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-123' });
+    mockService.getPositiveNoteById = jest.fn().mockResolvedValue(mockResult);
+    const result = await controller.getPositiveNoteByNoteId(
+      mockReq as unknown as ExpressRequest,
+      mockNoteId,
+    );
+
+    expect(result).toEqual(mockResult);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockService.getPositiveNoteById).toHaveBeenCalledWith(
+      'user-123',
+      mockNoteId,
+    );
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockService.getPositiveNoteById).toHaveBeenCalledTimes(1);
   });
 
   it('should get all community note', async () => {
