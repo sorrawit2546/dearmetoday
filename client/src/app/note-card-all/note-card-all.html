@@ -1,5 +1,6 @@
 <div class="grid gap-4 max-w-6xl mx-auto">
   <div
+  [ngClass]="cardClasses"
     class="p-4 rounded-3xl border border-gray-200 bg-white cursor-pointer transition-all duration-300 ease-in-out "
   >
   <div class="flex justify-end dropdown dropdown-right dropdown-end" *ngIf="!isCommunity">
@@ -141,7 +142,7 @@
       (click)="$event.stopPropagation()"
     >
       <div class="cat2"></div>
-      <app-note-form [noteId]="id"></app-note-form>
+      <app-note-form *ngIf="showNoteForm() && id" [noteId]="id"></app-note-form>
     </div>
     </div>
   </div>

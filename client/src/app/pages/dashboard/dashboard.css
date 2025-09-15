@@ -134,3 +134,25 @@
   pointer-events: none;    /* กันไม่ให้บังการคลิก */
 }
 
+.join .btn {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.join .btn:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.join .btn:hover {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.join .btn.btn-active {
+  background-color: rgb(77, 187, 255);
+  color: rgb(255, 255, 255);
+  border: none !important;
+  box-shadow: none !important;
+}
+

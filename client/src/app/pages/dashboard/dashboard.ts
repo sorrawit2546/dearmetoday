@@ -39,7 +39,7 @@ import { Footer } from '../../components/footer/footer';
     NoteCardAll,
     Header,
     ToastComponent,
-    Footer
+    Footer,
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
@@ -66,6 +66,72 @@ export class Dashboard implements OnInit, OnDestroy {
   itemsNoteSearch = signal<entryNote[]>([]);
   searchTerm = signal('');
   searchDate = signal('');
+  // Pagination properties
+  currentPage = signal(1);
+  itemsPerPage = 9;
+  activeCard: number | null = null;
+
+  toggleCard(index: number) {
+    // Convert paginated index to global index
+    const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
+    this.activeCard = this.activeCard === globalIndex ? null : globalIndex;
+  }
+
+  // จำนวนหน้าทั้งหมด
+  totalPages = computed(() => {
+    const all = this.filteredItems();
+    return Math.ceil(all.length / this.itemsPerPage);
+  });
+
+  // ข้อมูลเฉพาะหน้าปัจจุบัน
+  paginatedPosts = computed(() => {
+    const all = this.filteredItems();
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
+    return all.slice(startIndex, startIndex + this.itemsPerPage);
+  });
+
+  // Pagination methods
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+      this.activeCard = null; // Reset active card when changing pages
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.goToPage(this.currentPage() + 1);
+    }
+  }
+
+  previousPage() {
+    if (this.currentPage() > 1) {
+      this.goToPage(this.currentPage() - 1);
+    }
+  }
+
+  // Generate page numbers for pagination
+  getPageNumbers(): number[] {
+    const total = this.totalPages();
+    const current = this.currentPage();
+    const pages: number[] = [];
+
+    // Show up to 5 page numbers
+    const maxVisible = 5;
+    let start = Math.max(1, current - Math.floor(maxVisible / 2));
+    let end = Math.min(total, start + maxVisible - 1);
+
+    // Adjust start if we're near the end
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
 
   filteredItems = computed(() => {
     const term = this.searchTerm().toLowerCase().trim();
@@ -214,10 +280,7 @@ export class Dashboard implements OnInit, OnDestroy {
           localStorage.removeItem('quick-note');
         }
         this.pending.set(false);
-        this.toastService.showToast(
-          'เก็บคำขอบคุณอันมีค่าเรียบร้อย! :)',
-          false
-        );
+        this.toastService.showToast('เก็บคำขอบคุณอันมีค่าเรียบร้อย! :)', false);
       },
       error: (err) => {
         // ส่งไม่สำเร็จ → ค้างไว้ใน local ให้ลองใหม่
@@ -267,7 +330,7 @@ export class Dashboard implements OnInit, OnDestroy {
             imageUrls: [],
             mood: '',
             createdAt: new Date(),
-            showMessage:false
+            showMessage: false,
           });
         });
       },
@@ -310,7 +373,7 @@ export class Dashboard implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error updating notes after creation:', err);
-      }
+      },
     });
   }
 
@@ -318,5 +381,4 @@ export class Dashboard implements OnInit, OnDestroy {
     this.retryCount.set(0);
     this.authService.checkAuthState();
   }
-
 }

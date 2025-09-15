@@ -8,6 +8,7 @@ import {
   NgZone,
   OnChanges,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -15,8 +16,6 @@ import { finalize } from 'rxjs/operators';
 import { Api, AuthResponse } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
 import { entryNote } from '../../model/entry-note';
-import { response } from 'express';
-import { QuickNote } from '../../model/quick-note';
 
 @Component({
   selector: 'app-note-form',
@@ -30,13 +29,6 @@ export class NoteForm implements OnChanges {
   @Output() noteCreated = new EventEmitter<void>();
 
   @Input() noteId!: string;
-  ngOnChanges() {
-    console.log('NoteForm received id:', this.noteId);
-    if (this.noteId) {
-      this.loadNoteData();
-    }
-    // ตรงนี้คุณจะไป fetch data ตาม id ได้
-  }
 
   noteById: entryNote | null = null;
 
@@ -83,22 +75,40 @@ export class NoteForm implements OnChanges {
         });
       },
     });
+    if (this.noteId) {
+      this.loadNoteData();
+    }
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes['noteId']?.currentValue &&
+      changes['noteId'].currentValue !== changes['noteId'].previousValue
+    ) {
+      console.log('NoteForm received id:', this.noteId);
+      this.loadNoteData();
+    }
+  }
 
   loadNoteData() {
     this.isLoading = true;
     this.apiService.getPositiveNoteById(this.noteId).subscribe({
-      next: (response: entryNote) => {
-        const data = response;
-        console.log(data);
-        this.email = data.email;
-        this.note = data.line1;
-        this.note2 = data.line2;
-        this.note3 = data.line3;
-        this.previewImages = data.imageUrls.map((m) => m);
-        this.mood = data.mood;
-        this.createdAt = new Date(data.createdAt).toISOString();
+      next: (data: entryNote) => {
+        this.ngZone.run(() => {
+          this.email = data.email;
+          this.note = data.line1;
+          this.note2 = data.line2;
+          this.note3 = data.line3;
+          this.previewImages = [...data.imageUrls];
+          this.mood = data.mood;
+          this.createdAt = new Date(data.createdAt).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          });
+    
+          this.cd.detectChanges(); // ✅ บังคับให้ตรวจรอบใหม่หลังอัปเดตค่า
+        });
       },
     });
   }

@@ -34,6 +34,12 @@ export class NoteCardAll implements OnChanges {
     this.refreshTrigger.update((trigger) => trigger + 1);
   }
 
+  get cardClasses() {
+    return this.isActive
+      ? 'col-span-12 transition-all duration-300'
+      : 'col-span-4 transition-all duration-300';
+  }
+
 
   constructor(private router: Router) {
     this.isCommunity = this.router.url.includes('/community');
