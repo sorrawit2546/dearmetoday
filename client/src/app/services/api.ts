@@ -4,6 +4,7 @@ import { Observable, Subject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthResponse } from '../model/api-data';
 import { QuickNote, QuickNoteDto } from '../model/quick-note';
+import { entryNote } from '../model/entry-note';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,12 @@ export class Api {
 
   // Emits when quick notes are created/updated/deleted
   quickNoteChanged$ = new Subject<void>();
+
+  getPositiveNoteById(noteId : string){
+    return this.http.get<entryNote>(`${environment.apiUrl}/positive-note/note/${noteId}`, {
+      withCredentials: true,
+    })
+  };
 
   getAllQuickNote(): Observable<QuickNote[]> {
     return this.http.get<QuickNote[]>(`${environment.apiUrl}/quick-note`, {

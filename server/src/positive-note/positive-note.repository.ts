@@ -13,12 +13,13 @@ export class PositiveNoteRepository {
   constructor(private prisma: PrismaService) {}
 
   async getPositiveNoteById(noteId: string, userId: string): Promise<Entry> {
-    return await this.prisma.entry.findUnique({
+    const result = await this.prisma.entry.findFirst({
       where: {
-        userId: userId,
         id: noteId,
+        userId: userId,
       },
     });
+    return result;
   }
 
   async getAllNotesCommunity() {

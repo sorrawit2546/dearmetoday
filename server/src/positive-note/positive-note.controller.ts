@@ -41,10 +41,10 @@ export class PositiveNoteController {
   constructor(private readonly positivenoteService: PositiveNoteService) {}
   BASE_URL = process.env.BASE_URL;
 
-  @Get(':id')
+  @Get('note/:id')
   async getPositiveNoteByNoteId(
     @Req() req: Request,
-    @Param('id') id: string,
+    @Param('id') noteId: string,
   ): Promise<IpositiveNoteByNoteId> {
     if (!req) {
       throw new UnauthorizedException();
@@ -59,7 +59,7 @@ export class PositiveNoteController {
       sub: string;
     };
     const userId = decoded.sub;
-    return this.positivenoteService.getPositiveNoteById(userId, id);
+    return this.positivenoteService.getPositiveNoteById(noteId, userId);
   }
 
   @Post('create')

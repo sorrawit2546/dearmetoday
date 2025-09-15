@@ -15,6 +15,8 @@ import { finalize } from 'rxjs/operators';
 import { Api, AuthResponse } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
 import { entryNote } from '../../model/entry-note';
+import { response } from 'express';
+import { QuickNote } from '../../model/quick-note';
 
 @Component({
   selector: 'app-note-form',
@@ -30,6 +32,9 @@ export class NoteForm implements OnChanges {
   @Input() noteId!: string;
   ngOnChanges() {
     console.log('NoteForm received id:', this.noteId);
+    if (this.noteId) {
+      this.loadNoteData();
+    }
     // ตรงนี้คุณจะไป fetch data ตาม id ได้
   }
 
@@ -40,9 +45,10 @@ export class NoteForm implements OnChanges {
   isDragging = false;
   email = '';
   note = '';
-  note2= '';
-  note3= '';
+  note2 = '';
+  note3 = '';
   mood = 'happy';
+  createdAt = '';
   formattedDate: string = '';
   showMessage = false;
 
@@ -79,8 +85,22 @@ export class NoteForm implements OnChanges {
     });
   }
 
-  loadNoteData(id:string){
 
+  loadNoteData() {
+    this.isLoading = true;
+    this.apiService.getPositiveNoteById(this.noteId).subscribe({
+      next: (response: entryNote) => {
+        const data = response;
+        console.log(data);
+        this.email = data.email;
+        this.note = data.line1;
+        this.note2 = data.line2;
+        this.note3 = data.line3;
+        this.previewImages = data.imageUrls.map((m) => m);
+        this.mood = data.mood;
+        this.createdAt = new Date(data.createdAt).toISOString();
+      },
+    });
   }
 
   handleImageUpload(event: Event): void {
@@ -235,5 +255,4 @@ export class NoteForm implements OnChanges {
     // this.mood = ''; // ไม่ reset mood เพื่อให้ toast ทำงานได้
     this.previewImages = [];
   }
-
 }
