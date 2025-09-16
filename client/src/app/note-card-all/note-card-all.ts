@@ -34,13 +34,6 @@ export class NoteCardAll implements OnChanges {
     this.refreshTrigger.update((trigger) => trigger + 1);
   }
 
-  get cardClasses() {
-    return this.isActive
-      ? 'col-span-12 transition-all duration-300'
-      : 'col-span-4 transition-all duration-300';
-  }
-
-
   constructor(private router: Router) {
     this.isCommunity = this.router.url.includes('/community');
   }
@@ -61,6 +54,13 @@ export class NoteCardAll implements OnChanges {
     this.showNoteForm.set(false);
     // Refresh data หลังจากปิด form
     this.refreshData();
+  }
+
+  closeDropdown(): void {
+    const activeEl = document.activeElement as HTMLElement | null;
+    if (activeEl && activeEl.closest('.dropdown')) {
+      activeEl.blur(); // เอาโฟกัสออกจาก dropdown trigger → dropdown ปิด
+    }
   }
 
   prevPhoto() {

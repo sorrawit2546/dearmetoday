@@ -42,7 +42,6 @@ export class Community {
     loader: async () => firstValueFrom(this.apiService.getAllCommunityPost()),
   });
 
-  // Computed properties for pagination
   paginatedPosts = computed(() => {
     const allPosts = this.communityPost.value() || [];
     const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
@@ -55,7 +54,6 @@ export class Community {
     return Math.ceil(allPosts.length / this.itemsPerPage);
   });
 
-  // Pagination methods
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages()) {
       this.currentPage.set(page);
@@ -75,7 +73,6 @@ export class Community {
     }
   }
 
-  // Generate page numbers for pagination
   getPageNumbers(): number[] {
     const total = this.totalPages();
     const current = this.currentPage();

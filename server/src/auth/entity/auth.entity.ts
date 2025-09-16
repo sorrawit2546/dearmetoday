@@ -1,7 +1,7 @@
 export interface GoogleUser {
   email: string;
   name: string;
-  avatar: string;
+  avatarUrl: string;
   provider: string; // "google"
   id: string; // Google ID
   accessToken?: string;

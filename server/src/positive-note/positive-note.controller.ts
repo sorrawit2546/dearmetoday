@@ -39,7 +39,7 @@ interface JwtUser {
 @Controller('positive-note')
 export class PositiveNoteController {
   constructor(private readonly positivenoteService: PositiveNoteService) {}
-  BASE_URL = process.env.BASE_URL;
+  BASE_URL = process.env.SERVER_URL;
 
   @Get('note/:id')
   async getPositiveNoteByNoteId(

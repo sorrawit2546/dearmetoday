@@ -158,8 +158,25 @@ export class SendgridService {
 
     <h3 style="font-size: 16px; color: #2c3e50; margin-bottom: 8px;">📸 ภาพประกอบ</h3>
     <div style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
-      ${imageUrls.map((_, i) => `<img src="cid:img${i}" width="100%" style="max-width: 320px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);" alt="Image ${i + 1}" />`).join('')}
-    </div>
+  ${imageUrls
+    .map(
+      (_, i) => `
+        <img 
+          src="cid:img${i}" 
+          alt="Image ${i + 1}"
+          style="
+            display: block;
+            max-width: 320px;
+            width: 100%;
+            height: auto;
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            object-fit: cover;
+          "
+        />`,
+    )
+    .join('')}
+</div>
     
     <p style="font-size: 12px; color: #555; margin-top: 32px; text-align: center;">
       Sent with warmth ❄️ via <strong>DearMeToday App</strong><br/>
