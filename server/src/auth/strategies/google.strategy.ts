@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { GoogleUser } from '../entity/auth.entity';
+import { downloadAvatar } from '../../positive-note/utils/download-avatar';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -29,11 +30,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     refreshToken: string,
     profile: Profile,
   ): Promise<GoogleUser> {
+    const googleAvatar = profile.photos?.[0]?.value ?? '';
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const localAvatarPath = await downloadAvatar(googleAvatar, profile.id);
+
     return {
       id: profile.id,
       email: profile.emails[0].value,
       name: profile.displayName,
-      avatarUrl: profile.photos?.[0]?.value,
+      avatarUrl: `${process.env.SERVER_URL}${localAvatarPath}`,
       provider: 'google',
       accessToken, // <- Google access_token จริง
     };
