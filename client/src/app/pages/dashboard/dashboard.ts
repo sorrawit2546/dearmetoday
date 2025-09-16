@@ -365,11 +365,11 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   onNoteCreated(): void {
-    // อัปเดต notes list โดยตรงโดยไม่ refresh ทั้งหมด
     this.apiService.getAllNoteByUserId().subscribe({
       next: (res) => {
+        console.log('Reload notes from server:', res); // <--- ดูตรงนี้
         this.itemsNoteSearch.set(res);
-        this.loadNotesCount(); // อัปเดตจำนวน notes
+        this.loadNotesCount();
       },
       error: (err) => {
         console.error('Error updating notes after creation:', err);

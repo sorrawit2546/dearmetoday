@@ -9,3 +9,15 @@ export interface entryNote{
   createdAt: Date;
   showMessage: boolean;
 }
+
+export interface updateEntryNote{
+  id: string;
+  email: string;
+  line1: string;
+  line2: string;
+  line3: string;
+  imageUrls: string[];
+  mood: string;
+  createdAt: Date;
+  showMessage: boolean;
+}

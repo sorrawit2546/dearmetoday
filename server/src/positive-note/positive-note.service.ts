@@ -33,7 +33,7 @@ export class PositiveNoteService {
     noteId: string,
     userId: string,
     Dto: UpdatePositiveNoteDto,
-  ): Promise<Partial<UpdatePositiveNoteDto>> {
+  ): Promise<Entry> {
     try {
       if (!noteId || !userId) {
         throw new UnauthorizedException('UserId or NoteId Not found!');

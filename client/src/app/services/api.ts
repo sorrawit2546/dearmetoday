@@ -15,6 +15,12 @@ export class Api {
   // Emits when quick notes are created/updated/deleted
   quickNoteChanged$ = new Subject<void>();
 
+  editPositiveNoteById(noteId : string, data: FormData){
+    return this.http.patch<entryNote>(`${environment.apiUrl}/positive-note/note/${noteId}`, data, {
+      withCredentials: true,
+    })
+  };
+
   getPositiveNoteById(noteId : string){
     return this.http.get<entryNote>(`${environment.apiUrl}/positive-note/note/${noteId}`, {
       withCredentials: true,

@@ -16,6 +16,10 @@ import { finalize } from 'rxjs/operators';
 import { Api, AuthResponse } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
 import { entryNote } from '../../model/entry-note';
+type PreviewImage = {
+  src: string;       // URL หรือ base64 dataURL
+  isNew: boolean;    // true = อัปโหลดใหม่, false = มีอยู่แล้วในระบบ
+};
 
 @Component({
   selector: 'app-note-form',
@@ -29,11 +33,12 @@ export class NoteForm implements OnChanges {
   @Output() noteCreated = new EventEmitter<void>();
 
   @Input() noteId!: string;
+  isEditMode = false;
 
   noteById: entryNote | null = null;
 
   isLoading = false;
-  previewImages: string[] = [];
+  previewImages: PreviewImage[] = [];
   isDragging = false;
   email = '';
   note = '';
@@ -78,6 +83,10 @@ export class NoteForm implements OnChanges {
     if (this.noteId) {
       this.loadNoteData();
     }
+    this.isEditMode = !!this.noteId;
+    if (this.isEditMode) {
+      this.loadNoteData();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -95,19 +104,18 @@ export class NoteForm implements OnChanges {
     this.apiService.getPositiveNoteById(this.noteId).subscribe({
       next: (data: entryNote) => {
         this.ngZone.run(() => {
+          // ✅ ต้อง set ค่าฟอร์มทั้งหมดด้วยของจาก server
           this.email = data.email;
-          this.note = data.line1;
-          this.note2 = data.line2;
-          this.note3 = data.line3;
-          this.previewImages = [...data.imageUrls];
-          this.mood = data.mood;
+          this.note  = data.line1 ?? '';
+          this.note2 = data.line2 ?? '';
+          this.note3 = data.line3 ?? '';
+          this.mood  = data.mood;
+          this.previewImages = data.imageUrls.map(url => ({ src: url, isNew: false }));
           this.createdAt = new Date(data.createdAt).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
+            day: '2-digit', month: 'short', year: 'numeric'
           });
-    
-          this.cd.detectChanges(); // ✅ บังคับให้ตรวจรอบใหม่หลังอัปเดตค่า
+
+          this.cd.detectChanges();
         });
       },
     });
@@ -131,8 +139,10 @@ export class NoteForm implements OnChanges {
       const reader = new FileReader();
       reader.onload = () => {
         this.ngZone.run(() => {
-          // immutable update เพื่อ Angular detect change
-          this.previewImages = [...this.previewImages, reader.result as string];
+          this.previewImages = [
+            ...this.previewImages,
+            { src: reader.result as string, isNew: true }
+          ];
           this.cd.detectChanges();
         });
       };
@@ -166,10 +176,31 @@ export class NoteForm implements OnChanges {
   }
 
   submitForm() {
-    this.confirmDialog.nativeElement.showModal(); // เปิด dialog
+    this.confirmDialog.nativeElement.showModal();
   }
   cancelSend() {
     this.confirmDialog.nativeElement.close();
+  }
+
+  showMoodToast(mood: string, isEdit: boolean = false) {
+    if (isEdit) {
+      this.toastService.showToast('แก้ไขบันทึกสำเร็จแล้ว!', false);
+      return;
+    }
+
+    const messages: Record<string, string> = {
+      happy: 'ดีใจด้วยนะ! ลองเก็บสิ่งดีๆ นี้ไว้ใช้ในวันที่รู้สึกเหนื่อยนะ :)',
+      calm: 'วันที่สงบ มักจะมากับความสบายใจ!',
+      tired: 'สายลมเปลี่ยนแปลงเสมอ อย่าลืมไปหาของอร่อย ๆ กินนะ!',
+      sad: 'แม้วันนี้จะไม่ง่าย แต่คุณยังเห็นแสงเล็กๆ อยู่ เก่งมากเลยนะ',
+      neutral:
+        'บางวันก็กลางๆ แบบนี้แหละ แต่คุณก็ยังเขียนถึงสิ่งดีๆ ได้ เยี่ยมเลย!',
+    };
+
+    const msg = messages[mood];
+    if (msg) {
+      this.toastService.showToast(msg, false);
+    }
   }
 
   confirmSend() {
@@ -184,85 +215,85 @@ export class NoteForm implements OnChanges {
     formData.append('line2', this.note2);
     formData.append('line3', this.note3);
     formData.append('mood', this.mood);
-    formData.append('showMessage', this.showMessage ? 'true' : 'false');
+    if (!this.isEditMode) {
+      formData.append('showMessage', this.showMessage ? 'true' : 'false');
+    }
 
-    this.previewImages.forEach((imageDataUrl, index) => {
-      const byteString = atob(imageDataUrl.split(',')[1]);
-      const mimeString = imageDataUrl.split(',')[0].split(':')[1].split(';')[0];
-      const ab = new ArrayBuffer(byteString.length);
-      const ia = new Uint8Array(ab);
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
+    this.previewImages.forEach((img, index) => {
+      if (img.isNew) {
+        // base64 → แปลงเป็น blob
+        const byteString = atob(img.src.split(',')[1]);
+        const mimeString = img.src.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        formData.append('imageUrls', blob, `image${index}.jpg`);
+      } else {
+        // URL → ส่งกลับไปเพื่อบอกว่าให้เก็บไว้
+        formData.append('existingImageUrls', img.src);
       }
-      const blob = new Blob([ab], { type: mimeString });
-      formData.append('imageUrls', blob, `image${index}.jpg`);
     });
 
-    this.apiService
-      .createPositiveNote(formData)
+    const request$ = this.isEditMode
+      ? this.apiService.editPositiveNoteById(this.noteId!, formData)
+      : this.apiService.createPositiveNote(formData);
+
+    request$
       .pipe(
         finalize(() => {
-          console.log('Request finalized');
-          this.ngZone.run(() => {
-            this.isLoading = false;
-            console.log('isLoading set to:', this.isLoading);
-            this.cd.detectChanges();
-          });
+          this.isLoading = false;
+          this.cd.detectChanges();
         })
       )
       .subscribe({
-        next: (response) => {
-          console.log('Success:', response);
-          console.log('Current mood:', this.mood);
-          this.resetForm();
+        next: (updatedNote) => {
+          console.log('Success:', updatedNote);
+          console.log('Server response after edit:', updatedNote);
 
-          // แจ้ง dashboard ว่า note ถูกสร้างสำเร็จแล้ว
+          // ✅ อัปเดต UI ด้วยข้อมูลล่าสุดที่ backend คืนกลับมา
+          this.note = updatedNote.line1;
+          this.note2 = updatedNote.line2 ?? '';
+          this.note3 = updatedNote.line3 ?? '';
+          this.mood = updatedNote.mood;
+          this.previewImages = updatedNote.imageUrls.map((url: string) => ({
+            src: url,
+            isNew: false,
+          }));
+
+          this.cd.detectChanges();
+
+          // ✅ แจ้ง parent ว่าบันทึกเสร็จแล้ว → ให้ reload list
           this.noteCreated.emit();
 
-          if (this.mood === 'happy') {
-            this.toastService.showToast(
-              'ดีใจด้วยนะ! ลองเก็บสิ่งดีๆ นี้ไว้ใช้ในวันที่รู้สึกเหนื่อยนะ :)',
-              false
-            );
-          }
-          if (this.mood === 'calm') {
-            this.toastService.showToast(
-              'วันที่สงบ มักจะมากับความสบายใจ!',
-              false
-            );
-          }
-          if (this.mood === 'tired') {
-            this.toastService.showToast(
-              'สายลมเปลี่ยนแปลงเสมอ อย่าลืมไปหาของอร่อย ๆ กินนะ!',
-              false
-            );
-          }
-          if (this.mood === 'sad') {
-            this.toastService.showToast(
-              'แม้วันนี้จะไม่ง่าย แต่คุณยังเห็นแสงเล็กๆ อยู่ เก่งมากเลยนะ',
-              false
-            );
-          }
-          if (this.mood === 'neutral') {
-            this.toastService.showToast(
-              'บางวันก็กลางๆ แบบนี้แหละ แต่คุณก็ยังเขียนถึงสิ่งดีๆ ได้ เยี่ยมเลย!',
-              false
-            );
+          // ✅ toast
+          this.showMoodToast(this.mood, this.isEditMode);
+
+          if (!this.isEditMode) {
+            this.resetForm();
           }
         },
         error: (err) => {
           console.error('Error:', err);
-          this.toastService.showToast('Failed to send magic message!', true);
+          this.toastService.showToast(
+            this.isEditMode
+              ? 'แก้ไขบันทึกล้มเหลว'
+              : 'สร้างบันทึกล้มเหลว',
+            true
+          );
         },
       });
   }
 
   private resetForm(): void {
-    this.email = '';
-    this.note = '';
-    this.note2 = '';
-    this.note3 = '';
-    // this.mood = ''; // ไม่ reset mood เพื่อให้ toast ทำงานได้
-    this.previewImages = [];
+    if (!this.isEditMode) {
+      this.email = '';
+      this.note = '';
+      this.note2 = '';
+      this.note3 = '';
+      this.previewImages = [];
+    }
   }
 }

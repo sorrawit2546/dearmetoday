@@ -20,17 +20,15 @@ export class PositiveNoteRepository {
   ): Promise<Entry> {
     const cleanDto = Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      Object.entries(Dto).filter(([_, v]) => v !== undefined),
+      Object.entries(Dto).filter(([_, v]) => v !== undefined), // ✅ อย่า filter null/'' ทิ้ง
     );
-    return await this.prisma.entry.update({
-      where: {
-        id: noteId,
-        userId: userId,
-      },
-      data: {
-        ...cleanDto,
-      },
+
+    const updated = await this.prisma.entry.update({
+      where: { id: noteId, userId },
+      data: cleanDto,
     });
+
+    return updated;
   }
 
   async getPositiveNoteById(noteId: string, userId: string): Promise<Entry> {
