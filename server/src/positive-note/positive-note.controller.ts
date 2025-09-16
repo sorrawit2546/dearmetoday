@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   UnauthorizedException,
@@ -21,6 +22,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
   CreatePositiveNoteAuthDto,
   CreatePositiveNoteDto,
+  UpdatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import {
   getAllNotesCommunity,
@@ -40,6 +42,32 @@ interface JwtUser {
 export class PositiveNoteController {
   constructor(private readonly positivenoteService: PositiveNoteService) {}
   BASE_URL = process.env.SERVER_URL;
+
+  @Patch('note/:id')
+  async editPositiveNoteByNoteId(
+    @Req() req: Request,
+    @Param('id') noteId: string,
+    @Body() Dto: UpdatePositiveNoteDto,
+  ): Promise<Partial<IpositiveNoteByNoteId>> {
+    if (!req) {
+      throw new UnauthorizedException();
+    }
+    const token = (req.cookies as { [key: string]: string })?.access_token;
+
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
+    }
+    // ตรวจสอบและถอดรหัส
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+      sub: string;
+    };
+    const userId = decoded.sub;
+    return await this.positivenoteService.editPositiveNoteById(
+      noteId,
+      userId,
+      Dto,
+    );
+  }
 
   @Get('note/:id')
   async getPositiveNoteByNoteId(

@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Entry, Mood } from '@prisma/client'; // ปรับตาม enum จริงของคุณ
 import type { Request as ExpressRequest } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { CreatePositiveNoteDto } from './Dto/create-positive-note';
+import {
+  CreatePositiveNoteDto,
+  UpdatePositiveNoteDto,
+} from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
 import { PositiveNoteController } from './positive-note.controller';
 import { PositiveNoteService } from './positive-note.service';
@@ -49,6 +52,7 @@ describe('PositiveNoteController', () => {
             getAllpositiveNotesWithoutLatest: jest.fn(),
             getAllCommunityNote: jest.fn(),
             getPositiveNoteById: jest.fn(),
+            editPositiveNoteById: jest.fn(),
           },
         },
         {
@@ -65,6 +69,53 @@ describe('PositiveNoteController', () => {
     (jwt.verify as jest.Mock).mockReset();
   });
 
+  it('should edit positive note', async () => {
+    const mockReq: MinimalRequestLike = {
+      cookies: {
+        access_token: 'mock-token',
+      },
+    };
+    const mockNoteId = 'note-1';
+    const mockPositiveDto: UpdatePositiveNoteDto = {
+      line1: 'Updated line1 content',
+      line3: 'Additional thoughts here',
+      imageUrls: [
+        'https://example.com/image1.jpg',
+        'https://example.com/image2.jpg',
+      ],
+      mood: Mood.happy,
+      showMessage: true,
+    };
+    const mockResultData = {
+      id: 'user-1',
+      userId: 'user-123',
+      email: 'sangmanee773@gmail.com',
+      line1: 'Updated line1 content',
+      line2: 'แมวววว',
+      line3: 'Additional thoughts here',
+      imageUrls: [
+        'https://example.com/image1.jpg',
+        'https://example.com/image2.jpg',
+      ],
+      mood: Mood.happy,
+      moodScore: 2,
+      isDelete: false,
+      showMessage: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    // Mock jwt.verify ให้คืนค่า payload ที่ต้องการ
+    (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-123' });
+    mockService.editPositiveNoteById = jest
+      .fn()
+      .mockResolvedValue(mockResultData);
+    const result = await controller.editPositiveNoteByNoteId(
+      mockReq as unknown as ExpressRequest,
+      mockNoteId,
+      mockPositiveDto,
+    );
+    expect(result).toEqual(mockResultData);
+  });
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
@@ -76,7 +127,7 @@ describe('PositiveNoteController', () => {
       },
     };
     const mockNoteId = 'note-1';
-    const mockResult = {
+    const mockResultPositiveNote = {
       id: 'user-1',
       email: 'sangmanee773@gmail.com',
       line1: 'ชอบท้องฟ้า',
@@ -92,17 +143,19 @@ describe('PositiveNoteController', () => {
     };
     // Mock jwt.verify ให้คืนค่า payload ที่ต้องการ
     (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-123' });
-    mockService.getPositiveNoteById = jest.fn().mockResolvedValue(mockResult);
+    mockService.getPositiveNoteById = jest
+      .fn()
+      .mockResolvedValue(mockResultPositiveNote);
     const result = await controller.getPositiveNoteByNoteId(
       mockReq as unknown as ExpressRequest,
       mockNoteId,
     );
 
-    expect(result).toEqual(mockResult);
+    expect(result).toEqual(mockResultPositiveNote);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockService.getPositiveNoteById).toHaveBeenCalledWith(
-      'user-123',
       mockNoteId,
+      'user-123',
     );
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockService.getPositiveNoteById).toHaveBeenCalledTimes(1);

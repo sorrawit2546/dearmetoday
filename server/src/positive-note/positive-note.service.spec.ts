@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Mood } from '@prisma/client';
+import { Entry, Mood } from '@prisma/client';
 import { SendgridService } from '../third-party/sendgrid/sendgrid.service';
 import {
   getAllNoteSendById,
@@ -8,6 +8,7 @@ import {
 import { PositiveNoteRepository } from './positive-note.repository';
 import { PositiveNoteService } from './positive-note.service';
 import { CalendarService } from '../calendar/calendar.service';
+import { UpdatePositiveNoteDto } from './Dto/create-positive-note';
 
 describe('PositiveNoteService', () => {
   let service: PositiveNoteService;
@@ -19,6 +20,7 @@ describe('PositiveNoteService', () => {
     getAllpositiveNotesWithoutLatest: jest.fn(),
     getAllNotesCommunity: jest.fn(),
     getPositiveNoteById: jest.fn(),
+    editPositiveNoteById: jest.fn<Promise<Entry>, [string, string, any]>(),
   };
 
   const mockSendgridService = {
@@ -55,6 +57,53 @@ describe('PositiveNoteService', () => {
     expect(service).toBeDefined();
   });
 
+  describe('Edit Positive Note', () => {
+    it('should edit positive note without images', async () => {
+      const noteId = 'note-1';
+      const userId = 'user-1';
+
+      const mockPositiveDto: UpdatePositiveNoteDto = {
+        line1: 'Updated line1 content',
+        line3: 'Additional thoughts here',
+        imageUrls: [
+          'https://example.com/image1.jpg',
+          'https://example.com/image2.jpg',
+        ],
+        mood: Mood.happy,
+        showMessage: true,
+      };
+
+      const mockResultData: IpositiveNoteByNoteId = {
+        id: 'note-1',
+        email: 'test@example.com',
+        line1: 'Updated line1 content',
+        line2: null,
+        line3: 'Additional thoughts here',
+        imageUrls: [
+          'https://example.com/image1.jpg',
+          'https://example.com/image2.jpg',
+        ],
+        mood: Mood.happy,
+        showMessage: true,
+        moodScore: 2,
+        isDelete: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        userId: 'user-1',
+      };
+      mockRepository.editPositiveNoteById = jest
+        .fn<Promise<Entry>, [string, string, any]>()
+        .mockResolvedValue(mockResultData as Entry);
+
+      const result = await service.editPositiveNoteById(
+        noteId,
+        userId,
+        mockPositiveDto,
+      );
+      expect(result).toEqual(mockResultData);
+      expect(mockRepository.editPositiveNoteById).toHaveBeenCalledTimes(1);
+    });
+  });
   it('should get positivenote by note id', async () => {
     //data
     const noteId = 'note-1';
@@ -72,7 +121,11 @@ describe('PositiveNoteService', () => {
       ],
       mood: 'sad' as Mood,
       moodScore: 2,
+      isDelete: false,
+      showMessage: true,
       createdAt: new Date(),
+      updatedAt: new Date(),
+      userId: 'user-1',
     };
 
     mockRepository.getPositiveNoteById = jest

@@ -10,6 +10,7 @@ import { SendgridService } from '../third-party/sendgrid/sendgrid.service';
 import {
   CreatePositiveNoteAuthDto,
   CreatePositiveNoteDto,
+  UpdatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import {
   getAllNotesCommunity,
@@ -28,6 +29,32 @@ export class PositiveNoteService {
     private readonly calendarService: CalendarService,
   ) {}
 
+  async editPositiveNoteById(
+    noteId: string,
+    userId: string,
+    Dto: UpdatePositiveNoteDto,
+  ): Promise<Partial<UpdatePositiveNoteDto>> {
+    try {
+      if (!noteId || !userId) {
+        throw new UnauthorizedException('UserId or NoteId Not found!');
+      }
+      if (!Dto) {
+        throw new UnauthorizedException('UserId or NoteId Not found!');
+      }
+      const rawResult = await this.repositoryPositiveNote.editPositiveNoteById(
+        noteId,
+        userId,
+        Dto,
+      );
+      return rawResult;
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      } else {
+        throw new BadRequestException(error);
+      }
+    }
+  }
   async getPositiveNoteById(
     noteId: string,
     userId: string,

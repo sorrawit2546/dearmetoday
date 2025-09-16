@@ -32,9 +32,6 @@ importers:
       '@angular/ssr':
         specifier: ^20.0.1
         version: 20.1.4(968cd4f81f34dd7bef8f069c9cd916a9)
-      '@rollup/rollup-win32-x64-msvc':
-        specifier: ^4.46.2
-        version: 4.46.2
       express:
         specifier: ^5.1.0
         version: 5.1.0
@@ -99,6 +96,10 @@ importers:
       typescript:
         specifier: ~5.8.2
         version: 5.8.3
+    optionalDependencies:
+      '@rollup/rollup-win32-x64-msvc':
+        specifier: ^4.46.2
+        version: 4.46.2
 
 packages:
 
@@ -4025,7 +4026,8 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.44.1':
     optional: true
 
-  '@rollup/rollup-win32-x64-msvc@4.46.2': {}
+  '@rollup/rollup-win32-x64-msvc@4.46.2':
+    optional: true
 
   '@schematics/angular@20.1.4(chokidar@4.0.3)':
     dependencies:

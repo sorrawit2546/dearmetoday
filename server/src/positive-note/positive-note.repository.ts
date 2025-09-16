@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import {
   CreatePositiveNoteAuthDto,
   CreatePositiveNoteDto,
+  UpdatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
 import { moodToScore } from './utils/positive-note.mood.utils';
@@ -15,8 +16,8 @@ export class PositiveNoteRepository {
   async editPositiveNoteById(
     noteId: string,
     userId: string,
-    Dto: CreatePositiveNoteDto,
-  ): Promise<Partial<Entry>> {
+    Dto: UpdatePositiveNoteDto,
+  ): Promise<Entry> {
     const cleanDto = Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(Dto).filter(([_, v]) => v !== undefined),

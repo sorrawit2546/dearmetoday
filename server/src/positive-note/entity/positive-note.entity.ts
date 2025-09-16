@@ -8,8 +8,12 @@ export interface IpositiveNoteByNoteId {
   line3?: string;
   imageUrls: string[];
   mood: Mood;
+  showMessage: boolean;
+  isDelete: boolean;
+  userId: string;
   moodScore: number;
   createdAt: Date;
+  updatedAt?: Date;
 }
 export interface getAllNoteSendById {
   id: string;

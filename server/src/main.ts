@@ -35,6 +35,7 @@ async function bootstrap() {
     }),
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   app.use(passport.initialize());
 
   const port = configService.get<number>('PORT') || 3000;
