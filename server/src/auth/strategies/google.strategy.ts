@@ -39,7 +39,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       name: profile.displayName,
       avatarUrl: `${process.env.SERVER_URL}${localAvatarPath}`,
       provider: 'google',
-      accessToken, // <- Google access_token จริง
+      accessToken,
     };
   }
 }

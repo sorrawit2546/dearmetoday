@@ -31,7 +31,7 @@ export class AuthRepository {
       data: {
         email: googleUser.email,
         name: googleUser.name,
-        avatarUrl: googleUser.avatar,
+        avatarUrl: googleUser.avatarUrl,
         provider: googleUser.provider,
         googleId: googleUser.id,
       },
