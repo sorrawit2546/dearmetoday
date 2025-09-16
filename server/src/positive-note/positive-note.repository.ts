@@ -12,6 +12,26 @@ import { moodToScore } from './utils/positive-note.mood.utils';
 export class PositiveNoteRepository {
   constructor(private prisma: PrismaService) {}
 
+  async editPositiveNoteById(
+    noteId: string,
+    userId: string,
+    Dto: CreatePositiveNoteDto,
+  ): Promise<Partial<Entry>> {
+    const cleanDto = Object.fromEntries(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      Object.entries(Dto).filter(([_, v]) => v !== undefined),
+    );
+    return await this.prisma.entry.update({
+      where: {
+        id: noteId,
+        userId: userId,
+      },
+      data: {
+        ...cleanDto,
+      },
+    });
+  }
+
   async getPositiveNoteById(noteId: string, userId: string): Promise<Entry> {
     const result = await this.prisma.entry.findFirst({
       where: {

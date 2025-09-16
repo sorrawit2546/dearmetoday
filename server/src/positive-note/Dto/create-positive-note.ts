@@ -74,3 +74,31 @@ export class CreatePositiveNoteAuthDto {
   @IsBoolean()
   isDelete?: boolean;
 }
+
+export class UpdatePositiveNoteDto {
+  @IsOptional()
+  @IsString()
+  line1?: string;
+
+  @IsOptional()
+  @IsString()
+  line2?: string | null;
+
+  @IsOptional()
+  @IsString()
+  line3?: string | null;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  imageUrls?: string[]; // เก็บหลาย URL ของรูปภาพ
+
+  @IsOptional()
+  @IsEnum(Mood)
+  mood?: Mood;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
+  showMessage?: boolean;
+}
