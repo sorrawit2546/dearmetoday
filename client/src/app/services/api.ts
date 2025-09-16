@@ -14,11 +14,15 @@ export class Api {
 
   // Emits when quick notes are created/updated/deleted
   quickNoteChanged$ = new Subject<void>();
+  // Emits when positive notes are created/updated/deleted
+  positiveNoteChanged$ = new Subject<void>();
 
   editPositiveNoteById(noteId : string, data: FormData){
-    return this.http.patch<entryNote>(`${environment.apiUrl}/positive-note/note/${noteId}`, data, {
-      withCredentials: true,
-    })
+    return this.http
+      .patch<entryNote>(`${environment.apiUrl}/positive-note/note/${noteId}`, data, {
+        withCredentials: true,
+      })
+      .pipe(tap(() => this.positiveNoteChanged$.next()));
   };
 
   getPositiveNoteById(noteId : string){
@@ -48,9 +52,11 @@ export class Api {
   }
 
   createPositiveNote(data: FormData): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/positive-note/create`, data, {
-      withCredentials: true,
-    });
+    return this.http
+      .post(`${environment.apiUrl}/positive-note/create`, data, {
+        withCredentials: true,
+      })
+      .pipe(tap(() => this.positiveNoteChanged$.next()));
   }
 
   getUserdataFromGoogle(): Observable<AuthResponse> {

@@ -142,10 +142,10 @@ export class Dashboard implements OnInit, OnDestroy {
       const matchText =
         !term ||
         item.id.toLowerCase().includes(term) ||
-        item.line1.toLowerCase().includes(term) ||
-        item.line2.toLowerCase().includes(term) ||
-        item.line3.toLowerCase().includes(term) ||
-        item.mood?.toLowerCase().includes(term);
+        (item.line1 ?? '').toLowerCase().includes(term) ||
+        (item.line2 ?? '').toLowerCase().includes(term) ||
+        (item.line3 ?? '').toLowerCase().includes(term) ||
+        (item.mood ?? '').toLowerCase().includes(term);
       return matchText;
     });
   });
@@ -220,6 +220,17 @@ export class Dashboard implements OnInit, OnDestroy {
     effect(() => {
       this.apiService.getAllNoteByUserId().subscribe({
         next: (res) => this.itemsNoteSearch.set(res),
+      });
+    });
+
+    // เมื่อมีการแก้ไข/สร้าง positive note ที่ไหนก็ได้ → รีโหลดทันที
+    this.apiService.positiveNoteChanged$.subscribe(() => {
+      this.ngZone.run(() => {
+        this.apiService.getAllNoteByUserId().subscribe({
+          next: (res) => this.itemsNoteSearch.set(res),
+        });
+        this.loadRecentNote();
+        this.loadNotesCount();
       });
     });
 
@@ -367,20 +378,50 @@ export class Dashboard implements OnInit, OnDestroy {
 
   closeNoteForm(): void {
     this.showNoteForm.set(false);
-    // Refresh data หลังจากปิด form
-    this.refreshData();
+    // Refresh data หลังจากปิด form ให้รีโหลดทั้งหมดทันที
+    this.apiService.getAllNoteByUserId().subscribe({
+      next: (res) => {
+        this.ngZone.run(() => {
+          this.itemsNoteSearch.set(res);
+          this.cdr.detectChanges();
+        });
+      },
+    });
+    this.loadRecentNote();
+    this.loadNotesCount();
+    // บังคับให้ตรวจจับการเปลี่ยนแปลงทันที
+    this.cdr.detectChanges();
   }
 
   onNoteUpdated(updated: entryNote): void {
-    this.itemsNoteSearch.update((notes) =>
-      notes.map((n) => (n.id === updated.id ? updated : n))
-    );
+    // อัปเดตรายการในแคชทันที
+    let found = false;
+    this.itemsNoteSearch.update((notes) => {
+      const mapped = notes.map((n) => {
+        if (n.id === updated.id) {
+          found = true;
+          return updated;
+        }
+        return n;
+      });
+      return mapped;
+    });
 
-    if (this.entry_recent_note().id === updated.id) {
-      this.entry_recent_note.set(updated);
+    // ถ้าไม่พบในแคช ให้รีโหลดจากเซิร์ฟเวอร์ (ป้องกันกรณีรายการไม่ครบ/เพจอื่น)
+    if (!found) {
+      this.apiService.getAllNoteByUserId().subscribe({
+        next: (res) => this.itemsNoteSearch.set(res),
+      });
     }
 
-    this.showNoteForm.set(false); // ปิด modal หลังแก้เสร็จ
+    // อัปเดต recent note และนับจำนวนอีกครั้ง
+    this.loadRecentNote();
+    this.loadNotesCount();
+
+    // ปิดฟอร์ม
+    this.showNoteForm.set(false);
+    // บังคับให้ตรวจจับการเปลี่ยนแปลงทันที
+    this.cdr.detectChanges();
   }
 
 
@@ -388,7 +429,10 @@ export class Dashboard implements OnInit, OnDestroy {
     this.apiService.getAllNoteByUserId().subscribe({
       next: (res) => {
         console.log('Reload notes from server:', res); // <--- ดูตรงนี้
-        this.itemsNoteSearch.set(res);
+        this.ngZone.run(() => {
+          this.itemsNoteSearch.set(res);
+          this.cdr.detectChanges();
+        });
         this.loadNotesCount();
       },
       error: (err) => {

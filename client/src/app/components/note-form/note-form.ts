@@ -32,6 +32,7 @@ type PreviewImage = {
 export class NoteForm implements OnChanges {
   @ViewChild('confirmDialog') confirmDialog!: ElementRef<HTMLDialogElement>;
   @Output() noteCreated = new EventEmitter<entryNote>();
+  @Output() closed = new EventEmitter<void>();
   @Input() noteId!: string;
 
   isEditMode = false;
@@ -171,6 +172,7 @@ export class NoteForm implements OnChanges {
   }
   cancelSend() {
     this.confirmDialog.nativeElement.close();
+    this.closed.emit();
   }
 
   private showMoodToast(mood: string, isEdit: boolean = false) {
@@ -236,25 +238,27 @@ export class NoteForm implements OnChanges {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (updatedNote) => {
-          this.note.set(updatedNote.line1);
-          this.note2.set(updatedNote.line2 ?? '');
-          this.note3.set(updatedNote.line3 ?? '');
-          this.mood.set(updatedNote.mood);
-          this.previewImages.set(
-            updatedNote.imageUrls.map((url: string) => ({
-              src: url,
-              isNew: false,
-            }))
-          );
+          this.ngZone.run(() => {
+            this.note.set(updatedNote.line1);
+            this.note2.set(updatedNote.line2 ?? '');
+            this.note3.set(updatedNote.line3 ?? '');
+            this.mood.set(updatedNote.mood);
+            this.previewImages.set(
+              updatedNote.imageUrls.map((url: string) => ({
+                src: url,
+                isNew: false,
+              }))
+            );
 
-          this.noteCreated.emit(updatedNote);
-          this.showMoodToast(this.mood(), this.isEditMode);
-          if (this.isEditMode) {
-            this.loadNoteData(); // ✅ โหลดข้อมูลใหม่ทันทีหลังแก้ไขสำเร็จ
-          } else {
-            this.resetForm();
-          }
-          if (!this.isEditMode) this.resetForm();
+            this.noteCreated.emit(updatedNote);
+            this.showMoodToast(this.mood(), this.isEditMode);
+            if (this.isEditMode) {
+              this.loadNoteData();
+            } else {
+              this.resetForm();
+            }
+            this.closed.emit();
+          });
         },
         error: (err) => {
           console.error('Error:', err);

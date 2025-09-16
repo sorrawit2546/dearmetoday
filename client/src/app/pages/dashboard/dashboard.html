@@ -100,7 +100,8 @@
             </g>
           </svg>
           <input
-            [(ngModel)]="searchTerm"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)"
             class=""
             type="search"
             required
@@ -147,7 +148,7 @@
         (click)="$event.stopPropagation()"
       >
         <div class="cat2"></div>
-        <app-note-form (noteCreated)="reloadNotes()"> </app-note-form>
+        <app-note-form (noteCreated)="onNoteUpdated($event)" (closed)="closeNoteForm()"> </app-note-form>
       </div>
     </div>
 

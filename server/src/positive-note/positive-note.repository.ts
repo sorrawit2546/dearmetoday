@@ -23,9 +23,18 @@ export class PositiveNoteRepository {
       Object.entries(Dto).filter(([_, v]) => v !== undefined), // ✅ อย่า filter null/'' ทิ้ง
     );
 
+    // Prisma scalar list fields require `{ set: [...] }` when updating
+    const data: Record<string, unknown> = { ...cleanDto };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (Array.isArray((cleanDto as any).imageUrls)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      data.imageUrls = { set: (cleanDto as any).imageUrls as string[] };
+    }
+
     const updated = await this.prisma.entry.update({
       where: { id: noteId, userId },
-      data: cleanDto,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      data: data as any,
     });
 
     return updated;
