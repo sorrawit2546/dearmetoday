@@ -31,7 +31,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: Profile,
   ): Promise<GoogleUser> {
     const googleAvatar = profile.photos?.[0]?.value ?? '';
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const localAvatarPath = await downloadAvatar(googleAvatar, profile.id);
 
     return {
