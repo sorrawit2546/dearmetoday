@@ -12,7 +12,10 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  AnyFilesInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { Entry } from '@prisma/client';
 import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
@@ -44,24 +47,29 @@ export class PositiveNoteController {
   BASE_URL = process.env.SERVER_URL;
 
   @Patch('note/:id')
+  @UseInterceptors(AnyFilesInterceptor())
   async editPositiveNoteByNoteId(
     @Req() req: Request,
     @Param('id') noteId: string,
-    @Body() Dto: UpdatePositiveNoteDto,
+    @Body() body: any, // ← ต้องเป็น any เพื่อรับจาก FormData
   ): Promise<Partial<IpositiveNoteByNoteId>> {
-    if (!req) {
-      throw new UnauthorizedException();
-    }
+    if (!req) throw new UnauthorizedException();
     const token = (req.cookies as { [key: string]: string })?.access_token;
+    if (!token) throw new UnauthorizedException('Token not found');
 
-    if (!token) {
-      throw new UnauthorizedException('Token not found');
-    }
-    // ตรวจสอบและถอดรหัส
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
       sub: string;
     };
     const userId = decoded.sub;
+
+    // ✅ แปลง string กลับเป็น type ที่ต้องการ
+    const Dto: Partial<UpdatePositiveNoteDto> = {
+      line1: body?.line1 ?? undefined,
+      line2: body?.line2 ?? undefined,
+      line3: body?.line3 ?? undefined,
+      mood:  body?.mood  ?? undefined,
+    };
+
     return await this.positivenoteService.editPositiveNoteById(
       noteId,
       userId,

@@ -70,6 +70,7 @@ export class Dashboard implements OnInit, OnDestroy {
   currentPage = signal(1);
   itemsPerPage = 9;
   activeCard: number | null = null;
+  
 
   toggleCard(index: number) {
     // Convert paginated index to global index
@@ -294,6 +295,12 @@ export class Dashboard implements OnInit, OnDestroy {
     this.refreshTrigger.update((trigger) => trigger + 1);
   }
 
+  reloadNotes() {
+    this.apiService.getPositiveNotes().subscribe(notes => {
+      this.notes = notes;
+    });
+  }
+
   loadRecentNote(): void {
     console.log('Loading recent note...');
     this.apiService.getRecentNoteByUserId().subscribe({
@@ -363,6 +370,19 @@ export class Dashboard implements OnInit, OnDestroy {
     // Refresh data หลังจากปิด form
     this.refreshData();
   }
+
+  onNoteUpdated(updated: entryNote): void {
+    this.itemsNoteSearch.update((notes) =>
+      notes.map((n) => (n.id === updated.id ? updated : n))
+    );
+
+    if (this.entry_recent_note().id === updated.id) {
+      this.entry_recent_note.set(updated);
+    }
+
+    this.showNoteForm.set(false); // ปิด modal หลังแก้เสร็จ
+  }
+
 
   onNoteCreated(): void {
     this.apiService.getAllNoteByUserId().subscribe({

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -10,15 +9,17 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
+  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Api, AuthResponse } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
 import { entryNote } from '../../model/entry-note';
+
 type PreviewImage = {
-  src: string;       // URL หรือ base64 dataURL
-  isNew: boolean;    // true = อัปโหลดใหม่, false = มีอยู่แล้วในระบบ
+  src: string;
+  isNew: boolean;
 };
 
 @Component({
@@ -30,120 +31,114 @@ type PreviewImage = {
 })
 export class NoteForm implements OnChanges {
   @ViewChild('confirmDialog') confirmDialog!: ElementRef<HTMLDialogElement>;
-  @Output() noteCreated = new EventEmitter<void>();
-
+  @Output() noteCreated = new EventEmitter<entryNote>();
   @Input() noteId!: string;
+
   isEditMode = false;
 
-  noteById: entryNote | null = null;
-
-  isLoading = false;
-  previewImages: PreviewImage[] = [];
-  isDragging = false;
-  email = '';
-  note = '';
-  note2 = '';
-  note3 = '';
-  mood = 'happy';
-  createdAt = '';
-  formattedDate: string = '';
-  showMessage = false;
+  isLoading = signal(false);
+  isDragging = signal(false);
+  email = signal('');
+  note = signal('');
+  note2 = signal('');
+  note3 = signal('');
+  mood = signal('happy');
+  createdAt = signal('');
+  showMessage = signal(false);
+  previewImages = signal<PreviewImage[]>([]);
+  formattedDate = signal('');
 
   constructor(
-    private cd: ChangeDetectorRef,
     private ngZone: NgZone,
     private apiService: Api,
-    private cdr: ChangeDetectorRef,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    const now = new Date();
-    this.formattedDate = now.toLocaleDateString('en-GB', {
+  const now = new Date();
+  this.formattedDate.set(
+    now.toLocaleDateString('en-GB', {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
-    }); // เช่น "28 July 2025"
-    this.apiService.getUserdataFromGoogle().subscribe({
-      next: (response: AuthResponse) => {
-        this.ngZone.run(() => {
-          console.log('Dashboard: User data loaded successfully:', response);
-          this.email = response.user.email;
-          console.log(this.email);
-          this.isLoading = false;
-          this.cdr.detectChanges(); // ✅ บังคับให้ Angular อัปเดต
+    })
+  );
+
+  this.apiService.getUserdataFromGoogle().subscribe({
+    next: (response: AuthResponse) => {
+      this.ngZone.run(() => {
+        setTimeout(() => {
+          this.email.set(response.user.email);
+          this.isLoading.set(false);
         });
-      },
-      error: (err) => {
-        this.ngZone.run(() => {
-          console.error('Dashboard: Error loading user data:', err);
-        });
-      },
-    });
-    if (this.noteId) {
-      this.loadNoteData();
-    }
-    this.isEditMode = !!this.noteId;
-    if (this.isEditMode) {
-      this.loadNoteData();
-    }
-  }
+      });
+    },
+    error: (err) => console.error('Error loading user data:', err),
+  });
+}
+
 
   ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes['noteId']?.currentValue &&
-      changes['noteId'].currentValue !== changes['noteId'].previousValue
-    ) {
-      console.log('NoteForm received id:', this.noteId);
+    if (changes['noteId']?.currentValue) {
+      this.isEditMode = true;
       this.loadNoteData();
     }
   }
 
+
   loadNoteData() {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.apiService.getPositiveNoteById(this.noteId).subscribe({
       next: (data: entryNote) => {
         this.ngZone.run(() => {
-          // ✅ ต้อง set ค่าฟอร์มทั้งหมดด้วยของจาก server
-          this.email = data.email;
-          this.note  = data.line1 ?? '';
-          this.note2 = data.line2 ?? '';
-          this.note3 = data.line3 ?? '';
-          this.mood  = data.mood;
-          this.previewImages = data.imageUrls.map(url => ({ src: url, isNew: false }));
-          this.createdAt = new Date(data.createdAt).toLocaleDateString('en-GB', {
-            day: '2-digit', month: 'short', year: 'numeric'
-          });
-
-          this.cd.detectChanges();
+          this.email.set(data.email);
+          this.note.set(data.line1 ?? '');
+          this.note2.set(data.line2 ?? '');
+          this.note3.set(data.line3 ?? '');
+          this.mood.set(data.mood);
+          this.previewImages.set(
+            data.imageUrls.map((url) => ({ src: url, isNew: false }))
+          );
+          this.createdAt.set(
+            new Date(data.createdAt).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })
+          );
+          this.isLoading.set(false);
         });
+      },
+      error: (err) => {
+        console.error('Error loading note data', err);
+        this.isLoading.set(false);
       },
     });
   }
+
 
   handleImageUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
-
     const files = Array.from(input.files);
     this.handleFiles(files);
-
     input.value = '';
   }
 
-  handleFiles(files: File[]): void {
-    const remainingSlots = 5 - this.previewImages.length;
+  private handleFiles(files: File[]): void {
+    const remainingSlots = 5 - this.previewImages().length;
     const validFiles = files.slice(0, remainingSlots);
 
     validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onload = () => {
         this.ngZone.run(() => {
-          this.previewImages = [
-            ...this.previewImages,
-            { src: reader.result as string, isNew: true }
-          ];
-          this.cd.detectChanges();
+          setTimeout(() => {
+            this.previewImages.update((imgs) => [
+              ...imgs,
+              { src: reader.result as string, isNew: true },
+            ]);
+          });
         });
       };
       reader.readAsDataURL(file);
@@ -151,28 +146,24 @@ export class NoteForm implements OnChanges {
   }
 
   removeImage(index: number): void {
-    this.previewImages = this.previewImages.filter((_, i) => i !== index);
-    this.cd.detectChanges();
+    this.previewImages.update((imgs) => imgs.filter((_, i) => i !== index));
   }
 
   handleDrop(event: DragEvent): void {
     event.preventDefault();
-    this.isDragging = false;
-
+    this.isDragging.set(false);
     const files = event.dataTransfer?.files;
-    if (files) {
-      this.handleFiles(Array.from(files));
-    }
+    if (files) this.handleFiles(Array.from(files));
   }
 
   handleDragOver(event: DragEvent): void {
     event.preventDefault();
-    this.isDragging = true;
+    this.isDragging.set(true);
   }
 
   handleDragLeave(event: DragEvent): void {
     event.preventDefault();
-    this.isDragging = false;
+    this.isDragging.set(false);
   }
 
   submitForm() {
@@ -182,12 +173,11 @@ export class NoteForm implements OnChanges {
     this.confirmDialog.nativeElement.close();
   }
 
-  showMoodToast(mood: string, isEdit: boolean = false) {
+  private showMoodToast(mood: string, isEdit: boolean = false) {
     if (isEdit) {
       this.toastService.showToast('แก้ไขบันทึกสำเร็จแล้ว!', false);
       return;
     }
-
     const messages: Record<string, string> = {
       happy: 'ดีใจด้วยนะ! ลองเก็บสิ่งดีๆ นี้ไว้ใช้ในวันที่รู้สึกเหนื่อยนะ :)',
       calm: 'วันที่สงบ มักจะมากับความสบายใจ!',
@@ -196,43 +186,44 @@ export class NoteForm implements OnChanges {
       neutral:
         'บางวันก็กลางๆ แบบนี้แหละ แต่คุณก็ยังเขียนถึงสิ่งดีๆ ได้ เยี่ยมเลย!',
     };
-
     const msg = messages[mood];
-    if (msg) {
-      this.toastService.showToast(msg, false);
-    }
+    if (msg) this.toastService.showToast(msg, false);
   }
 
   confirmSend() {
-    console.log('Starting form submission...');
-    this.isLoading = true;
-    console.log('isLoading set to:', this.isLoading);
-    this.cd.detectChanges(); // Force change detection
+    console.log('📝 Submitting form with values:', {
+      isEditMode: this.isEditMode,
+      noteId: this.noteId,
+      email: this.email(),
+      line1: this.note(),
+      line2: this.note2(),
+      line3: this.note3(),
+      mood: this.mood(),
+      previewImages: this.previewImages(),
+    });
+    this.isLoading.set(true);
 
     const formData = new FormData();
-    formData.append('email', this.email);
-    formData.append('line1', this.note);
-    formData.append('line2', this.note2);
-    formData.append('line3', this.note3);
-    formData.append('mood', this.mood);
+    formData.append('email', this.email());
+    formData.append('line1', this.note());
+    formData.append('line2', this.note2());
+    formData.append('line3', this.note3());
+    formData.append('mood', this.mood());
     if (!this.isEditMode) {
-      formData.append('showMessage', this.showMessage ? 'true' : 'false');
+      formData.append('showMessage', this.showMessage() ? 'true' : 'false');
     }
 
-    this.previewImages.forEach((img, index) => {
+    this.previewImages().forEach((img, index) => {
       if (img.isNew) {
-        // base64 → แปลงเป็น blob
         const byteString = atob(img.src.split(',')[1]);
         const mimeString = img.src.split(',')[0].split(':')[1].split(';')[0];
         const ab = new ArrayBuffer(byteString.length);
         const ia = new Uint8Array(ab);
-        for (let i = 0; i < byteString.length; i++) {
+        for (let i = 0; i < byteString.length; i++)
           ia[i] = byteString.charCodeAt(i);
-        }
         const blob = new Blob([ab], { type: mimeString });
         formData.append('imageUrls', blob, `image${index}.jpg`);
       } else {
-        // URL → ส่งกลับไปเพื่อบอกว่าให้เก็บไว้
         formData.append('existingImageUrls', img.src);
       }
     });
@@ -242,45 +233,33 @@ export class NoteForm implements OnChanges {
       : this.apiService.createPositiveNote(formData);
 
     request$
-      .pipe(
-        finalize(() => {
-          this.isLoading = false;
-          this.cd.detectChanges();
-        })
-      )
+      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (updatedNote) => {
-          console.log('Success:', updatedNote);
-          console.log('Server response after edit:', updatedNote);
+          this.note.set(updatedNote.line1);
+          this.note2.set(updatedNote.line2 ?? '');
+          this.note3.set(updatedNote.line3 ?? '');
+          this.mood.set(updatedNote.mood);
+          this.previewImages.set(
+            updatedNote.imageUrls.map((url: string) => ({
+              src: url,
+              isNew: false,
+            }))
+          );
 
-          // ✅ อัปเดต UI ด้วยข้อมูลล่าสุดที่ backend คืนกลับมา
-          this.note = updatedNote.line1;
-          this.note2 = updatedNote.line2 ?? '';
-          this.note3 = updatedNote.line3 ?? '';
-          this.mood = updatedNote.mood;
-          this.previewImages = updatedNote.imageUrls.map((url: string) => ({
-            src: url,
-            isNew: false,
-          }));
-
-          this.cd.detectChanges();
-
-          // ✅ แจ้ง parent ว่าบันทึกเสร็จแล้ว → ให้ reload list
-          this.noteCreated.emit();
-
-          // ✅ toast
-          this.showMoodToast(this.mood, this.isEditMode);
-
-          if (!this.isEditMode) {
+          this.noteCreated.emit(updatedNote);
+          this.showMoodToast(this.mood(), this.isEditMode);
+          if (this.isEditMode) {
+            this.loadNoteData(); // ✅ โหลดข้อมูลใหม่ทันทีหลังแก้ไขสำเร็จ
+          } else {
             this.resetForm();
           }
+          if (!this.isEditMode) this.resetForm();
         },
         error: (err) => {
           console.error('Error:', err);
           this.toastService.showToast(
-            this.isEditMode
-              ? 'แก้ไขบันทึกล้มเหลว'
-              : 'สร้างบันทึกล้มเหลว',
+            this.isEditMode ? 'แก้ไขบันทึกล้มเหลว' : 'สร้างบันทึกล้มเหลว',
             true
           );
         },
@@ -288,12 +267,10 @@ export class NoteForm implements OnChanges {
   }
 
   private resetForm(): void {
-    if (!this.isEditMode) {
-      this.email = '';
-      this.note = '';
-      this.note2 = '';
-      this.note3 = '';
-      this.previewImages = [];
-    }
+    this.email.set('');
+    this.note.set('');
+    this.note2.set('');
+    this.note3.set('');
+    this.previewImages.set([]);
   }
 }

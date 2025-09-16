@@ -3,7 +3,7 @@
   <div class="max-w-2xl mx-auto">
     <div class="bg-[#ffffff] rounded-3xl shadow-lg p-6">
       <!-- Date Header -->
-      <div class="text-sm text-gray-600 mb-4">{{createdAt}}</div>
+      <div class="text-sm text-gray-600 mb-4">{{ createdAt() }}</div>
 
       <!-- Dropzone with preview inside -->
       <div
@@ -15,10 +15,10 @@
         (click)="fileInput.click()"
       >
         <!-- Image previews (in grid) -->
-        <ng-container *ngIf="previewImages.length > 0; else dropHint">
+        <ng-container *ngIf="previewImages().length > 0; else dropHint">
           <div class="w-full h-full grid grid-cols-5 gap-5 p-2">
             <div
-              *ngFor="let img of previewImages; let i = index"
+              *ngFor="let img of previewImages(); let i = index"
               class="relative h-full aspect-square rounded overflow-hidden border"
             >
               <img [src]="img.src" class="w-full h-full object-cover" />
@@ -58,19 +58,6 @@
         />
       </div>
 
-      <!-- Email Field -->
-      <!-- <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1"
-          >Email
-        </label>
-        <input
-          type="email"
-          placeholder="example@gmail.com"
-          [(ngModel)]="email"
-          class="w-full border rounded px-3 py-2"
-        />
-      </div> -->
-
       <!-- Positive Note Field -->
       <div class="mb-3 mt-3">
         <label class="block text-sm font-medium text-gray-700 mb-1"
@@ -79,17 +66,20 @@
         <div class="grid grid-cols-2 gap-4">
           <textarea
             placeholder="เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้..."
-            [(ngModel)]="note"
+            [ngModel]="note()"
+            (ngModelChange)="note.set($event)"
             class="col-span-2 h-20 resize-none border rounded px-3 py-2 text-gray-700"
           ></textarea>
           <textarea
             placeholder="สิ่งเล็ก ๆ ที่ทำให้คุณยิ้มได้ในวันนี้..."
-            [(ngModel)]="note2"
+            [ngModel]="note2()"
+            (ngModelChange)="note2.set($event)"
             class="w-full h-20 resize-none border rounded px-3 py-2 text-gray-700"
           ></textarea>
           <textarea
             placeholder="เรื่องราวที่ทำให้รู้สึกภูมิใจ.."
-            [(ngModel)]="note3"
+            [ngModel]="note3()"
+            (ngModelChange)="note3.set($event)"
             class="w-full h-20 resize-none border rounded px-3 py-2 text-gray-700"
           ></textarea>
         </div>
@@ -98,7 +88,11 @@
       <!-- Mood Selector -->
       <div class="mb-6">
         <label class="block text-sm font-medium text-gray-700 mb-1">Mood</label>
-        <select [(ngModel)]="mood" class="w-full border rounded px-3 py-2">
+        <select
+          [ngModel]="mood()"
+          (ngModelChange)="mood.set($event)"
+          class="w-full border rounded px-3 py-2"
+        >
           <option value="happy">happy</option>
           <option value="calm">calm</option>
           <option value="neutral">neutral</option>
@@ -111,45 +105,47 @@
       <button
         (click)="submitForm()"
         class="btn btn-soft btn-primary w-full"
-        [disabled]="isLoading"
+        [disabled]="isLoading()"
       >
-        <span *ngIf="!isLoading">Submit</span>
-        <span *ngIf="isLoading" class="loading loading-dots loading-md"></span>
+        <span *ngIf="!isLoading()">Submit</span>
+        <span *ngIf="isLoading()" class="loading loading-dots loading-md"></span>
       </button>
 
       <!-- Confirm Modal -->
       <dialog #confirmDialog class="modal">
         <div class="modal-box rounded-2xl">
           <h3 class="font-bold text-lg">
-            {{ isEditMode ? 'ยืนยันการบันทึกการแก้ไข?' : 'ยืนยันการส่งข้อความ?'
-            }}
+            {{ isEditMode ? 'ยืนยันการบันทึกการแก้ไข?' : 'ยืนยันการส่งข้อความ?' }}
           </h3>
 
           <ng-container *ngIf="!isEditMode; else editHint">
             <p class="py-2">
               ระบบจะทำการส่งอีเมล พร้อมข้อความและรูปภาพของคุณไปยัง
             </p>
-            <p class="py-2">{{email}}</p>
+            <p class="py-2">{{ email() }}</p>
             <fieldset
               class="fieldset bg-base-100 border-base-300 rounded-2xl w-64 border p-4"
             >
               <legend class="fieldset-legend">Share to community?</legend>
               <label class="label">
                 <input
-                  [(ngModel)]="showMessage"
+                  [ngModel]="showMessage()"
+                  (ngModelChange)="showMessage.set($event)"
                   type="checkbox"
                   class="checkbox checkbox-info rounded-2xl"
                 />
-                of couse
+                of course
               </label>
             </fieldset>
           </ng-container>
+
           <!-- ถ้าเป็น edit → แสดง hint อย่างเดียว -->
           <ng-template #editHint>
             <p class="py-2 text-gray-600">
               ระบบจะบันทึกการแก้ไข โดยไม่ส่งอีเมลซ้ำอีกครั้ง
             </p>
           </ng-template>
+
           <div class="modal-action">
             <form method="dialog" class="flex gap-2">
               <button class="btn rounded-2xl" (click)="cancelSend()">
