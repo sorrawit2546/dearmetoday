@@ -1,0 +1,392 @@
+{
+  "info": {
+    "name": "DearMeToday API Tests",
+    "description": "API Testing Collection for DearMeToday Application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "noteId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Google OAuth Login",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google"]
+            },
+            "description": "Initiate Google OAuth login"
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Get current user profile"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Logout user"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Positive Notes",
+      "item": [
+        {
+          "name": "Create Positive Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "test@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "line1",
+                  "value": "เรื่องราวดี ๆ ที่อยากขอบคุณ",
+                  "type": "text"
+                },
+                {
+                  "key": "line2",
+                  "value": "สิ่งเล็ก ๆ ที่ทำให้ยิ้มได้",
+                  "type": "text"
+                },
+                {
+                  "key": "line3",
+                  "value": "เรื่องราวที่ทำให้รู้สึกภูมิใจ",
+                  "type": "text"
+                },
+                {
+                  "key": "mood",
+                  "value": "happy",
+                  "type": "text"
+                },
+                {
+                  "key": "showMessage",
+                  "value": "true",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/positive-note/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["positive-note", "create"]
+            },
+            "description": "Create a new positive note"
+          }
+        },
+        {
+          "name": "Get All Notes by User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/positive-note/all-note",
+              "host": ["{{baseUrl}}"],
+              "path": ["positive-note", "all-note"]
+            },
+            "description": "Get all notes for current user"
+          }
+        },
+        {
+          "name": "Get Recent Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/positive-note/recent-note",
+              "host": ["{{baseUrl}}"],
+              "path": ["positive-note", "recent-note"]
+            },
+            "description": "Get most recent note for current user"
+          }
+        },
+        {
+          "name": "Get Note by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/positive-note/note/{{noteId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["positive-note", "note", "{{noteId}}"]
+            },
+            "description": "Get specific note by ID"
+          }
+        },
+        {
+          "name": "Update Note",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "line1",
+                  "value": "เรื่องราวดี ๆ ที่แก้ไขแล้ว",
+                  "type": "text"
+                },
+                {
+                  "key": "line2",
+                  "value": "สิ่งเล็ก ๆ ที่แก้ไขแล้ว",
+                  "type": "text"
+                },
+                {
+                  "key": "line3",
+                  "value": "เรื่องราวที่แก้ไขแล้ว",
+                  "type": "text"
+                },
+                {
+                  "key": "mood",
+                  "value": "calm",
+                  "type": "text"
+                },
+                {
+                  "key": "showMessage",
+                  "value": "false",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/positive-note/note/{{noteId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["positive-note", "note", "{{noteId}}"]
+            },
+            "description": "Update existing note"
+          }
+        },
+        {
+          "name": "Get Community Notes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/positive-note/community-notes",
+              "host": ["{{baseUrl}}"],
+              "path": ["positive-note", "community-notes"]
+            },
+            "description": "Get all community notes (public notes)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quick Notes",
+      "item": [
+        {
+          "name": "Create Quick Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"thankMessage\": \"ขอบคุณสำหรับวันนี้ที่เต็มไปด้วยความสุข\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/quick-note",
+              "host": ["{{baseUrl}}"],
+              "path": ["quick-note"]
+            },
+            "description": "Create a quick thank you note"
+          }
+        },
+        {
+          "name": "Get All Quick Notes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/quick-note",
+              "host": ["{{baseUrl}}"],
+              "path": ["quick-note"]
+            },
+            "description": "Get all quick notes for current user"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Server Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "Check if server is running"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-generate test data if needed",
+          "if (!pm.variables.get('noteId')) {",
+          "    pm.variables.set('noteId', 'test-note-id-' + Date.now());",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Common test scripts",
+          "pm.test('Status code is successful', function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+          "});",
+          "",
+          "pm.test('Response time is less than 5000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});",
+          "",
+          "// Extract access token from cookies if present",
+          "if (pm.response.headers.get('Set-Cookie')) {",
+          "    const cookies = pm.response.headers.get('Set-Cookie');",
+          "    const accessTokenMatch = cookies.match(/access_token=([^;]+)/);",
+          "    if (accessTokenMatch) {",
+          "        pm.variables.set('accessToken', accessTokenMatch[1]);",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ]
+}

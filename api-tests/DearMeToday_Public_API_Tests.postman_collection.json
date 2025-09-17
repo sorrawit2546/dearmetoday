@@ -1,0 +1,87 @@
+{
+  "info": {
+    "name": "DearMeToday Public API Tests",
+    "description": "Public API Testing Collection for DearMeToday Application (No Authentication Required)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Server Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "Check if server is running"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public Endpoints",
+      "item": [
+        {
+          "name": "Get Community Notes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/positive-note/community-notes",
+              "host": ["{{baseUrl}}"],
+              "path": ["positive-note", "community-notes"]
+            },
+            "description": "Get all community notes (public notes)"
+          }
+        },
+        {
+          "name": "Google OAuth Login",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google"]
+            },
+            "description": "Initiate Google OAuth login"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Common test scripts for public APIs",
+          "pm.test('Status code is successful', function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 302]);",
+          "});",
+          "",
+          "pm.test('Response time is less than 5000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});",
+          "",
+          "pm.test('Response has content', function () {",
+          "    pm.expect(pm.response.text()).to.not.be.empty;",
+          "});"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "dearmetoday-api-tests",
+  "version": "1.0.0",
+  "description": "API Tests for DearMeToday Application using Newman",
+  "scripts": {
+    "test": "newman run DearMeToday_API_Tests.postman_collection.json -e DearMeToday_Environment.postman_environment.json",
+    "test:html": "newman run DearMeToday_API_Tests.postman_collection.json -e DearMeToday_Environment.postman_environment.json --reporters html --reporter-html-export test-report.html",
+    "test:json": "newman run DearMeToday_API_Tests.postman_collection.json -e DearMeToday_Environment.postman_environment.json --reporters json --reporter-json-export test-results.json",
+    "test:cli": "newman run DearMeToday_API_Tests.postman_collection.json -e DearMeToday_Environment.postman_environment.json --reporters cli",
+    "test:all": "newman run DearMeToday_API_Tests.postman_collection.json -e DearMeToday_Environment.postman_environment.json --reporters cli,json,html --reporter-json-export test-results.json --reporter-html-export test-report.html",
+    "test:verbose": "newman run DearMeToday_API_Tests.postman_collection.json -e DearMeToday_Environment.postman_environment.json --reporters cli --verbose",
+    "test:iteration": "newman run DearMeToday_API_Tests.postman_collection.json -e DearMeToday_Environment.postman_environment.json --iteration-count 3",
+    "test:delay": "newman run DearMeToday_API_Tests.postman_collection.json -e DearMeToday_Environment.postman_environment.json --delay-request 2000",
+    "install-newman": "npm install -g newman newman-reporter-html",
+    "run-tests": "./run-tests.sh"
+  },
+  "devDependencies": {
+    "newman": "^6.0.0",
+    "newman-reporter-html": "^1.0.5"
+  },
+  "keywords": [
+    "api-testing",
+    "newman",
+    "postman",
+    "dearmetoday",
+    "automation"
+  ],
+  "author": "DearMeToday Team",
+  "license": "MIT"
+}
