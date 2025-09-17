@@ -35,46 +35,68 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: RequestWithUser, @Res() res: Response) {
-    console.log('AuthController: Google callback received');
-    console.log('AuthController: User from Google:', req.user);
+    try {
+      console.log('AuthController: Google callback received');
+      console.log('AuthController: User from Google:', req.user);
 
-    const { accessToken } = await this.authService.loginWithGoogle(
-      req.user as GoogleUser,
-    );
-    const googleAccessToken = (req.user as GoogleUser).accessToken;
+      if (!req.user) {
+        console.error('AuthController: No user data from Google');
+        const frontendUrl =
+          this.config.get<string>('FRONTEND_URL') || 'http://localhost:4200';
+        return res.redirect(`${frontendUrl}/?error=auth_failed`);
+      }
 
-    console.log(
-      'AuthController: Access token generated:',
-      accessToken ? 'Yes' : 'No',
-    );
+      const { accessToken } = await this.authService.loginWithGoogle(
+        req.user as GoogleUser,
+      );
+      const googleAccessToken = (req.user as GoogleUser).accessToken;
 
-    // แก้ไข cookie configuration
-    const frontendUrl = this.config.get<string>('FRONTEND_URL');
-    const cookieDomain = this.config.get<string>('COOKIE_DOMAIN'); // e.g. localhost or your prod domain
-    const cookieSecure = this.config.get<string>('COOKIE_SECURE') === 'true';
-    const cookieSameSite = (this.config.get<string>('COOKIE_SAMESITE') ??
-      'lax') as 'lax' | 'strict' | 'none';
+      console.log(
+        'AuthController: Access token generated:',
+        accessToken ? 'Yes' : 'No',
+      );
 
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      sameSite: cookieSameSite,
-      secure: cookieSecure,
-      path: '/',
-      domain: cookieDomain,
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    });
+      if (!accessToken) {
+        console.error('AuthController: Failed to generate access token');
+        const frontendUrl =
+          this.config.get<string>('FRONTEND_URL') || 'http://localhost:4200';
+        return res.redirect(`${frontendUrl}/?error=token_generation_failed`);
+      }
 
-    res.cookie('google_access_token', googleAccessToken, {
-      httpOnly: true,
-      sameSite: cookieSameSite,
-      secure: cookieSecure,
-      path: '/',
-      domain: cookieDomain,
-      maxAge: 60 * 60 * 1000, // 1 ชั่วโมง (เท่ากับอายุ access_token)
-    });
+      // แก้ไข cookie configuration
+      const frontendUrl =
+        this.config.get<string>('FRONTEND_URL') || 'http://localhost:4200';
+      const cookieDomain = this.config.get<string>('COOKIE_DOMAIN'); // e.g. localhost or your prod domain
+      const cookieSecure = this.config.get<string>('COOKIE_SECURE') === 'true';
+      const cookieSameSite = (this.config.get<string>('COOKIE_SAMESITE') ??
+        'lax') as 'lax' | 'strict' | 'none';
 
-    console.log('AuthController: Cookie set, redirecting to dashboard');
-    res.redirect(`${frontendUrl}/dashboard`);
+      res.cookie('access_token', accessToken, {
+        httpOnly: true,
+        sameSite: cookieSameSite,
+        secure: cookieSecure,
+        path: '/',
+        domain: cookieDomain,
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      });
+
+      res.cookie('google_access_token', googleAccessToken, {
+        httpOnly: true,
+        sameSite: cookieSameSite,
+        secure: cookieSecure,
+        path: '/',
+        domain: cookieDomain,
+        maxAge: 60 * 60 * 1000, // 1 ชั่วโมง (เท่ากับอายุ access_token)
+      });
+
+      console.log('AuthController: Cookie set, redirecting to dashboard');
+      res.redirect(`${frontendUrl}/dashboard`);
+    } catch (error) {
+      console.error('AuthController: Error in Google callback:', error);
+      const frontendUrl =
+        this.config.get<string>('FRONTEND_URL') || 'http://localhost:4200';
+      res.redirect(`${frontendUrl}/?error=server_error`);
+    }
   }
 
   @Post('logout')

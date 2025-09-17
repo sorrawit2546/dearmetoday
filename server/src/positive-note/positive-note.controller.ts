@@ -12,10 +12,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  AnyFilesInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { Entry } from '@prisma/client';
 import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
@@ -47,8 +44,24 @@ export class PositiveNoteController {
   BASE_URL = process.env.SERVER_URL;
 
   @Patch('note/:id')
-  @UseInterceptors(AnyFilesInterceptor())
+  @UseInterceptors(
+    FilesInterceptor('imageUrls', 10, {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (
+          req: Request,
+          file: Express.Multer.File,
+          cb: (error: Error | null, filename: string) => void,
+        ) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, uniqueSuffix + extname(file.originalname));
+        },
+      }),
+    }),
+  )
   async editPositiveNoteByNoteId(
+    @UploadedFiles() files: Express.Multer.File[],
     @Req() req: Request,
     @Param('id') noteId: string,
     @Body() body: any, // ← ต้องเป็น any เพื่อรับจาก FormData
@@ -64,12 +77,40 @@ export class PositiveNoteController {
 
     // ✅ แปลง string กลับเป็น type ที่ต้องการ
     const Dto: Partial<UpdatePositiveNoteDto> = {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       line1: body?.line1 ?? undefined,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       line2: body?.line2 ?? undefined,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       line3: body?.line3 ?? undefined,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       mood: body?.mood ?? undefined,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       showMessage: body?.showMessage ? body.showMessage === 'true' : undefined,
     };
+
+    // Handle image URLs (existing + new)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (body?.existingImageUrls || files?.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      const existingUrls = Array.isArray(body.existingImageUrls)
+        ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          body.existingImageUrls
+        : // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          body.existingImageUrls
+          ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            [body.existingImageUrls]
+          : [];
+
+      // Generate URLs for new uploaded files
+      const newImageUrls = files.map(
+        (file) => `${this.BASE_URL}/uploads/${file.filename}`,
+      );
+
+      // Combine existing and new image URLs
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      Dto.imageUrls = [...existingUrls, ...newImageUrls];
+    }
 
     return await this.positivenoteService.editPositiveNoteById(
       noteId,
