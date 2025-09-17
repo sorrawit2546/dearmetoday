@@ -3,8 +3,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
   signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -18,7 +20,7 @@ import { Api } from '../services/api';
   templateUrl: './note-card-all.html',
   styleUrls: ['./note-card-all.css'],
 })
-export class NoteCardAll implements OnInit {
+export class NoteCardAll implements OnInit, OnChanges {
   @Input() id!: string;
   @Input() date!: string;
   @Input() line1: string = '';
@@ -32,6 +34,7 @@ export class NoteCardAll implements OnInit {
 
   @Input() isActive = false;
   @Output() isActiveChange = new EventEmitter<boolean>();
+  @Output() cardClick = new EventEmitter<void>();
 
   // Local state สำหรับ toggle
   private _localIsActive = false;
@@ -82,6 +85,13 @@ export class NoteCardAll implements OnInit {
     this._localIsActive = this.isActive;
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['isActive']) {
+      // Sync local state กับ input เมื่อ parent อัพเดต
+      this._localIsActive = changes['isActive'].currentValue;
+    }
+  }
+
   // Getter สำหรับแสดงผลใน template
   get displayIsActive(): boolean {
     return this._localIsActive;
@@ -104,6 +114,22 @@ export class NoteCardAll implements OnInit {
     const activeEl = document.activeElement as HTMLElement | null;
     if (activeEl && activeEl.closest('.dropdown')) {
       activeEl.blur();
+    }
+  }
+
+  onCardClick(event: Event): void {
+    // ตรวจสอบว่าไม่ได้คลิกที่ dropdown หรือปุ่มอื่น ๆ
+    const target = event.target as HTMLElement;
+    const isDropdownClick =
+      target.closest('.dropdown') ||
+      target.closest('button') ||
+      target.closest('input') ||
+      target.closest('label') ||
+      target.closest('svg') ||
+      target.closest('path');
+
+    if (!isDropdownClick) {
+      this.cardClick.emit();
     }
   }
 

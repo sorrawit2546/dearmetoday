@@ -1,0 +1,144 @@
+<section class="relative overflow-hidden">
+  <!-- Soft background + depth balls -->
+  <div
+    class="absolute inset-0 bg-gradient-to-b from-white via-white to-[#dcebfa]"
+  ></div>
+  <div
+    class="pointer-events-none absolute -top-24 -left-32 h-[28rem] w-[28rem] rounded-full bg-blue-200 blur-3xl opacity-25"
+  ></div>
+  <div
+    class="pointer-events-none absolute top-44 -right-40 h-[24rem] w-[24rem] rounded-full bg-blue-300 blur-3xl opacity-20"
+  ></div>
+
+  <div class="relative mx-auto max-w-6xl px-6 pt-20 pb-16">
+    <a
+          href="/"
+          class="px-4 py-2 rounded-full bg-white text-blue-600 border border-gray-200 shadow-sm hover:shadow-md"
+          >Back</a
+        >
+    <!-- Header -->
+    <header class="mx-auto max-w-3xl text-center">
+      <div class="flex justify-center">
+        <img
+          src="assets/images/dearme,logo.png"
+          alt=""
+          class="h-10 w-16 md:h-20 md:w-32 mb-4"
+        />
+      </div>
+
+      <h1
+        class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-800"
+      >
+        Dear me, Today
+      </h1>
+      <p class="mt-5 text-lg md:text-xl leading-relaxed text-slate-600">
+        พื้นที่เล็ก ๆ สำหรับบันทึกเชิงบวก ที่ช่วยให้เราหยุดพักจากความวุ่นวาย
+        หันกลับมาทบทวนตัวเองแบบสั้น ๆ แต่ลึกซึ้ง
+        เติมพลังใจและความสม่ำเสมอในทุกวัน
+      </p>
+
+      <!-- Top nav -->
+      <nav class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <a
+          href="#concept"
+          class="px-4 py-2 rounded-full bg-white text-blue-600 border border-gray-200 shadow-sm hover:shadow-md"
+          >Concept</a
+        >
+        <a
+          href="#features"
+          class="px-4 py-2 rounded-full bg-white text-blue-600 border border-gray-200 shadow-sm hover:shadow-md"
+          >Features</a
+        >
+        <a
+          href="#community"
+          class="px-4 py-2 rounded-full bg-white text-blue-600 border border-gray-200 shadow-sm hover:shadow-md"
+          >Community</a
+        >
+        <a
+          href="#vision"
+          class="px-4 py-2 rounded-full bg-white text-blue-600 border border-gray-200 shadow-sm hover:shadow-md"
+          >Vision</a
+        >
+      </nav>
+    </header>
+
+    <!-- Concept -->
+    <section id="concept" class="mt-16 md:mt-24">
+      <h2 class="text-2xl md:text-3xl font-bold text-blue-700">Concept</h2>
+      <p class="mt-3 text-slate-600">แก่นของ Dear me, Today</p>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          *ngFor="let item of concept"
+          class="rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 p-6 shadow-lg transition transform hover:-translate-y-1"
+        >
+          <h3 class="font-semibold text-blue-600">{{ item.title }}</h3>
+          <p class="mt-2 leading-relaxed text-slate-600">{{ item.desc }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="mt-16 md:mt-24">
+      <h2 class="text-2xl md:text-3xl font-bold text-blue-700">Features</h2>
+      <p class="mt-3 text-slate-600">สิ่งที่คุณทำได้ใน Dear me, Today</p>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          *ngFor="let f of features"
+          class="rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 p-6 shadow-lg transition transform hover:-translate-y-1"
+        >
+          <h3 class="font-semibold text-blue-600">{{ f.title }}</h3>
+          <p class="mt-2 leading-relaxed text-slate-600">{{ f.desc }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Community -->
+    <section id="community" class="mt-16 md:mt-24">
+      <h2 class="text-2xl md:text-3xl font-bold text-blue-700">Community</h2>
+      <p class="mt-3 text-slate-600">แบ่งปันเรื่องราว และเติบโตไปด้วยกัน</p>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          *ngFor="let c of community"
+          class="rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 p-6 shadow-lg transition transform hover:-translate-y-1"
+        >
+          <h3 class="font-semibold text-blue-600">{{ c.title }}</h3>
+          <p class="mt-2 leading-relaxed text-slate-600">{{ c.desc }}</p>
+        </div>
+      </div>
+
+      <div class="mt-10 flex items-center justify-center">
+        <a
+          routerLink="/community"
+          class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-blue-500 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition"
+        >
+          เริ่มแบ่งปันเรื่องราวของคุณ
+        </a>
+      </div>
+    </section>
+
+    <!-- Vision -->
+    <section id="vision" class="mt-16 md:mt-24">
+      <div
+        class="rounded-3xl bg-white/80 backdrop-blur-md border border-white/60 p-8 md:p-12 shadow-lg"
+      >
+        <h2 class="text-2xl md:text-3xl font-bold text-blue-700">Vision</h2>
+        <p class="mt-4 leading-relaxed text-slate-700 text-2xl">
+          “อยากให้ที่นี่เป็นมุมสงบเล็ก ๆ ที่ช่วยให้ใครสักคนได้หยุดพัก
+          หันกลับมารับฟังตัวเองวันละนิด แล้วค่อย ๆ เติบโตอย่างมั่นคง
+          ด้วยความใส่ใจตัวเองในทุก ๆ วัน”
+        </p>
+        <div class="mt-8">
+          <a
+            routerLink="/notes/new"
+            class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-blue-500 text-white font-semibold shadow-md hover:shadow-lg hover:scale-105 transition"
+          >
+            เริ่มต้นบันทึกเลยวันนี้
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>

@@ -1,7 +1,4 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ToastService } from '../../services/toast.service';
-import { ToastComponent } from '../../components/toast/toast.component';
 import {
   ChangeDetectorRef,
   Component,
@@ -12,21 +9,22 @@ import {
   computed,
   effect,
   inject,
-  resource,
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, firstValueFrom } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { Footer } from '../../components/footer/footer';
+import { Header } from '../../components/header/header';
 import { NoteForm } from '../../components/note-form/note-form';
+import { ToastComponent } from '../../components/toast/toast.component';
 import { entryNote } from '../../model/entry-note';
 import { NoteCardAll } from '../../note-card-all/note-card-all';
 import { NoteCardComponent } from '../../note-card/note-card';
 import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
-import { Header } from '../../components/header/header';
-import { HeroSection } from '../../components/hero-section/hero-section';
-import { Footer } from '../../components/footer/footer';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -81,7 +79,9 @@ export class Dashboard implements OnInit, OnDestroy {
     return u && this.refreshTrigger() > 0;
   });
 
-  openNoteForm(): void { this.showNoteForm.set(true); }
+  openNoteForm(): void {
+    this.showNoteForm.set(true);
+  }
 
   // Recent / all note
   entry_recent_note = signal<entryNote>({
@@ -165,10 +165,8 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   updateNoteIsActive(id: string, newValue: boolean) {
-    this.itemsNoteSearch.update(notes =>
-      notes.map(n =>
-        n.id === id ? { ...n, isActive: newValue } : n
-      )
+    this.itemsNoteSearch.update((notes) =>
+      notes.map((n) => (n.id === id ? { ...n, isActive: newValue } : n))
     );
   }
 
@@ -272,6 +270,12 @@ export class Dashboard implements OnInit, OnDestroy {
   toggleCard(index: number) {
     const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
     this.activeCard = this.activeCard === globalIndex ? null : globalIndex;
+  }
+
+  // Helper method to check if a card is active
+  isCardActive(index: number): boolean {
+    const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
+    return this.activeCard === globalIndex;
   }
 
   goToPage(page: number) {
@@ -390,9 +394,8 @@ export class Dashboard implements OnInit, OnDestroy {
         });
         this.loadNotesCount();
       },
-      error: (err) => console.error('Error updating notes after creation:', err),
+      error: (err) =>
+        console.error('Error updating notes after creation:', err),
     });
   }
 }
-
-

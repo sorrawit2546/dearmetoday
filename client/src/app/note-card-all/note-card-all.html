@@ -1,6 +1,7 @@
 <div class="grid gap-4 max-w-6xl mx-auto">
   <div
     class="p-4 rounded-3xl border border-gray-200 bg-white cursor-pointer transition-all duration-300 ease-in-out"
+    (click)="onCardClick($event)"
   >
     <div
       class="flex justify-end dropdown dropdown-right dropdown-end"
@@ -140,11 +141,11 @@
         <div class="text-blue-500">
           เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้
         </div>
-        {{ displayIsActive ? (line1 ?? '') : ((line1?.length ?? 0) > 50 ? (line1 |
+        {{ displayIsActive  ? (line1 ?? '') : ((line1?.length ?? 0) > 50 ? (line1 |
         slice:0:50) + '...' : (line1 ?? '')) }}
       </div>
       <div class="py-1 whitespace-pre-line mt-2">
-        <div class="text-blue-500">สิ่งเล็ก ๆ ที่ทำให้คุณยิ้มได้ในวันนี้</div>
+        <div class="text-blue-500">สิ่งเล็ก ๆ ที่ทำให้ยิ้มได้ในวันนี้</div>
         {{ displayIsActive ? (line2 ?? '') : ((line2?.length ?? 0) > 50 ? (line2 |
         slice:0:50) + '...' : (line2 ?? '')) }}
       </div>
