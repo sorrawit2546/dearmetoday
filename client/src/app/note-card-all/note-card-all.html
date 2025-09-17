@@ -31,20 +31,23 @@
         tabindex="0"
         class="rounded-lg dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow"
       >
-        <div class="flex flex-row ml-3 my-2">
-          <img src="assets/images/public.svg" alt="" class="w-6 h-6 mr-1" />
-          <label
-            class="relative inline-flex items-center cursor-pointer flex-row"
-          >
-            <input type="checkbox" class="sr-only peer" [checked]="isActive" />
-            <div
-              class="w-12 h-6 bg-red-400 rounded-full peer peer-checked:bg-blue-500 transition-colors duration-300"
-            ></div>
-            <span
-              class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6"
-            ></span>
-          </label>
-        </div>
+      <div class="flex flex-row ml-3 my-2">
+        <img src="assets/images/public.svg" alt="" class="w-6 h-6 mr-1" />
+        <label class="relative inline-flex items-center cursor-pointer flex-row">
+          <input
+            type="checkbox"
+            class="sr-only peer"
+            [checked]="displayIsActive"
+            (change)="toggleActive()"
+          />
+          <div
+            class="w-12 h-6 bg-red-400 rounded-full peer-checked:bg-blue-500 transition-colors duration-300"
+          ></div>
+          <span
+            class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6"
+          ></span>
+        </label>
+      </div>
         <li><a (click)="closeDropdown(); openNoteForm()" class="hover:rounded-lg">Edit</a></li>
         <li><a class="hover:rounded-lg text-red-500">Delete</a></li>
       </ul>
@@ -137,17 +140,17 @@
         <div class="text-blue-500">
           เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้
         </div>
-        {{ isActive ? (line1 ?? '') : ((line1?.length ?? 0) > 50 ? (line1 |
+        {{ displayIsActive ? (line1 ?? '') : ((line1?.length ?? 0) > 50 ? (line1 |
         slice:0:50) + '...' : (line1 ?? '')) }}
       </div>
       <div class="py-1 whitespace-pre-line mt-2">
         <div class="text-blue-500">สิ่งเล็ก ๆ ที่ทำให้คุณยิ้มได้ในวันนี้</div>
-        {{ isActive ? (line2 ?? '') : ((line2?.length ?? 0) > 50 ? (line2 |
+        {{ displayIsActive ? (line2 ?? '') : ((line2?.length ?? 0) > 50 ? (line2 |
         slice:0:50) + '...' : (line2 ?? '')) }}
       </div>
       <div class="py-1 whitespace-pre-line mt-2">
         <div class="text-blue-500">เรื่องราวที่ทำให้รู้สึกภูมิใจ</div>
-        {{ isActive ? (line3 ?? '') : ((line3?.length ?? 0) > 50 ? (line3 |
+        {{ displayIsActive ? (line3 ?? '') : ((line3?.length ?? 0) > 50 ? (line3 |
         slice:0:50) + '...' : (line3 ?? '')) }}
       </div>
 

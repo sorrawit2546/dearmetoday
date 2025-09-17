@@ -45,6 +45,7 @@ import { Footer } from '../../components/footer/footer';
   styleUrls: ['./dashboard.css'],
 })
 export class Dashboard implements OnInit, OnDestroy {
+  // Services
   private authSubscription: Subscription | null = null;
   private authService = inject(AuthService);
   private apiService = inject(Api);
@@ -52,8 +53,9 @@ export class Dashboard implements OnInit, OnDestroy {
   private router = inject(Router);
   private ngZone = inject(NgZone);
   private cdr = inject(ChangeDetectorRef);
+  private toastService = inject(ToastService);
 
-  // Modern Signal-based state management
+  // State signals
   user = toSignal(this.authService.currentUser$, { initialValue: null });
   isAuthed = computed(() => !!this.user());
   quickNoteFromLocalStorage = signal<string>('');
@@ -63,97 +65,25 @@ export class Dashboard implements OnInit, OnDestroy {
   retryCount = signal<number>(0);
   maxRetries = 3;
   countNote = signal<number>(0);
-  itemsNoteSearch = signal<entryNote[]>([]);
+  itemsNoteSearch = signal<(entryNote & { isActive: boolean })[]>([]);
   searchTerm = signal('');
   searchDate = signal('');
-  // Pagination properties
+
+  // Pagination
   currentPage = signal(1);
   itemsPerPage = 9;
   activeCard: number | null = null;
-  
 
-  toggleCard(index: number) {
-    // Convert paginated index to global index
-    const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
-    this.activeCard = this.activeCard === globalIndex ? null : globalIndex;
-  }
-
-  // จำนวนหน้าทั้งหมด
-  totalPages = computed(() => {
-    const all = this.filteredItems();
-    return Math.ceil(all.length / this.itemsPerPage);
-  });
-
-  // ข้อมูลเฉพาะหน้าปัจจุบัน
-  paginatedPosts = computed(() => {
-    const all = this.filteredItems();
-    const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
-    return all.slice(startIndex, startIndex + this.itemsPerPage);
-  });
-
-  // Pagination methods
-  goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPages()) {
-      this.currentPage.set(page);
-      this.activeCard = null; // Reset active card when changing pages
-    }
-  }
-
-  nextPage() {
-    if (this.currentPage() < this.totalPages()) {
-      this.goToPage(this.currentPage() + 1);
-    }
-  }
-
-  previousPage() {
-    if (this.currentPage() > 1) {
-      this.goToPage(this.currentPage() - 1);
-    }
-  }
-
-  // Generate page numbers for pagination
-  getPageNumbers(): number[] {
-    const total = this.totalPages();
-    const current = this.currentPage();
-    const pages: number[] = [];
-
-    // Show up to 5 page numbers
-    const maxVisible = 5;
-    let start = Math.max(1, current - Math.floor(maxVisible / 2));
-    let end = Math.min(total, start + maxVisible - 1);
-
-    // Adjust start if we're near the end
-    if (end - start + 1 < maxVisible) {
-      start = Math.max(1, end - maxVisible + 1);
-    }
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  }
-
-  filteredItems = computed(() => {
-    const term = this.searchTerm().toLowerCase().trim();
-    const date = this.searchDate().trim();
-
-    return this.itemsNoteSearch().filter((item) => {
-      const matchText =
-        !term ||
-        item.id.toLowerCase().includes(term) ||
-        (item.line1 ?? '').toLowerCase().includes(term) ||
-        (item.line2 ?? '').toLowerCase().includes(term) ||
-        (item.line3 ?? '').toLowerCase().includes(term) ||
-        (item.mood ?? '').toLowerCase().includes(term);
-      return matchText;
-    });
-  });
-
-  // Trigger signal สำหรับ refresh data
+  // Refresh triggers
   private refreshTrigger = signal<number>(0);
+  private shouldRefresh = computed(() => {
+    const u = this.user();
+    return u && this.refreshTrigger() > 0;
+  });
 
-  // Signal-based recent note
+  openNoteForm(): void { this.showNoteForm.set(true); }
+
+  // Recent / all note
   entry_recent_note = signal<entryNote>({
     id: '',
     email: '',
@@ -178,38 +108,35 @@ export class Dashboard implements OnInit, OnDestroy {
     showMessage: false,
   });
 
-  // Computed values
-  hasRecentNote = computed(() => {
-    const note = this.entry_recent_note();
-    return note.id !== '' && note.line1 !== '';
-  });
-  hasAllNote = computed(() => {
-    const note = this.entry_all_note();
-    return note.id !== '' && note.line1 !== '';
-  });
-
-  // Computed signal สำหรับ trigger refresh
-  private shouldRefresh = computed(() => {
-    const u = this.user();
-    const trigger = this.refreshTrigger();
-    return u && trigger > 0;
-  });
+  hasRecentNote = computed(() => this.entry_recent_note().id !== '');
+  hasAllNote = computed(() => this.entry_all_note().id !== '');
 
   // Modal state
   showNoteForm = signal<boolean>(false);
 
-  constructor(private toastService: ToastService) {
-    // Modern effect with automatic cleanup
+  constructor() {
+    // โหลด notes ครั้งแรก
     effect(() => {
-      const all = this.itemsNoteSearch();
-      console.log(all);
-      const u = this.user();
-      console.log('Effect triggered, user:', u);
+      this.apiService.getAllNoteByUserId().subscribe({
+        next: (res) => this.itemsNoteSearch.set(this.normalizeNotes(res)),
+      });
+    });
 
-      if (u) {
+    // เมื่อมีการแก้ไข note ที่ไหนก็ reload
+    this.apiService.positiveNoteChanged$.subscribe(() => {
+      this.ngZone.run(() => {
+        this.apiService.getAllNoteByUserId().subscribe({
+          next: (res) => this.itemsNoteSearch.set(this.normalizeNotes(res)),
+        });
+        this.loadRecentNote();
+        this.loadNotesCount();
+      });
+    });
+
+    // โหลดข้อมูลเมื่อ user พร้อม
+    effect(() => {
+      if (this.user()) {
         this.isLoading.set(false);
-        this.error.set(null);
-        console.log('Loading notes for user:', u.name);
         this.loadNotesCount();
         this.loadRecentNote();
       } else if (!this.isLoading()) {
@@ -217,27 +144,9 @@ export class Dashboard implements OnInit, OnDestroy {
       }
     });
 
+    // refresh trigger
     effect(() => {
-      this.apiService.getAllNoteByUserId().subscribe({
-        next: (res) => this.itemsNoteSearch.set(res),
-      });
-    });
-
-    // เมื่อมีการแก้ไข/สร้าง positive note ที่ไหนก็ได้ → รีโหลดทันที
-    this.apiService.positiveNoteChanged$.subscribe(() => {
-      this.ngZone.run(() => {
-        this.apiService.getAllNoteByUserId().subscribe({
-          next: (res) => this.itemsNoteSearch.set(res),
-        });
-        this.loadRecentNote();
-        this.loadNotesCount();
-      });
-    });
-
-    // Effect ที่ใช้ computed signal สำหรับ refresh data
-    effect(() => {
-      const shouldRefresh = this.shouldRefresh();
-      if (shouldRefresh) {
+      if (this.shouldRefresh()) {
         this.loadNotesCount();
         this.loadRecentNote();
       }
@@ -246,9 +155,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const currentUser = this.authService.getCurrentUser();
-    if (!currentUser) {
-      this.authService.checkAuthState();
-    }
+    if (!currentUser) this.authService.checkAuthState();
     this.saveThankInLocalStorage();
     setTimeout(() => {
       if (isPlatformBrowser(this.platformId) && this.isAuthed()) {
@@ -257,15 +164,37 @@ export class Dashboard implements OnInit, OnDestroy {
     }, 100);
   }
 
-  ngOnDestroy(): void {
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
+  updateNoteIsActive(id: string, newValue: boolean) {
+    this.itemsNoteSearch.update(notes =>
+      notes.map(n =>
+        n.id === id ? { ...n, isActive: newValue } : n
+      )
+    );
   }
 
-  notes = resource({
-    loader: () => firstValueFrom(this.apiService.getAllNoteByUserId()),
-  });
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
+  }
+
+  // --------------------------
+  // 📌 Utility
+  // --------------------------
+
+  private normalizeNotes(res: entryNote[]) {
+    return res.map((n) => ({
+      ...n,
+      isActive: (n as any).isActive ?? (n as any).showMessage ?? false,
+    }));
+  }
+
+  refreshData(): void {
+    this.refreshTrigger.update((n) => n + 1);
+  }
+
+  retry(): void {
+    this.retryCount.set(0);
+    this.authService.checkAuthState();
+  }
 
   saveThankInLocalStorage() {
     if (isPlatformBrowser(this.platformId)) {
@@ -275,7 +204,7 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
-  public flushFromLocal() {
+  flushFromLocal() {
     if (!isPlatformBrowser(this.platformId)) return;
     const saved = localStorage.getItem('quick-note');
     if (!saved?.trim()) return;
@@ -287,69 +216,114 @@ export class Dashboard implements OnInit, OnDestroy {
     this.pending.set(true);
     this.error.set(null);
     this.apiService.createQuickNote({ thankMessage: msg }).subscribe({
-      next: (res) => {
+      next: () => {
         if (isPlatformBrowser(this.platformId)) {
           localStorage.removeItem('quick-note');
         }
         this.pending.set(false);
         this.toastService.showToast('เก็บคำขอบคุณอันมีค่าเรียบร้อย! :)', false);
       },
-      error: (err) => {
-        // ส่งไม่สำเร็จ → ค้างไว้ใน local ให้ลองใหม่
+      error: () => {
         this.error.set('ส่งไม่สำเร็จ—เก็บไว้ในเครื่องแล้ว');
       },
     });
   }
 
-  // Method สำหรับ refresh data
-  refreshData(): void {
-    this.refreshTrigger.update((trigger) => trigger + 1);
+  // --------------------------
+  // 📌 Pagination
+  // --------------------------
+
+  filteredItems = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    return this.itemsNoteSearch().filter((item) => {
+      return (
+        !term ||
+        item.id.toLowerCase().includes(term) ||
+        (item.line1 ?? '').toLowerCase().includes(term) ||
+        (item.line2 ?? '').toLowerCase().includes(term) ||
+        (item.line3 ?? '').toLowerCase().includes(term) ||
+        (item.mood ?? '').toLowerCase().includes(term)
+      );
+    });
+  });
+
+  paginatedPosts = computed(() => {
+    const all = this.filteredItems();
+    const start = (this.currentPage() - 1) * this.itemsPerPage;
+    return all.slice(start, start + this.itemsPerPage);
+  });
+
+  totalPages = computed(() =>
+    Math.ceil(this.filteredItems().length / this.itemsPerPage)
+  );
+
+  getPageNumbers(): number[] {
+    const total = this.totalPages();
+    const current = this.currentPage();
+    const pages: number[] = [];
+    const maxVisible = 5;
+    let start = Math.max(1, current - Math.floor(maxVisible / 2));
+    let end = Math.min(total, start + maxVisible - 1);
+    if (end - start + 1 < maxVisible) start = Math.max(1, end - maxVisible + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
   }
 
-  reloadNotes() {
-    this.apiService.getPositiveNotes().subscribe(notes => {
-      this.notes = notes;
-    });
+  toggleCard(index: number) {
+    const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
+    this.activeCard = this.activeCard === globalIndex ? null : globalIndex;
   }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+      this.activeCard = null;
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.goToPage(this.currentPage() + 1);
+    }
+  }
+
+  previousPage() {
+    if (this.currentPage() > 1) {
+      this.goToPage(this.currentPage() - 1);
+    }
+  }
+
+  // --------------------------
+  // 📌 Notes
+  // --------------------------
 
   loadRecentNote(): void {
-    console.log('Loading recent note...');
     this.apiService.getRecentNoteByUserId().subscribe({
-      next: (response) => {
-        console.log('Recent note response:', response);
-        this.ngZone.run(() => {
-          const note = response as Partial<entryNote> & {
-            createdAt?: string | Date;
-          };
-          const updatedNote: entryNote = {
-            id: note.id ?? '',
-            email: note.email ?? '',
-            line1: note.line1 ?? '',
-            line2: note.line2 ?? '',
-            line3: note.line3 ?? '',
-            imageUrls: Array.isArray(note.imageUrls) ? note.imageUrls : [],
-            mood: (note as any).mood ?? '',
-            createdAt: note.createdAt ? new Date(note.createdAt) : new Date(),
-            showMessage: note.showMessage ?? false,
-          };
-
-          console.log('Updated entry_recent_note:', updatedNote);
-          this.entry_recent_note.set(updatedNote);
+      next: (res) => {
+        const note = res as any;
+        this.entry_recent_note.set({
+          id: note.id ?? '',
+          email: note.email ?? '',
+          line1: note.line1 ?? '',
+          line2: note.line2 ?? '',
+          line3: note.line3 ?? '',
+          imageUrls: note.imageUrls ?? [],
+          mood: note.mood ?? '',
+          createdAt: note.createdAt ? new Date(note.createdAt) : new Date(),
+          showMessage: note.showMessage ?? false,
         });
       },
       error: () => {
-        this.ngZone.run(() => {
-          this.entry_recent_note.set({
-            id: '',
-            email: '',
-            line1: '',
-            line2: '',
-            line3: '',
-            imageUrls: [],
-            mood: '',
-            createdAt: new Date(),
-            showMessage: false,
-          });
+        this.entry_recent_note.set({
+          id: '',
+          email: '',
+          line1: '',
+          line2: '',
+          line3: '',
+          imageUrls: [],
+          mood: '',
+          createdAt: new Date(),
+          showMessage: false,
         });
       },
     });
@@ -357,92 +331,68 @@ export class Dashboard implements OnInit, OnDestroy {
 
   loadNotesCount(): void {
     this.apiService.getPositiveNotesByUserId().subscribe({
-      next: (response) => {
-        this.ngZone.run(() => {
-          this.countNote.set(response.data.countNote);
-          console.log('Notes count updated:', this.countNote());
-        });
-      },
-      error: (err) => {
-        console.error('Error loading notes count:', err);
-        this.ngZone.run(() => {
-          this.countNote.set(0);
-        });
-      },
+      next: (res) => this.countNote.set(res.data.countNote),
+      error: () => this.countNote.set(0),
     });
-  }
-
-  openNoteForm(): void {
-    this.showNoteForm.set(true);
   }
 
   closeNoteForm(): void {
     this.showNoteForm.set(false);
-    // Refresh data หลังจากปิด form ให้รีโหลดทั้งหมดทันที
     this.apiService.getAllNoteByUserId().subscribe({
       next: (res) => {
         this.ngZone.run(() => {
-          this.itemsNoteSearch.set(res);
+          this.itemsNoteSearch.set(this.normalizeNotes(res));
           this.cdr.detectChanges();
         });
       },
     });
     this.loadRecentNote();
     this.loadNotesCount();
-    // บังคับให้ตรวจจับการเปลี่ยนแปลงทันที
-    this.cdr.detectChanges();
   }
 
   onNoteUpdated(updated: entryNote): void {
-    // อัปเดตรายการในแคชทันที
     let found = false;
-    this.itemsNoteSearch.update((notes) => {
-      const mapped = notes.map((n) => {
+    this.itemsNoteSearch.update((notes) =>
+      notes.map((n) => {
         if (n.id === updated.id) {
           found = true;
-          return updated;
+          return {
+            ...updated,
+            isActive:
+              (updated as any).isActive ??
+              (n as any).isActive ??
+              (updated as any).showMessage ??
+              false,
+          };
         }
         return n;
-      });
-      return mapped;
-    });
+      })
+    );
 
-    // ถ้าไม่พบในแคช ให้รีโหลดจากเซิร์ฟเวอร์ (ป้องกันกรณีรายการไม่ครบ/เพจอื่น)
     if (!found) {
       this.apiService.getAllNoteByUserId().subscribe({
-        next: (res) => this.itemsNoteSearch.set(res),
+        next: (res) => this.itemsNoteSearch.set(this.normalizeNotes(res)),
       });
     }
 
-    // อัปเดต recent note และนับจำนวนอีกครั้ง
     this.loadRecentNote();
     this.loadNotesCount();
-
-    // ปิดฟอร์ม
     this.showNoteForm.set(false);
-    // บังคับให้ตรวจจับการเปลี่ยนแปลงทันที
     this.cdr.detectChanges();
   }
-
 
   onNoteCreated(): void {
     this.apiService.getAllNoteByUserId().subscribe({
       next: (res) => {
-        console.log('Reload notes from server:', res); // <--- ดูตรงนี้
         this.ngZone.run(() => {
-          this.itemsNoteSearch.set(res);
+          this.itemsNoteSearch.set(this.normalizeNotes(res));
           this.cdr.detectChanges();
         });
         this.loadNotesCount();
       },
-      error: (err) => {
-        console.error('Error updating notes after creation:', err);
-      },
+      error: (err) => console.error('Error updating notes after creation:', err),
     });
   }
-
-  retry(): void {
-    this.retryCount.set(0);
-    this.authService.checkAuthState();
-  }
 }
+
+

@@ -120,7 +120,8 @@
           [line3]="note.line3"
           [mood]="note.mood"
           [photos]="note.imageUrls"
-          [isActive]="note.showMessage"
+          [isActive]="note.isActive"
+          (isActiveChange)="updateNoteIsActive(note.id, $event)"
           class="w-full my-2 pr-2"
         >
         </app-note-card-all>
@@ -148,7 +149,11 @@
         (click)="$event.stopPropagation()"
       >
         <div class="cat2"></div>
-        <app-note-form (noteCreated)="onNoteUpdated($event)" (closed)="closeNoteForm()"> </app-note-form>
+        <app-note-form
+          (noteCreated)="onNoteUpdated($event)"
+          (closed)="closeNoteForm()"
+        >
+        </app-note-form>
       </div>
     </div>
 

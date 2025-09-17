@@ -67,7 +67,8 @@ export class PositiveNoteController {
       line1: body?.line1 ?? undefined,
       line2: body?.line2 ?? undefined,
       line3: body?.line3 ?? undefined,
-      mood:  body?.mood  ?? undefined,
+      mood: body?.mood ?? undefined,
+      showMessage: body?.showMessage ? body.showMessage === 'true' : undefined,
     };
 
     return await this.positivenoteService.editPositiveNoteById(

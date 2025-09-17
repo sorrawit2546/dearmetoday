@@ -1,8 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, input, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
-import { sign } from 'node:crypto';
 import { NoteForm } from '../components/note-form/note-form';
+import { Api } from '../services/api';
 
 @Component({
   selector: 'app-note-card-all',
@@ -11,8 +18,7 @@ import { NoteForm } from '../components/note-form/note-form';
   templateUrl: './note-card-all.html',
   styleUrls: ['./note-card-all.css'],
 })
-export class NoteCardAll implements OnChanges {
-  // date = input<string>;
+export class NoteCardAll implements OnInit {
   @Input() id!: string;
   @Input() date!: string;
   @Input() line1: string = '';
@@ -21,11 +27,48 @@ export class NoteCardAll implements OnChanges {
   @Input() mood!: string;
   @Input() email!: string;
   @Input() photos: string[] = [];
-  //optional
   @Input() name?: string;
   @Input() avatarUrl?: string;
-  //
+
   @Input() isActive = false;
+  @Output() isActiveChange = new EventEmitter<boolean>();
+
+  // Local state สำหรับ toggle
+  private _localIsActive = false;
+  private _isToggling = false;
+
+  constructor(private router: Router, private apiService: Api) {
+    this.isCommunity = this.router.url.includes('/community');
+  }
+
+  toggleActive() {
+    // ป้องกันการ toggle ซ้ำ
+    if (this._isToggling) return;
+    this._isToggling = true;
+
+    // ใช้ local state แทน input state
+    this._localIsActive = !this._localIsActive;
+
+    // แจ้ง parent
+    this.isActiveChange.emit(this._localIsActive);
+
+    // ยิง API
+    const formData = new FormData();
+    formData.append('showMessage', String(this._localIsActive));
+    this.apiService.editPositiveNoteById(this.id, formData).subscribe({
+      next: () => {
+        console.log('isActive updated on server');
+        this._isToggling = false;
+      },
+      error: (err) => {
+        console.error('Failed to update isActive', err);
+        // revert กลับถ้า error
+        this._localIsActive = !this._localIsActive;
+        this.isActiveChange.emit(this._localIsActive);
+        this._isToggling = false;
+      },
+    });
+  }
 
   isCommunity = false;
   showNoteForm = signal<boolean>(false);
@@ -34,12 +77,14 @@ export class NoteCardAll implements OnChanges {
     this.refreshTrigger.update((trigger) => trigger + 1);
   }
 
-  constructor(private router: Router) {
-    this.isCommunity = this.router.url.includes('/community');
+  ngOnInit() {
+    // Initialize local state จาก input
+    this._localIsActive = this.isActive;
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    console.log('NoteCardAll ngOnChanges:', changes);
+  // Getter สำหรับแสดงผลใน template
+  get displayIsActive(): boolean {
+    return this._localIsActive;
   }
 
   currentIndex = 0;
@@ -52,14 +97,13 @@ export class NoteCardAll implements OnChanges {
 
   closeNoteForm(): void {
     this.showNoteForm.set(false);
-    // Refresh data หลังจากปิด form
     this.refreshData();
   }
 
   closeDropdown(): void {
     const activeEl = document.activeElement as HTMLElement | null;
     if (activeEl && activeEl.closest('.dropdown')) {
-      activeEl.blur(); // เอาโฟกัสออกจาก dropdown trigger → dropdown ปิด
+      activeEl.blur();
     }
   }
 
@@ -94,20 +138,13 @@ export class NoteCardAll implements OnChanges {
   onTouchEnd(event: TouchEvent) {
     if (this.touchStartX == null) return;
     const deltaX = event.changedTouches[0]?.clientX - this.touchStartX;
-    // Swipe threshold ~40px
-    if (deltaX > 40) {
-      this.prevPhoto();
-    } else if (deltaX < -40) {
-      this.nextPhoto();
-    }
+    if (deltaX > 40) this.prevPhoto();
+    else if (deltaX < -40) this.nextPhoto();
     this.touchStartX = null;
   }
 
   onKeyDown(event: KeyboardEvent) {
-    if (event.key === 'ArrowLeft') {
-      this.prevPhoto();
-    } else if (event.key === 'ArrowRight') {
-      this.nextPhoto();
-    }
+    if (event.key === 'ArrowLeft') this.prevPhoto();
+    else if (event.key === 'ArrowRight') this.nextPhoto();
   }
 }
