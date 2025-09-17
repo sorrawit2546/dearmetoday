@@ -268,14 +268,26 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   toggleCard(index: number) {
+    console.log('toggleCard called with index:', index);
     const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
+    console.log(
+      'globalIndex:',
+      globalIndex,
+      'current activeCard:',
+      this.activeCard
+    );
     this.activeCard = this.activeCard === globalIndex ? null : globalIndex;
+    console.log('new activeCard:', this.activeCard);
   }
 
   // Helper method to check if a card is active
   isCardActive(index: number): boolean {
     const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
-    return this.activeCard === globalIndex;
+    const isActive = this.activeCard === globalIndex;
+    console.log(
+      `isCardActive(${index}): globalIndex=${globalIndex}, activeCard=${this.activeCard}, isActive=${isActive}`
+    );
+    return isActive;
   }
 
   goToPage(page: number) {

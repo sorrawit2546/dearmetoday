@@ -118,18 +118,18 @@ export class NoteCardAll implements OnInit, OnChanges {
   }
 
   onCardClick(event: Event): void {
-    // ตรวจสอบว่าไม่ได้คลิกที่ dropdown หรือปุ่มอื่น ๆ
+    console.log('onCardClick called', event.target);
+    // ตรวจสอบว่าไม่ได้คลิกที่ dropdown menu เท่านั้น
     const target = event.target as HTMLElement;
-    const isDropdownClick =
-      target.closest('.dropdown') ||
-      target.closest('button') ||
-      target.closest('input') ||
-      target.closest('label') ||
-      target.closest('svg') ||
-      target.closest('path');
+    const isDropdownClick = target.closest('.dropdown');
+
+    console.log('isDropdownClick:', isDropdownClick);
 
     if (!isDropdownClick) {
+      console.log('Emitting cardClick');
       this.cardClick.emit();
+    } else {
+      console.log('Dropdown click, not emitting cardClick');
     }
   }
 
