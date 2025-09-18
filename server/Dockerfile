@@ -1,6 +1,11 @@
 # Dockerfile
 FROM node:20-alpine
 
+# ----- เพิ่มรับ build arg -----
+ARG VERSION
+LABEL app.version=$VERSION
+ENV APP_VERSION=$VERSION
+
 # Set working directory
 WORKDIR /app
 
@@ -12,7 +17,7 @@ COPY pnpm-lock.yaml ./
 COPY package*.json ./
 
 # Install dependencies
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 
 # Copy the rest of the application code
@@ -28,4 +33,4 @@ RUN pnpm run build
 EXPOSE 3000 
 
 # Start the application
-CMD ["pnpm", "run", "start:dev"]
+CMD ["node", "dist/main.js"]

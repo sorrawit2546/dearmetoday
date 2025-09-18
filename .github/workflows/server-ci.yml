@@ -1,14 +1,18 @@
-name: Server CI
+name: web-dearmetoday-backyard
+
+run-name: Deploy dearmetoday by ${{ github.actor }} on ${{ github.ref_name }}@${{ github.sha.substr(0,7) }}
 
 on:
   push:
     paths:
       - "server/**"
       - ".github/workflows/server-ci.yml"
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
   pull_request:
     paths:
       - "server/**"
-      - ".github/workflows/server-ci.yml" 
+      - ".github/workflows/server-ci.yml"
   workflow_dispatch:
 
 concurrency:
@@ -22,7 +26,8 @@ jobs:
       run:
         working-directory: server
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,7 +36,7 @@ jobs:
           cache: npm
           cache-dependency-path: server/package-lock.json
 
-      - name: Install deps (ci if lockfile exists)
+      - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
@@ -54,11 +59,9 @@ jobs:
   deploy:
     needs: server
     runs-on: ubuntu-latest
-    # เช็คเฉพาะเหตุการณ์/สาขาในระดับ job
     if: >
       github.event_name == 'push' &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development')
-    # ผูก secrets เข้ามาเป็น env ของทั้ง job
+      (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
     env:
       SSH_HOST: ${{ secrets.SSH_HOST }}
       SSH_USER: ${{ secrets.SSH_USER }}
@@ -66,7 +69,7 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     steps:
-      - name: Checkout repo (for branch context)
+      - name: Checkout repository (for branch/tag context)
         uses: actions/checkout@v4
 
       - name: Deploy server via SSH
@@ -78,8 +81,16 @@ jobs:
           envs: DATABASE_URL
           script: |
             set -euo pipefail
-            BRANCH="${{ github.ref_name }}"
+
+            # ตรวจว่าเป็น tag หรือ branch
+            if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+              VERSION="${GITHUB_REF#refs/tags/}"
+            else
+              VERSION="${GITHUB_REF_NAME}"
+            fi
+
             APP_DIR="/var/www/dearmetoday"
+            BRANCH="$GITHUB_REF_NAME"
 
             cd "$APP_DIR"
             git fetch origin "$BRANCH"
@@ -90,21 +101,18 @@ jobs:
             fi
             git pull origin "$BRANCH"
 
-            # ปิด service backend ชั่วคราวถ้าต้อง
-            # docker compose stop backend || true
-
-            # รีบิลด์/รีสตาร์ทเฉพาะ service ฝั่ง backend
             export APP_ENV=production
             export NODE_ENV=production
+            export IMAGE_VERSION="$VERSION"
 
-            docker compose pull backend || true
-            docker compose build backend
-            docker compose up -d backend
-
-            # Backup DB
+            # Backup DB ก่อน deploy
             TIMESTAMP=$(date +%Y%m%d_%H%M%S)
             mkdir -p "$APP_DIR/db_backups"
             docker exec backend sh -lc 'pg_dump "$DATABASE_URL"' > "$APP_DIR/db_backups/db_${TIMESTAMP}.sql"
+
+            # รีบิลด์/รีสตาร์ท backend พร้อม build-arg version
+            docker compose build --build-arg VERSION="$IMAGE_VERSION" backend
+            docker compose up -d backend
 
             # Prisma migrate & generate
             docker exec backend npx prisma migrate deploy
