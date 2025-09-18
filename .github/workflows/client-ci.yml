@@ -3,6 +3,8 @@ name: web-dearmetoday-frontyard
 on:
   push:
     paths: ["client/**", ".github/workflows/client-ci.yml"]
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+" # ให้รันตอน push tag ด้วย
   workflow_dispatch:
 
 concurrency:
@@ -37,4 +39,5 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           projectName: dearmetoday
-          directory: client/dist
+          directory: client/dist/client
+          commitHash: ${{ github.ref_name }}
