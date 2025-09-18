@@ -1,6 +1,6 @@
 name: web-dearmetoday-backyard
 
-run-name: Deploy dearmetoday by ${{ github.actor }} on ${{ github.ref_name }}@${{ github.sha }}
+run-name: Deploy dearmetoday by ${{ github.actor }} on ${{ github.ref_name }}
 
 on:  
   push:
