@@ -1,14 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Entry, Mood } from '@prisma/client';
+import { CalendarService } from '../calendar/calendar.service';
 import { SendgridService } from '../third-party/sendgrid/sendgrid.service';
+import {
+  UpdatePositiveNoteDeleteDto,
+  UpdatePositiveNoteDto,
+} from './Dto/create-positive-note';
 import {
   getAllNoteSendById,
   IpositiveNoteByNoteId,
 } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
 import { PositiveNoteService } from './positive-note.service';
-import { CalendarService } from '../calendar/calendar.service';
-import { UpdatePositiveNoteDto } from './Dto/create-positive-note';
 
 describe('PositiveNoteService', () => {
   let service: PositiveNoteService;
@@ -21,6 +24,7 @@ describe('PositiveNoteService', () => {
     getAllNotesCommunity: jest.fn(),
     getPositiveNoteById: jest.fn(),
     editPositiveNoteById: jest.fn<Promise<Entry>, [string, string, any]>(),
+    deletePositiveNoteById: jest.fn(),
   };
 
   const mockSendgridService = {
@@ -55,6 +59,31 @@ describe('PositiveNoteService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('Delete Positive Note', () => {
+    it('should delete positive note (softdelete)', async () => {
+      const noteId = 'note-1';
+      const userId = 'user-1';
+      const mockDto: UpdatePositiveNoteDeleteDto = { isDelete: true };
+      const mockResponse = 'Positive Note is Deleted!';
+      mockRepository.deletePositiveNoteById = jest
+        .fn()
+        .mockResolvedValue(mockResponse);
+
+      const result = await service.deletePositiveNoteById(
+        noteId,
+        userId,
+        mockDto,
+      );
+      expect(result).toEqual(mockResponse);
+      expect(mockRepository.deletePositiveNoteById).toHaveBeenCalledTimes(1);
+      expect(mockRepository.deletePositiveNoteById).toHaveBeenCalledWith(
+        noteId,
+        userId,
+        mockDto,
+      );
+    });
   });
 
   describe('Edit Positive Note', () => {
@@ -272,6 +301,7 @@ describe('PositiveNoteService', () => {
         ],
         mood: Mood.happy,
         createdAt: new Date('2025-08-09T10:30:00Z'),
+        isDelete: false,
       },
       {
         id: 'note-2',
@@ -280,6 +310,7 @@ describe('PositiveNoteService', () => {
         imageUrls: ['https://via.placeholder.com/400x300?text=Rainy+Day'],
         mood: Mood.neutral,
         createdAt: new Date('2025-08-08T15:45:00Z'),
+        isDelete: false,
       },
       {
         id: 'note-3',
@@ -291,6 +322,7 @@ describe('PositiveNoteService', () => {
         ],
         mood: Mood.sad,
         createdAt: new Date('2025-08-07T08:00:00Z'),
+        isDelete: false,
       },
     ];
     mockRepository.getAllNoteById = jest.fn().mockResolvedValue(mockNotes);
@@ -314,6 +346,7 @@ describe('PositiveNoteService', () => {
       ],
       mood: Mood.happy,
       createdAt: new Date('2025-08-09T10:30:00Z'),
+      isDelete: false,
     };
     //mock repository
     mockRepository.recentNoteByUserId = jest.fn().mockReturnValue(mockResult);

@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthResponse } from '../model/api-data';
-import { QuickNote, QuickNoteDto } from '../model/quick-note';
 import { entryNote } from '../model/entry-note';
+import { QuickNote, QuickNoteDto } from '../model/quick-note';
 
 @Injectable({
   providedIn: 'root',
@@ -17,19 +17,37 @@ export class Api {
   // Emits when positive notes are created/updated/deleted
   positiveNoteChanged$ = new Subject<void>();
 
-  editPositiveNoteById(noteId : string, data: FormData){
+  deletePositiveNoteById(
+    noteId: string,
+    dto: { isDelete: boolean }
+  ): Observable<string> {
     return this.http
-      .patch<entryNote>(`${environment.apiUrl}/positive-note/note/${noteId}`, data, {
+      .put(`${environment.apiUrl}/positive-note/note/${noteId}`, dto, {
         withCredentials: true,
+        responseType: 'text',
       })
+      .pipe(tap(() => this.positiveNoteChanged$.next())) as Observable<string>;
+  }
+  editPositiveNoteById(noteId: string, data: FormData) {
+    return this.http
+      .patch<entryNote>(
+        `${environment.apiUrl}/positive-note/note/${noteId}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      )
       .pipe(tap(() => this.positiveNoteChanged$.next()));
-  };
+  }
 
-  getPositiveNoteById(noteId : string){
-    return this.http.get<entryNote>(`${environment.apiUrl}/positive-note/note/${noteId}`, {
-      withCredentials: true,
-    })
-  };
+  getPositiveNoteById(noteId: string) {
+    return this.http.get<entryNote>(
+      `${environment.apiUrl}/positive-note/note/${noteId}`,
+      {
+        withCredentials: true,
+      }
+    );
+  }
 
   getAllQuickNote(): Observable<QuickNote[]> {
     return this.http.get<QuickNote[]>(`${environment.apiUrl}/quick-note`, {

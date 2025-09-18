@@ -23,6 +23,7 @@
           (click)="toggleCard(i)"
         >
           <app-note-card-all
+            [id]="note.id"
             [date]="(note.createdAt | date:'dd MMM yyyy') ?? ''"
             [line1]="note.line1"
             [line2]="note.line2 ?? ''"
@@ -33,6 +34,7 @@
             [name]="note.user?.name"
             [avatarUrl]="note.user?.avatarUrl"
             [isActive]="isCardActive(i)"
+            (isActiveChange)="updateNoteIsActive(note.id, $event)"
           >
           </app-note-card-all>
         </div>

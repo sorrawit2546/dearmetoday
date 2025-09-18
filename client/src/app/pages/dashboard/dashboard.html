@@ -127,9 +127,10 @@
             [line3]="note.line3"
             [mood]="note.mood"
             [photos]="note.imageUrls"
-            [isActive]="isCardActive(i)"
+            [isActive]="note.showMessage"
             (isActiveChange)="updateNoteIsActive(note.id, $event)"
             (cardClick)="toggleCard(i)"
+            (noteDeleted)="onNoteDeleted($event)"
             class="w-full my-2 pr-2 cursor-pointer"
           >
           </app-note-card-all>

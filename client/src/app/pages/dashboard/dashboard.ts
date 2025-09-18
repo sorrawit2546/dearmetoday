@@ -166,7 +166,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   updateNoteIsActive(id: string, newValue: boolean) {
     this.itemsNoteSearch.update((notes) =>
-      notes.map((n) => (n.id === id ? { ...n, isActive: newValue } : n))
+      notes.map((n) => (n.id === id ? { ...n, showMessage: newValue } : n))
     );
   }
 
@@ -179,10 +179,12 @@ export class Dashboard implements OnInit, OnDestroy {
   // --------------------------
 
   private normalizeNotes(res: entryNote[]) {
-    return res.map((n) => ({
-      ...n,
-      isActive: (n as any).isActive ?? (n as any).showMessage ?? false,
-    }));
+    return res
+      .filter((n) => !(n as any).isDelete) // กรอง note ที่ isDelete: true ออก
+      .map((n) => ({
+        ...n,
+        isActive: (n as any).isActive ?? (n as any).showMessage ?? false,
+      }));
   }
 
   refreshData(): void {
@@ -284,9 +286,6 @@ export class Dashboard implements OnInit, OnDestroy {
   isCardActive(index: number): boolean {
     const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
     const isActive = this.activeCard === globalIndex;
-    console.log(
-      `isCardActive(${index}): globalIndex=${globalIndex}, activeCard=${this.activeCard}, isActive=${isActive}`
-    );
     return isActive;
   }
 
@@ -408,6 +407,22 @@ export class Dashboard implements OnInit, OnDestroy {
       },
       error: (err) =>
         console.error('Error updating notes after creation:', err),
+    });
+  }
+
+  onNoteDeleted(deletedNoteId: string): void {
+    console.log('Note deleted:', deletedNoteId);
+    // Refresh notes list
+    this.apiService.getAllNoteByUserId().subscribe({
+      next: (res) => {
+        this.ngZone.run(() => {
+          this.itemsNoteSearch.set(this.normalizeNotes(res));
+          this.cdr.detectChanges();
+        });
+        this.loadNotesCount();
+      },
+      error: (err) =>
+        console.error('Error refreshing notes after deletion:', err),
     });
   }
 }

@@ -50,7 +50,7 @@
         </label>
       </div>
         <li><a (click)="closeDropdown(); openNoteForm()" class="hover:rounded-lg">Edit</a></li>
-        <li><a class="hover:rounded-lg text-red-500">Delete</a></li>
+        <li><a (click)="closeDropdown(); openDeleteDialog()" class="hover:rounded-lg text-red-500">Delete</a></li>
       </ul>
     </div>
 
@@ -172,6 +172,33 @@
           *ngIf="showNoteForm() && id"
           [noteId]="id"
         ></app-note-form>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Dialog -->
+    <div
+      *ngIf="showDeleteDialog()"
+      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40"
+      (click)="closeDeleteDialog()"
+    >
+      <div
+        class="w-full max-w-md mx-4 rounded-2xl bg-white p-6"
+        (click)="$event.stopPropagation()"
+      >
+        <h3 class="font-bold text-lg text-red-600 mb-4">ยืนยันการลบข้อความ?</h3>
+
+        <ng-template #deleteHint>
+          <p class="py-2 text-gray-600">
+            ระบบจะลบข้อความนี้อย่างถาวรภายใน 15 วันและไม่สามารถกู้คืนได้ หากอยากกู้กรุณาติดต่อแอดมิน!
+          </p>
+        </ng-template>
+
+        <ng-container *ngTemplateOutlet="deleteHint"></ng-container>
+
+        <div class="modal-action mt-6">
+          <button class="btn btn-ghost  rounded-2xl hover:rounded-2xl" (click)="closeDeleteDialog()">ยกเลิก</button>
+          <button class="btn btn-error rounded-2xl" (click)="confirmDelete()">ลบ</button>
+        </div>
       </div>
     </div>
   </div>

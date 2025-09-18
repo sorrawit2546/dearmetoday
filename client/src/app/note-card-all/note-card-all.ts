@@ -12,6 +12,7 @@ import {
 import { Router } from '@angular/router';
 import { NoteForm } from '../components/note-form/note-form';
 import { Api } from '../services/api';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-note-card-all',
@@ -35,18 +36,42 @@ export class NoteCardAll implements OnInit, OnChanges {
   @Input() isActive = false;
   @Output() isActiveChange = new EventEmitter<boolean>();
   @Output() cardClick = new EventEmitter<void>();
+  @Output() noteDeleted = new EventEmitter<string>();
 
   // Local state สำหรับ toggle
   private _localIsActive = false;
   private _isToggling = false;
 
-  constructor(private router: Router, private apiService: Api) {
+  constructor(
+    private router: Router,
+    private apiService: Api,
+    private authService: AuthService
+  ) {
     this.isCommunity = this.router.url.includes('/community');
+    console.log(
+      'NoteCardAll - isCommunity:',
+      this.isCommunity,
+      'URL:',
+      this.router.url
+    );
   }
 
   toggleActive() {
     // ป้องกันการ toggle ซ้ำ
     if (this._isToggling) return;
+
+    // ตรวจสอบว่าเป็น community page หรือไม่
+    if (this.isCommunity) {
+      console.log('Cannot toggle in community page - read only');
+      return;
+    }
+
+    // ตรวจสอบว่ามี id หรือไม่
+    if (!this.id) {
+      console.error('No note ID available for toggle');
+      return;
+    }
+
     this._isToggling = true;
 
     // ใช้ local state แทน input state
@@ -75,6 +100,7 @@ export class NoteCardAll implements OnInit, OnChanges {
 
   isCommunity = false;
   showNoteForm = signal<boolean>(false);
+  showDeleteDialog = signal<boolean>(false);
   private refreshTrigger = signal<number>(0);
   refreshData(): void {
     this.refreshTrigger.update((trigger) => trigger + 1);
@@ -83,6 +109,9 @@ export class NoteCardAll implements OnInit, OnChanges {
   ngOnInit() {
     // Initialize local state จาก input
     this._localIsActive = this.isActive;
+
+    // อัปเดต isCommunity ใหม่
+    this.isCommunity = this.router.url.includes('/community');
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -108,6 +137,36 @@ export class NoteCardAll implements OnInit, OnChanges {
   closeNoteForm(): void {
     this.showNoteForm.set(false);
     this.refreshData();
+  }
+
+  openDeleteDialog(): void {
+    this.showDeleteDialog.set(true);
+  }
+
+  closeDeleteDialog(): void {
+    this.showDeleteDialog.set(false);
+  }
+
+  confirmDelete(): void {
+    // เรียก API delete
+    this.apiService
+      .deletePositiveNoteById(this.id, { isDelete: true })
+      .subscribe({
+        next: (response) => {
+          console.log('Note deleted successfully:', response);
+          this.closeDeleteDialog();
+          this.refreshData();
+          // Emit event ไปยัง parent component เพื่อ refresh list
+          this.noteDeleted.emit(this.id);
+        },
+        error: (err) => {
+          console.error('Failed to delete note - Full error:', err);
+          console.error('Error status:', err.status);
+          console.error('Error message:', err.message);
+          console.error('Error body:', err.error);
+          // แสดง error message
+        },
+      });
   }
 
   closeDropdown(): void {

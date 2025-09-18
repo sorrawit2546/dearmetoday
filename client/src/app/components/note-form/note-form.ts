@@ -80,10 +80,19 @@ export class NoteForm implements OnChanges {
 
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(this.noteId);
     if (changes['noteId']?.currentValue) {
       this.isEditMode = true;
       this.loadNoteData();
     }
+  }
+
+  isFormValid() {
+    return (
+      this.note()?.trim() ||
+      this.note2()?.trim() ||
+      this.note3()?.trim()
+    );
   }
 
 

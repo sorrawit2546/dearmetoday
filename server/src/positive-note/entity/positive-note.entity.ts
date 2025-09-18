@@ -22,6 +22,7 @@ export interface getAllNoteSendById {
   imageUrls: string[];
   mood: Mood;
   createdAt: Date;
+  isDelete: boolean;
 }
 
 export interface getAllNoteSendByIdResponse {

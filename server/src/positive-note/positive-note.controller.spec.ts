@@ -2,14 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Entry, Mood } from '@prisma/client'; // ปรับตาม enum จริงของคุณ
 import type { Request as ExpressRequest } from 'express';
 import * as jwt from 'jsonwebtoken';
+import { CalendarService } from '../calendar/calendar.service';
 import {
   CreatePositiveNoteDto,
-  UpdatePositiveNoteDto,
+  UpdatePositiveNoteDeleteDto,
 } from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
 import { PositiveNoteController } from './positive-note.controller';
 import { PositiveNoteService } from './positive-note.service';
-import { CalendarService } from '../calendar/calendar.service';
 
 jest.mock('jsonwebtoken', () => ({
   verify: jest.fn(),
@@ -53,6 +53,7 @@ describe('PositiveNoteController', () => {
             getAllCommunityNote: jest.fn(),
             getPositiveNoteById: jest.fn(),
             editPositiveNoteById: jest.fn(),
+            deletePositiveNoteById: jest.fn(),
           },
         },
         {
@@ -69,6 +70,37 @@ describe('PositiveNoteController', () => {
     (jwt.verify as jest.Mock).mockReset();
   });
 
+  it('should delete positive note (softdelete)', async () => {
+    const mockReq: MinimalRequestLike = {
+      cookies: {
+        access_token: 'mock-token',
+      },
+    };
+    const mockNoteId = 'note-1';
+    const mockResultData = 'Positive Note is Deleted!';
+    // Mock jwt.verify ให้คืนค่า payload ที่ต้องการ
+    (jwt.verify as jest.Mock).mockReturnValue({ sub: 'user-1' });
+    mockService.deletePositiveNoteById = jest
+      .fn()
+      .mockResolvedValue(mockResultData);
+    // Mock FormData body
+    const mockDto: UpdatePositiveNoteDeleteDto = { isDelete: true };
+    const result = await controller.deletePositiveNoteById(
+      mockNoteId,
+      mockReq as unknown as ExpressRequest,
+      mockDto,
+    );
+    expect(result).toEqual(mockResultData);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockService.deletePositiveNoteById).toHaveBeenCalledTimes(1);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockService.deletePositiveNoteById).toHaveBeenCalledWith(
+      mockNoteId,
+      'user-1',
+      mockDto,
+    );
+  });
+
   it('should edit positive note', async () => {
     const mockReq: MinimalRequestLike = {
       cookies: {
@@ -76,16 +108,16 @@ describe('PositiveNoteController', () => {
       },
     };
     const mockNoteId = 'note-1';
-    const mockPositiveDto: UpdatePositiveNoteDto = {
-      line1: 'Updated line1 content',
-      line3: 'Additional thoughts here',
-      imageUrls: [
-        'https://example.com/image1.jpg',
-        'https://example.com/image2.jpg',
-      ],
-      mood: Mood.happy,
-      showMessage: true,
-    };
+    // const mockPositiveDto: UpdatePositiveNoteDto = {
+    //   line1: 'Updated line1 content',
+    //   line3: 'Additional thoughts here',
+    //   imageUrls: [
+    //     'https://example.com/image1.jpg',
+    //     'https://example.com/image2.jpg',
+    //   ],
+    //   mood: Mood.happy,
+    //   showMessage: true,
+    // };
     const mockResultData = {
       id: 'user-1',
       userId: 'user-123',
@@ -109,10 +141,26 @@ describe('PositiveNoteController', () => {
     mockService.editPositiveNoteById = jest
       .fn()
       .mockResolvedValue(mockResultData);
+    // Mock FormData body
+    const mockBody = {
+      line1: 'Updated line1 content',
+      line3: 'Additional thoughts here',
+      imageUrls: JSON.stringify([
+        'https://example.com/image1.jpg',
+        'https://example.com/image2.jpg',
+      ]),
+      mood: 'happy',
+      showMessage: 'true',
+    };
+
+    // Mock files array
+    const mockFiles: Express.Multer.File[] = [];
+
     const result = await controller.editPositiveNoteByNoteId(
+      mockFiles,
       mockReq as unknown as ExpressRequest,
       mockNoteId,
-      mockPositiveDto,
+      mockBody,
     );
     expect(result).toEqual(mockResultData);
   });
@@ -279,6 +327,7 @@ describe('PositiveNoteController', () => {
         ],
         mood: Mood.happy,
         createdAt: new Date('2025-08-09T10:30:00Z'),
+        isDelete: false,
       },
     ];
 
@@ -318,6 +367,7 @@ describe('PositiveNoteController', () => {
       ],
       mood: Mood.happy,
       createdAt: new Date('2025-08-09T10:30:00Z'),
+      isDelete: false,
     };
     const getAllSpy = jest
       .spyOn(mockService, 'recentNoteByUserId')

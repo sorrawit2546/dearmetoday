@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Entry } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreatePositiveNoteAuthDto,
   CreatePositiveNoteDto,
+  UpdatePositiveNoteDeleteDto,
   UpdatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
@@ -12,6 +13,27 @@ import { moodToScore } from './utils/positive-note.mood.utils';
 @Injectable()
 export class PositiveNoteRepository {
   constructor(private prisma: PrismaService) {}
+
+  async deletePositiveNoteById(
+    noteId: string,
+    userId: string,
+    Dto: UpdatePositiveNoteDeleteDto,
+  ): Promise<Entry> {
+    const note = await this.prisma.entry.findFirst({
+      where: { id: noteId, userId },
+    });
+    if (!note) {
+      throw new UnauthorizedException('Not your note');
+    }
+    return this.prisma.entry.update({
+      where: {
+        id: noteId,
+      },
+      data: {
+        isDelete: Dto.isDelete,
+      },
+    });
+  }
 
   async editPositiveNoteById(
     noteId: string,
@@ -54,6 +76,7 @@ export class PositiveNoteRepository {
     return await this.prisma.entry.findMany({
       where: {
         showMessage: true,
+        isDelete: false, // กรอง note ที่ถูกลบออก
       },
       orderBy: {
         createdAt: 'desc',
@@ -109,7 +132,7 @@ export class PositiveNoteRepository {
 
   async getAllNoteById(userId: string): Promise<getAllNoteSendById[]> {
     const entries = await this.prisma.entry.findMany({
-      where: { userId: userId },
+      where: { userId: userId, isDelete: false },
     });
 
     const result: getAllNoteSendById[] = entries.map((e) => ({
@@ -119,6 +142,7 @@ export class PositiveNoteRepository {
       imageUrls: e.imageUrls,
       mood: e.mood,
       createdAt: e.createdAt,
+      isDelete: e.isDelete,
     }));
     return result;
   }

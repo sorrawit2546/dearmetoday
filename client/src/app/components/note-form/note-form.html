@@ -1,31 +1,50 @@
 <!-- Note Form -->
 <div id="note-form" class="px-6">
   <div class="max-w-2xl mx-auto">
-    <div class="bg-[#ffffff] rounded-3xl shadow-lg p-6">
+    <div
+      class="bg-[#fdfcf8] border border-[#e6e2d3] rounded-[32px] shadow-[0_4px_12px_rgba(0,0,0,0.05)] p-10 relative overflow-hidden"
+      style="
+        background-image: linear-gradient(#fcfbf6 1px, transparent 1px),
+          linear-gradient(90deg, #fcfbf6 1px, transparent 1px);
+        background-size: 32px 32px;
+      "
+    >
+      <!-- Paper holes -->
+      <div
+        class="absolute top-6 left-4 w-3 h-3 rounded-full bg-[#d8d4c4]"
+      ></div>
+      <div
+        class="absolute top-16 left-4 w-3 h-3 rounded-full bg-[#d8d4c4]"
+      ></div>
+      <div
+        class="absolute top-28 left-4 w-3 h-3 rounded-full bg-[#d8d4c4]"
+      ></div>
+
       <!-- Date Header -->
-      <div class="text-sm text-gray-600 mb-4">{{ createdAt() }}</div>
+      <div class="text-sm text-gray-500 mb-4 text-right font-medium">
+        {{ createdAt() }}
+      </div>
 
       <!-- Dropzone with preview inside -->
       <div
-        class="relative w-full h-[300px] border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 overflow-hidden group cursor-pointer"
+        class="relative w-full h-[240px] border-2 border-dashed border-[#d2c9b8] rounded-xl bg-[#fefcf8] hover:bg-[#fcf8f2] overflow-hidden group cursor-pointer transition"
         (drop)="handleDrop($event)"
         (dragover)="handleDragOver($event)"
         (dragleave)="handleDragLeave($event)"
         [class.border-blue-400]="isDragging"
         (click)="fileInput.click()"
       >
-        <!-- Image previews (in grid) -->
         <ng-container *ngIf="previewImages().length > 0; else dropHint">
-          <div class="w-full h-full grid grid-cols-5 gap-5 p-2">
+          <div class="w-full h-full grid grid-cols-5 gap-3 p-2">
             <div
               *ngFor="let img of previewImages(); let i = index"
-              class="relative h-full aspect-square rounded overflow-hidden border"
+              class="relative h-full aspect-square rounded-xl overflow-hidden border border-[#e5e1d5]"
             >
               <img [src]="img.src" class="w-full h-full object-cover" />
               <button
                 type="button"
                 (click)="removeImage(i); $event.stopPropagation()"
-                class="absolute top-1 right-1 bg-black/60 text-white text-xs px-1 py-0.5 rounded-full hover:bg-red-600"
+                class="absolute top-1 right-1 bg-black/50 text-white text-xs px-1.5 py-0.5 rounded-full hover:bg-red-600"
               >
                 ✕
               </button>
@@ -33,21 +52,19 @@
           </div>
         </ng-container>
 
-        <!-- Drop hint if no images -->
         <ng-template #dropHint>
           <div
-            class="flex flex-col items-center justify-center h-full text-gray-500"
+            class="flex flex-col items-center justify-center h-full text-gray-400"
           >
             <p class="text-center">
               Drag & drop images here<br />
-              or <span class="font-medium text-blue-600">click to upload</span>
+              or <span class="font-medium text-amber-700">click to upload</span>
               <br />
-              <span class="text-sm">(up to 5 images)</span>
+              <span class="text-xs">(up to 5 images)</span>
             </p>
           </div>
         </ng-template>
 
-        <!-- Hidden file input -->
         <input
           type="file"
           accept="image/*"
@@ -59,8 +76,8 @@
       </div>
 
       <!-- Positive Note Field -->
-      <div class="mb-3 mt-3">
-        <label class="block text-sm font-medium text-gray-700 mb-1"
+      <div class="mb-3 mt-6">
+        <label class="block text-sm font-semibold text-amber-900 mb-2"
           >Positive note for today.</label
         >
         <div class="grid grid-cols-2 gap-4">
@@ -68,30 +85,32 @@
             placeholder="เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้..."
             [ngModel]="note()"
             (ngModelChange)="note.set($event)"
-            class="col-span-2 h-20 resize-none border rounded px-3 py-2 text-gray-700"
+            class="col-span-2 h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
           ></textarea>
           <textarea
             placeholder="สิ่งเล็ก ๆ ที่ทำให้คุณยิ้มได้ในวันนี้..."
             [ngModel]="note2()"
             (ngModelChange)="note2.set($event)"
-            class="w-full h-20 resize-none border rounded px-3 py-2 text-gray-700"
+            class="w-full h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
           ></textarea>
           <textarea
             placeholder="เรื่องราวที่ทำให้รู้สึกภูมิใจ.."
             [ngModel]="note3()"
             (ngModelChange)="note3.set($event)"
-            class="w-full h-20 resize-none border rounded px-3 py-2 text-gray-700"
+            class="w-full h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
           ></textarea>
         </div>
       </div>
 
       <!-- Mood Selector -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Mood</label>
+        <label class="block text-sm font-semibold text-amber-900 mb-2"
+          >Mood</label
+        >
         <select
           [ngModel]="mood()"
           (ngModelChange)="mood.set($event)"
-          class="w-full border rounded px-3 py-2"
+          class="w-full border border-[#e4dfd1] rounded-xl px-4 py-3 bg-[#fffdf8]"
         >
           <option value="happy">happy</option>
           <option value="calm">calm</option>
@@ -104,42 +123,68 @@
       <!-- Submit Button -->
       <button
         (click)="submitForm()"
-        class="btn btn-soft btn-primary w-full"
-        [disabled]="isLoading()"
+        class="btn bg-amber-700 hover:bg-amber-800 text-white w-full rounded-xl shadow-md border-none"
+        [disabled]="isLoading() || !isFormValid()"
       >
-        <span *ngIf="!isLoading()">Submit</span>
-        <span *ngIf="isLoading()" class="loading loading-dots loading-md"></span>
+        <span *ngIf="!isLoading()">✍️ Start My Note</span>
+        <span
+          *ngIf="isLoading()"
+          class="loading loading-dots loading-md"
+        ></span>
       </button>
 
       <!-- Confirm Modal -->
       <dialog #confirmDialog class="modal">
         <div class="modal-box rounded-2xl">
           <h3 class="font-bold text-lg">
-            {{ isEditMode ? 'ยืนยันการบันทึกการแก้ไข?' : 'ยืนยันการส่งข้อความ?' }}
+            {{ isEditMode ? 'ยืนยันการบันทึกการแก้ไข?' : 'ยืนยันการส่งข้อความ?'
+            }}
           </h3>
 
           <ng-container *ngIf="!isEditMode; else editHint">
-            <p class="py-2">
-              ระบบจะทำการส่งอีเมล พร้อมข้อความและรูปภาพของคุณไปยัง
-            </p>
-            <p class="py-2">{{ email() }}</p>
-            <fieldset
-              class="fieldset bg-base-100 border-base-300 rounded-2xl w-64 border p-4"
-            >
-              <legend class="fieldset-legend">Share to community?</legend>
-              <label class="label">
-                <input
-                  [ngModel]="showMessage()"
-                  (ngModelChange)="showMessage.set($event)"
-                  type="checkbox"
-                  class="checkbox checkbox-info rounded-2xl"
-                />
-                of course
-              </label>
-            </fieldset>
+            <div class="space-y-4 mt-2">
+              <!-- Email info -->
+              <div class="bg-blue-100 border-dashed border-blue-700 rounded-xl p-4">
+                <p class="text-sm text-blue-500">
+                  ระบบจะทำการส่งอีเมล พร้อมข้อความและรูปภาพของคุณไปยัง:
+                </p>
+                <p
+                  class="mt-2 text-center text-lg font-semibold text-blue-500"
+                >
+                  {{ email() }}
+                </p>
+              </div>
+
+              <!-- Divider -->
+              <div class="border-t border-gray-200"></div>
+
+              <!-- Share toggle -->
+              <fieldset
+                class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col gap-2"
+              >
+                <legend class="text-sm font-semibold text-gray-700 mb-1">
+                  แชร์ข้อความนี้เข้าสู่ Community ด้วยหรือไม่?
+                </legend>
+
+                <label
+                  class="flex items-center gap-3 p-2 rounded-lg hover:bg-white transition"
+                >
+                  <input
+                    [ngModel]="showMessage()"
+                    (ngModelChange)="showMessage.set($event)"
+                    type="checkbox"
+                    class="checkbox checkbox-primary rounded-md"
+                  />
+                  <span class="text-gray-700">แน่นอนเลย 🌱</span>
+                </label>
+
+                <p class="text-xs text-gray-500 ml-7">
+                  *เมื่อเปิดใช้งาน ข้อความของคุณจะปรากฏในหน้า Community Feed
+                </p>
+              </fieldset>
+            </div>
           </ng-container>
 
-          <!-- ถ้าเป็น edit → แสดง hint อย่างเดียว -->
           <ng-template #editHint>
             <p class="py-2 text-gray-600">
               ระบบจะบันทึกการแก้ไข โดยไม่ส่งอีเมลซ้ำอีกครั้ง
@@ -148,7 +193,7 @@
 
           <div class="modal-action">
             <form method="dialog" class="flex gap-2">
-              <button class="btn rounded-2xl" (click)="cancelSend()">
+              <button class="btn rounded-2xl border-none" (click)="cancelSend()">
                 ยกเลิก
               </button>
               <button

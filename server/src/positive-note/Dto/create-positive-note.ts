@@ -102,3 +102,8 @@ export class UpdatePositiveNoteDto {
   @Transform(({ value }) => value === 'true' || value === true)
   showMessage?: boolean;
 }
+
+export class UpdatePositiveNoteDeleteDto {
+  @IsBoolean()
+  isDelete: boolean;
+}

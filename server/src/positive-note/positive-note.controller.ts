@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Req,
   UnauthorizedException,
   UploadedFiles,
@@ -22,6 +23,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
   CreatePositiveNoteAuthDto,
   CreatePositiveNoteDto,
+  UpdatePositiveNoteDeleteDto,
   UpdatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import {
@@ -42,6 +44,24 @@ interface JwtUser {
 export class PositiveNoteController {
   constructor(private readonly positivenoteService: PositiveNoteService) {}
   BASE_URL = process.env.SERVER_URL;
+
+  @Put('note/:id')
+  async deletePositiveNoteById(
+    @Param('id') noteId: string,
+    @Req() req: Request,
+    @Body() Dto: UpdatePositiveNoteDeleteDto,
+  ): Promise<string> {
+    if (!req) throw new UnauthorizedException();
+    const token = (req.cookies as { [key: string]: string })?.access_token;
+    if (!token) throw new UnauthorizedException('Token not found');
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+      sub: string;
+    };
+    const userId = decoded.sub;
+    await this.positivenoteService.deletePositiveNoteById(noteId, userId, Dto);
+    return 'Positive Note is Deleted!';
+  }
 
   @Patch('note/:id')
   @UseInterceptors(

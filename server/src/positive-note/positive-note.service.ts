@@ -10,6 +10,7 @@ import { SendgridService } from '../third-party/sendgrid/sendgrid.service';
 import {
   CreatePositiveNoteAuthDto,
   CreatePositiveNoteDto,
+  UpdatePositiveNoteDeleteDto,
   UpdatePositiveNoteDto,
 } from './Dto/create-positive-note';
 import {
@@ -28,6 +29,25 @@ export class PositiveNoteService {
     private readonly sendgridService: SendgridService,
     private readonly calendarService: CalendarService,
   ) {}
+
+  async deletePositiveNoteById(
+    noteId: string,
+    userId: string,
+    Dto: UpdatePositiveNoteDeleteDto,
+  ): Promise<string> {
+    if (!noteId || !userId) {
+      throw new UnauthorizedException('UserId or NoteId Not found!');
+    }
+    if (Dto === undefined || Dto === null) {
+      throw new UnauthorizedException('isDelete Not found!');
+    }
+    await this.repositoryPositiveNote.deletePositiveNoteById(
+      noteId,
+      userId,
+      Dto,
+    );
+    return 'Positive Note is Deleted!';
+  }
 
   async editPositiveNoteById(
     noteId: string,
@@ -185,6 +205,7 @@ export class PositiveNoteService {
         imageUrls: e.imageUrls,
         mood: e.mood,
         createdAt: e.createdAt,
+        isDelete: e.isDelete,
       }));
       const countNote = mapResult.length;
 

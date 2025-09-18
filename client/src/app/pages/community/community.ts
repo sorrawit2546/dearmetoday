@@ -9,12 +9,12 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
+import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
 import { CommunityPost } from '../../model/community-note';
 import { NoteCardAll } from '../../note-card-all/note-card-all';
 import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
-import { Footer } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-community',
@@ -123,5 +123,10 @@ export class Community {
 
   ngOnInit(): void {
     // this.authService.checkAuthState();
+  }
+
+  updateNoteIsActive(id: string, newValue: boolean): void {
+    // ในหน้า community ไม่ต้องอัปเดต local state เพราะเป็น read-only
+    console.log('Note showMessage updated:', id, newValue);
   }
 }
