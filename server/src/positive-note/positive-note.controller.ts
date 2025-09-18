@@ -234,10 +234,7 @@ export class PositiveNoteController {
     const imageUrls = files.map(
       (file) => `${this.BASE_URL}/uploads/${file.filename}`,
     );
-
-    // รับ email จาก token ที่ผ่าน JWT guard แล้ว
     const user = req.user as JwtUser;
-
     if (!user?.email) {
       throw new UnauthorizedException('ไม่พบ email ใน token');
     }
@@ -252,11 +249,9 @@ export class PositiveNoteController {
   @Post('getnote-userid')
   async getAllpositiveNoteById(@Req() req: Request) {
     const token = (req.cookies as { [key: string]: string })?.access_token;
-
     if (!token) {
       throw new UnauthorizedException('Token not found');
     }
-
     try {
       // ตรวจสอบและถอดรหัส
       const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
