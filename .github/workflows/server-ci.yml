@@ -2,7 +2,7 @@ name: web-dearmetoday-backyard
 
 run-name: Deploy dearmetoday by ${{ github.actor }} on ${{ github.ref_name }}@${{ github.sha }}
 
-on:
+on: 
   push:
     paths:
       - "server/**"
