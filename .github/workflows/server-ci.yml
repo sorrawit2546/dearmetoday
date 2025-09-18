@@ -105,11 +105,6 @@ jobs:
             export NODE_ENV=production
             export IMAGE_VERSION="$VERSION"
 
-            # Backup DB ก่อน deploy
-            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-            mkdir -p "$APP_DIR/db_backups"
-            docker exec backend sh -lc 'pg_dump "$DATABASE_URL"' > "$APP_DIR/db_backups/db_${TIMESTAMP}.sql"
-
             # รีบิลด์/รีสตาร์ท backend พร้อม build-arg version
             docker compose build --build-arg VERSION="$IMAGE_VERSION" backend
             docker compose up -d backend

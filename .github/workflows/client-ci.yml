@@ -1,9 +1,7 @@
-name: Client CI
+name: web-dearmetoday-frontyard
 
 on:
   push:
-    paths: ["client/**", ".github/workflows/client-ci.yml"]
-  pull_request:
     paths: ["client/**", ".github/workflows/client-ci.yml"]
   workflow_dispatch:
 
@@ -12,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  client:
+  build:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -20,74 +18,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ใช้ cache ต่อเมื่อมี lockfile เท่านั้น (กัน error "paths were not resolved")
-      - name: Setup Node.js (with cache)
-        if: hashFiles('client/package-lock.json') != ''
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: client/package-lock.json
 
-      - name: Setup Node.js (no cache)
-        if: hashFiles('client/package-lock.json') == ''
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Install deps
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+        run: npm ci
 
       - name: Build
         run: npm run build:production
 
-      - name: Upload client dist
-        if: success()
-        uses: actions/upload-artifact@v4
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
         with:
-          name: client-dist
-          path: client/dist
-
-  deploy:
-    needs: client
-    runs-on: ubuntu-latest
-    # ตรวจ event/branch ที่ระดับ job (ไม่อ้าง secrets ตรง ๆ ที่นี่)
-    if: >
-      github.event_name == 'push' &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/development')
-    env:
-      SSH_HOST: ${{ secrets.SSH_HOST }}
-      SSH_USER: ${{ secrets.SSH_USER }}
-      SSH_KEY:  ${{ secrets.SSH_KEY }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy client via SSH
-        if: env.SSH_HOST != '' && env.SSH_USER != '' && env.SSH_KEY != ''
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ env.SSH_HOST }}
-          username: ${{ env.SSH_USER }}
-          key: ${{ env.SSH_KEY }}
-          script: |
-            set -euo pipefail
-            BRANCH="${{ github.ref_name }}"
-            APP_DIR="/var/www/dearmetoday"  # ปรับให้ตรงเครื่องจริง
-
-            cd "$APP_DIR"
-            git fetch origin "$BRANCH"
-            if git rev-parse --verify "$BRANCH" >/dev/null 2>&1; then
-              git checkout "$BRANCH"
-            else
-              git checkout -b "$BRANCH"
-            fi
-            git pull origin "$BRANCH"
-
-            export APP_ENV=production
-            export NODE_ENV=production
-            export CLIENT_PORT=8080
-
-            docker compose pull client || true
-            docker compose build client
-            docker compose up -d client
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: dearmetoday
+          directory: client/dist
