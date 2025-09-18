@@ -251,8 +251,6 @@ export class PositiveNoteController {
 
   @Post('getnote-userid')
   async getAllpositiveNoteById(@Req() req: Request) {
-    // ดึง token จาก cookie (สมมติชื่อ cookie คือ accessToken)
-
     const token = (req.cookies as { [key: string]: string })?.access_token;
 
     if (!token) {

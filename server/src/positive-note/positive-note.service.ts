@@ -196,7 +196,6 @@ export class PositiveNoteService {
     userId: string,
   ): Promise<getAllNoteSendByIdResponse> {
     try {
-      console.log('userId', userId);
       const result = await this.repositoryPositiveNote.getAllNoteById(userId);
       const mapResult: getAllNoteSendById[] = result.map((e) => ({
         id: e.id,
