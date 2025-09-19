@@ -25,6 +25,7 @@ import { NoteCardComponent } from '../../note-card/note-card';
 import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
+import { SummaryService } from '../../services/summary.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -52,8 +53,10 @@ export class Dashboard implements OnInit, OnDestroy {
   private ngZone = inject(NgZone);
   private cdr = inject(ChangeDetectorRef);
   private toastService = inject(ToastService);
+  private summaryService = inject(SummaryService);
 
   // State signals
+  summary = this.summaryService.summary;
   user = toSignal(this.authService.currentUser$, { initialValue: null });
   isAuthed = computed(() => !!this.user());
   quickNoteFromLocalStorage = signal<string>('');
@@ -71,6 +74,7 @@ export class Dashboard implements OnInit, OnDestroy {
   currentPage = signal(1);
   itemsPerPage = 9;
   activeCard: number | null = null;
+
 
   // Refresh triggers
   private refreshTrigger = signal<number>(0);
@@ -151,9 +155,19 @@ export class Dashboard implements OnInit, OnDestroy {
         this.loadRecentNote();
       }
     });
+    effect(() => {
+      const s = this.summary();
+      if (!s) return;
+    
+      console.log('📊 Weekly summary', s.weekly);
+      console.table(s.daily.currentWeek, ['date', 'avgMood', 'count']);
+    })
   }
 
   ngOnInit(): void {
+    this.summaryService.connect();
+    console.log(this.summary());
+
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) this.authService.checkAuthState();
     this.saveThankInLocalStorage();
@@ -172,6 +186,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.authSubscription?.unsubscribe();
+    this.summaryService.disconnect();
   }
 
   // --------------------------

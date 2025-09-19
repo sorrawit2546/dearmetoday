@@ -182,7 +182,6 @@ export class PositiveNoteService {
       } else {
         console.log('Skip Calendar');
       }
-
       return result;
     } catch (error) {
       if (error instanceof BadRequestException) {
