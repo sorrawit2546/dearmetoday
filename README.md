@@ -3,4 +3,4 @@ CLIENT_DOCKERFILE=Dockerfile.dev APP_ENV=development NODE_ENV=development CLIENT
 #คำสั่งรัน docker-compose == prod
 CLIENT_DOCKERFILE=Dockerfile APP_ENV=production NODE_ENV=production CLIENT_PORT=8080 docker compose up --build -d
 
-หรือ ./deploy.sh dev
+หรือ ./deploy.sh devtest
