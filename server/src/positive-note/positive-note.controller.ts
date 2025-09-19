@@ -112,7 +112,7 @@ export class PositiveNoteController {
     // Handle image URLs (existing + new)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (body?.existingImageUrls || files?.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
       const existingUrls = Array.isArray(body.existingImageUrls)
         ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           body.existingImageUrls
