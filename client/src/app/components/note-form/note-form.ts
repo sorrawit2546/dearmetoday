@@ -13,9 +13,9 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
+import { entryNote } from '../../model/entry-note';
 import { Api, AuthResponse } from '../../services/api';
 import { ToastService } from '../../services/toast.service';
-import { entryNote } from '../../model/entry-note';
 
 type PreviewImage = {
   src: string;
@@ -56,28 +56,27 @@ export class NoteForm implements OnChanges {
   ) {}
 
   ngOnInit(): void {
-  const now = new Date();
-  this.formattedDate.set(
-    now.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    })
-  );
+    const now = new Date();
+    this.formattedDate.set(
+      now.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      })
+    );
 
-  this.apiService.getUserdataFromGoogle().subscribe({
-    next: (response: AuthResponse) => {
-      this.ngZone.run(() => {
-        setTimeout(() => {
-          this.email.set(response.user.email);
-          this.isLoading.set(false);
+    this.apiService.getUserdataFromGoogle().subscribe({
+      next: (response: AuthResponse) => {
+        this.ngZone.run(() => {
+          setTimeout(() => {
+            this.email.set(response.user.email);
+            this.isLoading.set(false);
+          });
         });
-      });
-    },
-    error: (err) => console.error('Error loading user data:', err),
-  });
-}
-
+      },
+      error: (err) => console.error('Error loading user data:', err),
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     console.log(this.noteId);
@@ -88,13 +87,8 @@ export class NoteForm implements OnChanges {
   }
 
   isFormValid() {
-    return (
-      this.note()?.trim() ||
-      this.note2()?.trim() ||
-      this.note3()?.trim()
-    );
+    return this.note()?.trim() || this.note2()?.trim() || this.note3()?.trim();
   }
-
 
   loadNoteData() {
     this.isLoading.set(true);
@@ -125,7 +119,6 @@ export class NoteForm implements OnChanges {
       },
     });
   }
-
 
   handleImageUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -181,7 +174,7 @@ export class NoteForm implements OnChanges {
   }
   cancelSend() {
     this.confirmDialog.nativeElement.close();
-    this.closed.emit();
+    // ไม่ส่ง closed.emit() เพื่อให้ผู้ใช้ยังคงอยู่ในหน้า note-form
   }
 
   private showMoodToast(mood: string, isEdit: boolean = false) {
@@ -243,40 +236,38 @@ export class NoteForm implements OnChanges {
       ? this.apiService.editPositiveNoteById(this.noteId!, formData)
       : this.apiService.createPositiveNote(formData);
 
-    request$
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: (updatedNote) => {
-          this.ngZone.run(() => {
-            this.note.set(updatedNote.line1);
-            this.note2.set(updatedNote.line2 ?? '');
-            this.note3.set(updatedNote.line3 ?? '');
-            this.mood.set(updatedNote.mood);
-            this.previewImages.set(
-              updatedNote.imageUrls.map((url: string) => ({
-                src: url,
-                isNew: false,
-              }))
-            );
-
-            this.noteCreated.emit(updatedNote);
-            this.showMoodToast(this.mood(), this.isEditMode);
-            if (this.isEditMode) {
-              this.loadNoteData();
-            } else {
-              this.resetForm();
-            }
-            this.closed.emit();
-          });
-        },
-        error: (err) => {
-          console.error('Error:', err);
-          this.toastService.showToast(
-            this.isEditMode ? 'แก้ไขบันทึกล้มเหลว' : 'สร้างบันทึกล้มเหลว',
-            true
+    request$.pipe(finalize(() => this.isLoading.set(false))).subscribe({
+      next: (updatedNote) => {
+        this.ngZone.run(() => {
+          this.note.set(updatedNote.line1);
+          this.note2.set(updatedNote.line2 ?? '');
+          this.note3.set(updatedNote.line3 ?? '');
+          this.mood.set(updatedNote.mood);
+          this.previewImages.set(
+            updatedNote.imageUrls.map((url: string) => ({
+              src: url,
+              isNew: false,
+            }))
           );
-        },
-      });
+
+          this.noteCreated.emit(updatedNote);
+          this.showMoodToast(this.mood(), this.isEditMode);
+          if (this.isEditMode) {
+            this.loadNoteData();
+          } else {
+            this.resetForm();
+          }
+          this.closed.emit();
+        });
+      },
+      error: (err) => {
+        console.error('Error:', err);
+        this.toastService.showToast(
+          this.isEditMode ? 'แก้ไขบันทึกล้มเหลว' : 'สร้างบันทึกล้มเหลว',
+          true
+        );
+      },
+    });
   }
 
   private resetForm(): void {
