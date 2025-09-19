@@ -13,6 +13,7 @@ import { SendgridModule } from './third-party/sendgrid/sendgrid.module';
 import { CalendarService } from './calendar/calendar.service';
 import { CalendarModule } from './calendar/calendar.module';
 import { QuickNoteModule } from './quick-note/quick-note.module';
+import { SummaryModule } from './summary/summary.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { QuickNoteModule } from './quick-note/quick-note.module';
     }),
     CalendarModule,
     QuickNoteModule,
+    SummaryModule,
   ],
   controllers: [AppController],
   providers: [
