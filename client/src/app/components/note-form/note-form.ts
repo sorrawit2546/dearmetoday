@@ -36,6 +36,7 @@ export class NoteForm implements OnChanges {
   @Input() noteId!: string;
 
   isEditMode = false;
+  private readonly AUTOSAVE_KEY = 'dearmetoday_noteform_autosave';
 
   isLoading = signal(false);
   isDragging = signal(false);
@@ -71,6 +72,8 @@ export class NoteForm implements OnChanges {
           setTimeout(() => {
             this.email.set(response.user.email);
             this.isLoading.set(false);
+            // โหลดข้อมูล autosave หลังจากได้ email แล้ว
+            this.loadAutosaveData();
           });
         });
       },
@@ -141,6 +144,8 @@ export class NoteForm implements OnChanges {
               ...imgs,
               { src: reader.result as string, isNew: true },
             ]);
+            // autosave หลังจากเพิ่มรูปภาพ
+            this.onFormChange();
           });
         });
       };
@@ -150,6 +155,8 @@ export class NoteForm implements OnChanges {
 
   removeImage(index: number): void {
     this.previewImages.update((imgs) => imgs.filter((_, i) => i !== index));
+    // autosave หลังจากลบรูปภาพ
+    this.onFormChange();
   }
 
   handleDrop(event: DragEvent): void {
@@ -175,6 +182,12 @@ export class NoteForm implements OnChanges {
   cancelSend() {
     this.confirmDialog.nativeElement.close();
     // ไม่ส่ง closed.emit() เพื่อให้ผู้ใช้ยังคงอยู่ในหน้า note-form
+  }
+
+  // ฟังก์ชันสำหรับปิดฟอร์มและล้างข้อมูล autosave
+  closeForm(): void {
+    this.clearAutosaveData();
+    this.closed.emit();
   }
 
   private showMoodToast(mood: string, isEdit: boolean = false) {
@@ -257,6 +270,8 @@ export class NoteForm implements OnChanges {
           } else {
             this.resetForm();
           }
+          // ล้างข้อมูล autosave หลังจากบันทึกสำเร็จ
+          this.clearAutosaveData();
           this.closed.emit();
         });
       },
@@ -276,5 +291,78 @@ export class NoteForm implements OnChanges {
     this.note2.set('');
     this.note3.set('');
     this.previewImages.set([]);
+    this.clearAutosaveData();
+  }
+
+  // ฟังก์ชัน autosave
+  private saveToLocalStorage(): void {
+    if (this.isEditMode) return; // ไม่ autosave ในโหมดแก้ไข
+
+    const autosaveData = {
+      note: this.note(),
+      note2: this.note2(),
+      note3: this.note3(),
+      mood: this.mood(),
+      showMessage: this.showMessage(),
+      previewImages: this.previewImages().filter((img) => img.isNew), // เฉพาะรูปใหม่
+      timestamp: Date.now(),
+    };
+
+    try {
+      localStorage.setItem(this.AUTOSAVE_KEY, JSON.stringify(autosaveData));
+    } catch (error) {
+      console.warn('ไม่สามารถบันทึกข้อมูล autosave ได้:', error);
+    }
+  }
+
+  // ฟังก์ชันโหลดข้อมูลจาก localStorage
+  private loadAutosaveData(): void {
+    if (this.isEditMode) return; // ไม่โหลด autosave ในโหมดแก้ไข
+
+    try {
+      const savedData = localStorage.getItem(this.AUTOSAVE_KEY);
+      if (savedData) {
+        const autosaveData = JSON.parse(savedData);
+
+        // ตรวจสอบว่าข้อมูลไม่เก่าเกิน 24 ชั่วโมง
+        const isDataFresh =
+          Date.now() - autosaveData.timestamp < 24 * 60 * 60 * 1000;
+
+        if (
+          isDataFresh &&
+          (autosaveData.note || autosaveData.note2 || autosaveData.note3)
+        ) {
+          this.note.set(autosaveData.note || '');
+          this.note2.set(autosaveData.note2 || '');
+          this.note3.set(autosaveData.note3 || '');
+          this.mood.set(autosaveData.mood || 'happy');
+          this.showMessage.set(autosaveData.showMessage || false);
+          this.previewImages.set(autosaveData.previewImages || []);
+
+          console.log('โหลดข้อมูล autosave สำเร็จ');
+        } else {
+          this.clearAutosaveData();
+        }
+      }
+    } catch (error) {
+      console.warn('ไม่สามารถโหลดข้อมูล autosave ได้:', error);
+      this.clearAutosaveData();
+    }
+  }
+
+  // ฟังก์ชันล้างข้อมูล autosave
+  private clearAutosaveData(): void {
+    try {
+      localStorage.removeItem(this.AUTOSAVE_KEY);
+    } catch (error) {
+      console.warn('ไม่สามารถล้างข้อมูล autosave ได้:', error);
+    }
+  }
+
+  // ฟังก์ชันสำหรับเรียกใช้ autosave เมื่อมีการเปลี่ยนแปลง
+  onFormChange(): void {
+    if (!this.isEditMode) {
+      this.saveToLocalStorage();
+    }
   }
 }
