@@ -9,10 +9,14 @@ import {
 } from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
 import { moodToScore } from './utils/positive-note.mood.utils';
+import { SummaryGateway } from 'src/summary/summary.gateway';
 
 @Injectable()
 export class PositiveNoteRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private summaryGateway: SummaryGateway,
+  ) {}
 
   async deletePositiveNoteById(
     noteId: string,
@@ -127,6 +131,7 @@ export class PositiveNoteRepository {
         userId: userId,
       },
     });
+    this.summaryGateway.notify(userId);
     return result;
   }
 

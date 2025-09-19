@@ -51,6 +51,123 @@
           </div>
         </div>
       </div>
+      <div class="w-full max-w-6xl">
+        <!-- Stats Cards Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 h-44 ">
+          <!-- This Week's Average Card -->
+          <div
+            class="flex flex-col justify-center items-center rounded-[40px] p-6"
+            [ngClass]="getWeeklyAverageGradient()"
+          >
+            <div class="text-black text-lg mt-1">This Week's Average</div>
+            <div class="text-3xl font-bold text-gray-800 mb-1">
+              {{ weeklyAverage() }}
+            </div>
+            <div class="text-[#4B99D9] font-bold text-sm">
+              {{ getWeeklyAverageLabel() }}
+            </div>
+          </div>
+
+          <!-- Mood Entries Card -->
+          <div
+            class="card-gradient flex flex-col justify-center items-center bg-white rounded-[40px] p-6 shadow-lg"
+          >
+            <div class="text-black text-lg mt-1">Mood Entries</div>
+            <div class="text-3xl font-bold text-gray-800 mb-1">
+              {{weeklyMoodEntries()}}
+            </div>
+            <div class="text-[#4B99D9] font-bold text-sm">
+              recorded this week
+            </div>
+          </div>
+
+          <!-- Weekly Progress Card -->
+          <div
+            class="flex flex-col justify-center items-center bg-white rounded-[40px] p-6 shadow-lg"
+            [ngClass]="weeklyProgress().startsWith('-') ? 'card-gradient-red' : 'card-gradient-green'"
+          >
+            <div class="text-black text-lg mt-1">Weekly Progress</div>
+            <div
+              class="text-3xl font-bold mb-1"
+              [ngClass]="weeklyProgress().startsWith('-') ? 'text-red-600' : 'text-[#0A8050]'"
+            >
+              {{ weeklyProgress() }}
+            </div>
+            <div
+              class="font-bold text-sm"
+              [ngClass]="weeklyProgress().startsWith('-') ? 'text-red-600' : 'text-green-600'"
+            >
+              vs. last week
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Mood Flow Chart -->
+        <div class="bg-white rounded-[40px] p-6 shadow-lg mb-8">
+          <div class="mb-4">
+            <h3 class="text-lg font-bold text-black">Daily Mood Flow</h3>
+            <p class="text-sm text-gray-600">
+              Your emotional journey through the week
+            </p>
+          </div>
+
+          <!-- Chart Container -->
+          <div class="h-72 relative">
+            <!-- Y-axis labels -->
+            <div
+              class="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-black font-extrabold pr-2"
+            >
+              <span>5</span>
+              <span>4</span>
+              <span>3</span>
+              <span>2</span>
+              <span>1</span>
+            </div>
+
+            <!-- Chart Area -->
+            <div class="ml-8 h-full relative">
+              <!-- Grid lines -->
+              <!-- <div class="absolute inset-0">
+                <div class="h-full flex flex-col justify-between">
+                  <div class="border-t border-gray-200"></div>
+                  <div class="border-t border-gray-200"></div>
+                  <div class="border-t border-gray-200"></div>
+                  <div class="border-t border-gray-200"></div>
+                </div>
+              </div> -->
+
+              <!-- Data Points -->
+              <div class="absolute inset-0 flex justify-between px-4">
+                <div
+                  *ngFor="let day of weeklyMoodData(); let i = index"
+                  class="relative group flex flex-col items-center h-full"
+                >
+                  <!-- จุดกราฟ -->
+                  <div
+                    class="w-4 h-4 rounded-full absolute"
+                    [style.background-color]="getMoodColor(day.mood)"
+                    [style.top]="(100 - getMoodPosition(day.mood)) + '%'"
+                  ></div>
+
+                  <!-- Tooltip -->
+                  <div
+                    class="absolute -top-8 px-2 py-1 text-xs text-white bg-gray-800 rounded-md shadow-md opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap"
+                  >
+                    {{ day.date }} : {{ day.mood.toFixed(1) }}
+                  </div>
+
+                  <!-- Label วันที่ -->
+                  <div
+                    class="absolute bottom-0 text-xs text-black font-bold text-center w-20"
+                  >
+                    {{ day.date }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="w-full max-w-6xl flex justify-start text-2xl my-4">
         <img
           class="w-[30px] h-[30px]"

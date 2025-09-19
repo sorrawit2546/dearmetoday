@@ -84,19 +84,19 @@
           <textarea
             placeholder="เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้..."
             [ngModel]="note()"
-            (ngModelChange)="note.set($event)"
+            (ngModelChange)="note.set($event); onFormChange()"
             class="col-span-2 h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
           ></textarea>
           <textarea
             placeholder="สิ่งเล็ก ๆ ที่ทำให้คุณยิ้มได้ในวันนี้..."
             [ngModel]="note2()"
-            (ngModelChange)="note2.set($event)"
+            (ngModelChange)="note2.set($event); onFormChange()"
             class="w-full h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
           ></textarea>
           <textarea
             placeholder="เรื่องราวที่ทำให้รู้สึกภูมิใจ.."
             [ngModel]="note3()"
-            (ngModelChange)="note3.set($event)"
+            (ngModelChange)="note3.set($event); onFormChange()"
             class="w-full h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
           ></textarea>
         </div>
@@ -109,7 +109,7 @@
         >
         <select
           [ngModel]="mood()"
-          (ngModelChange)="mood.set($event)"
+          (ngModelChange)="mood.set($event); onFormChange()"
           class="w-full border border-[#e4dfd1] rounded-xl px-4 py-3 bg-[#fffdf8]"
         >
           <option value="happy">happy</option>
@@ -171,7 +171,7 @@
                 >
                   <input
                     [ngModel]="showMessage()"
-                    (ngModelChange)="showMessage.set($event)"
+                    (ngModelChange)="showMessage.set($event); onFormChange()"
                     type="checkbox"
                     class="checkbox checkbox-primary rounded-md"
                   />
