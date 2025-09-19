@@ -24,8 +24,8 @@ import { NoteCardAll } from '../../note-card-all/note-card-all';
 import { NoteCardComponent } from '../../note-card/note-card';
 import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
-import { ToastService } from '../../services/toast.service';
 import { SummaryService } from '../../services/summary.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -70,11 +70,42 @@ export class Dashboard implements OnInit, OnDestroy {
   searchTerm = signal('');
   searchDate = signal('');
 
+  // Dashboard stats computed values
+  weeklyAverage = computed(() => {
+    const s = this.summary();
+    if (!s?.weekly?.currentWeek?.avgMood) return '4.1';
+    return s.weekly.currentWeek.avgMood.toFixed(1);
+  });
+
+  weeklyMoodEntries = computed(() => {
+    const s = this.summary();
+    if (!s?.weekly?.currentWeek?.count) return '87';
+    return s.weekly.currentWeek.count.toString();
+  });
+
+  weeklyProgress = computed(() => {
+    const s = this.summary();
+    if (!s?.weekly?.diffPercent) return '+17.6%';
+    return s.weekly.diffPercent > 0
+      ? `+${s.weekly.diffPercent.toFixed(1)}%`
+      : `${s.weekly.diffPercent.toFixed(1)}%`;
+  });
+
+  weeklyMoodData = computed(() => {
+    const s = this.summary();
+    if (!s?.daily?.currentWeek) return this.getDefaultWeeklyData();
+
+    return s.daily.currentWeek.map((day) => ({
+      date: this.formatDate(day.date),
+      mood: day.avgMood || 3,
+      count: day.count || 0,
+    }));
+  });
+
   // Pagination
   currentPage = signal(1);
   itemsPerPage = 9;
   activeCard: number | null = null;
-
 
   // Refresh triggers
   private refreshTrigger = signal<number>(0);
@@ -158,10 +189,10 @@ export class Dashboard implements OnInit, OnDestroy {
     effect(() => {
       const s = this.summary();
       if (!s) return;
-    
+
       console.log('📊 Weekly summary', s.weekly);
       console.table(s.daily.currentWeek, ['date', 'avgMood', 'count']);
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -439,5 +470,83 @@ export class Dashboard implements OnInit, OnDestroy {
       error: (err) =>
         console.error('Error refreshing notes after deletion:', err),
     });
+  }
+
+  // Helper functions for dashboard
+  getMoodColor(mood: number): string {
+    if (mood >= 4.5) return '#11A189'; // green-500
+    if (mood >= 3.5) return '#6CB9F8'; // blue-500
+    if (mood >= 2.5) return '#2C2C2C'; // gray-500
+    if (mood >= 1.5) return '#FF6200'; // amber-500
+    return '#EF4444'; // red-500
+  }
+
+  getMoodPosition(mood: number): number {
+    return Math.max(0, Math.min(100, ((mood - 1) / 4) * 100));
+  }
+
+  getWeeklyAverageGradient(): string {
+    const avg = parseFloat(this.weeklyAverage());
+    if (avg < 1.5) return 'card-gradient-red';
+    if (avg < 2.5) return 'card-gradient-orange';
+    if (avg < 3.5) return 'card-gradient-yellow';
+    if (avg < 4.5) return 'card-gradient-blue';
+    return 'card-gradient-green';
+  }
+
+  getWeeklyAverageLabel(): string {
+    const avg = parseFloat(this.weeklyAverage());
+    if (avg < 1.5) return 'Very Low';
+    if (avg < 2.5) return 'Low';
+    if (avg < 3.5) return 'Moderate';
+    if (avg < 4.5) return 'Good';
+    return 'Great';
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    const dayName = days[date.getDay()];
+    const month = months[date.getMonth()];
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${dayName}, ${month} ${day}`;
+  }
+
+  getDefaultWeeklyData() {
+    // Default data for when no real data is available
+    const today = new Date();
+    const data = [];
+
+    // สร้างข้อมูลตัวอย่างที่ชัดเจนสำหรับทดสอบ
+    const sampleMoods = [4.5, 3.5, 1.2, 4.8, 3.0, 2.5, 4.0]; // ตาม design ที่แสดง
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const mood = sampleMoods[i] || 3 + Math.random() * 2;
+      data.push({
+        date: this.formatDate(date.toISOString()),
+        mood: mood,
+        count: Math.floor(Math.random() * 3) + 1, // Random count 1-3
+      });
+    }
+
+    return data;
   }
 }

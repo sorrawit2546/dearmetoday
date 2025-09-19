@@ -156,3 +156,39 @@
   box-shadow: none !important;
 }
 
+.card-gradient {
+  background: radial-gradient(circle at center, #CEEFF6 0%, rgb(255, 255, 255) 50%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
+}
+
+.card-gradient-green {
+  background: radial-gradient(circle at center, #D6F6CE 0%, rgb(255, 255, 255) 50%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
+}
+.card-gradient-blue {
+  background: radial-gradient(circle farthest-side at center,
+  #cef4f6 0%,
+  #e6f9fa 60%,
+  #ffffff 100%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
+}
+.card-gradient-yellow {
+  background: radial-gradient(circle at center, #f6f6ce 0%, rgb(255, 255, 255) 50%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
+}
+.card-gradient-orange {
+  background: radial-gradient(circle at center, #f6ddce 0%, rgb(255, 255, 255) 50%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
+}
+
+.card-gradient-red {
+  background: radial-gradient(circle at center, #f2c0c0 0%, rgb(255, 255, 255) 50%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
+}
+
