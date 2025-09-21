@@ -107,8 +107,8 @@ jobs:
             export NODE_ENV=production
             export IMAGE_VERSION="$VERSION"
 
-            docker-compose -f docker-compose.yml -f docker-compose.prod.yml build --build-arg VERSION="$IMAGE_VERSION" server
-            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d server
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build --build-arg VERSION="$IMAGE_VERSION" server
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d server
 
             # Prisma migrate ใช้ Supabase URL
             docker exec -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy
