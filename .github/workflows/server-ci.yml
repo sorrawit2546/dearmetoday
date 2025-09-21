@@ -111,6 +111,12 @@ jobs:
             docker compose -f docker-compose.yml -f docker-compose.prod.yml build --build-arg VERSION="$IMAGE_VERSION" server
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d server
 
+            # 🟢 รอ container ready ก่อน exec
+            echo "⏳ Waiting for server container to be ready..."
+            sleep 10
+            docker ps
+            docker logs server --tail=50
+
             # Prisma migrate ใช้ Supabase URL
             docker exec -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy
             docker exec -e DATABASE_URL="$DATABASE_URL" server npx prisma generate
