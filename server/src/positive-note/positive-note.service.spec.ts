@@ -12,6 +12,7 @@ import {
 } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
 import { PositiveNoteService } from './positive-note.service';
+import { SummaryGateway } from '../summary/summary.gateway';
 
 describe('PositiveNoteService', () => {
   let service: PositiveNoteService;
@@ -50,6 +51,10 @@ describe('PositiveNoteService', () => {
         {
           provide: CalendarService,
           useValue: mockCalendarService,
+        },
+        {
+          provide: SummaryGateway,
+          useValue: {},
         },
       ],
     }).compile();

@@ -10,6 +10,7 @@ import {
 import { getAllNoteSendById } from './entity/positive-note.entity';
 import { PositiveNoteController } from './positive-note.controller';
 import { PositiveNoteService } from './positive-note.service';
+import { SummaryGateway } from '../summary/summary.gateway';
 
 jest.mock('jsonwebtoken', () => ({
   verify: jest.fn(),
@@ -58,6 +59,10 @@ describe('PositiveNoteController', () => {
         },
         {
           provide: CalendarService,
+          useValue: {},
+        },
+        {
+          provide: SummaryGateway,
           useValue: {},
         },
       ],
