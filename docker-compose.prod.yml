@@ -23,8 +23,6 @@ services:
         VERSION: ${IMAGE_VERSION:-local}
     ports:
       - "3000:3000"
-    env_file:
-      - ./server/.env.${NODE_ENV:-local}   # ไว้ใช้ local dev
     environment:
       # ใช้ Supabase แทน DB local
       DATABASE_URL: ${DATABASE_URL}

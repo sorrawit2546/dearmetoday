@@ -67,6 +67,17 @@ jobs:
       SSH_USER: ${{ secrets.SSH_USER }}
       SSH_KEY: ${{ secrets.SSH_KEY }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DIRECT_URL: ${{ secrets.DIRECT_URL }}
+      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      MAIL_FROM: ${{ secrets.MAIL_FROM }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      SERVER_URL: ${{ secrets.SERVER_URL }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      COOKIE_DOMAIN: ${{ secrets.COOKIE_DOMAIN }}
+      COOKIE_SECURE: ${{ secrets.COOKIE_SECURE }}
+      COOKIE_SAMESITE: ${{ secrets.COOKIE_SAMESITE }}
 
     steps:
       - name: Checkout repository (for branch/tag context)
@@ -105,9 +116,8 @@ jobs:
             export NODE_ENV=production
             export IMAGE_VERSION="$VERSION"
 
-            # Build + restart server
-            docker compose build --build-arg VERSION="$IMAGE_VERSION" server
-            docker compose up -d server
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build --build-arg VERSION="$IMAGE_VERSION" server
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d server
 
             # Prisma migrate ใช้ Supabase URL
             docker exec -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy
