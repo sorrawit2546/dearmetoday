@@ -8,10 +8,10 @@
     COPY pnpm-lock.yaml package*.json ./
     RUN pnpm install --frozen-lockfile
     
-    # คัดลอก source code
+    # Copy source
     COPY . .
     
-    # Generate Prisma Client
+    # Prisma generate (dev env)
     RUN npx prisma generate
     
     # Build dist
@@ -23,11 +23,11 @@
     
     RUN npm install -g pnpm
     
-    # ติดตั้งเฉพาะ production deps
+    # Install only production deps
     COPY pnpm-lock.yaml package*.json ./
     RUN pnpm install --prod --frozen-lockfile
     
-    # Copy dist + prisma จาก builder
+    # ✅ Copy dist และ prisma schema จาก builder
     COPY --from=builder /app/dist ./dist
     COPY --from=builder /app/prisma ./prisma
     
