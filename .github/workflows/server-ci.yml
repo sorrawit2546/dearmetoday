@@ -131,6 +131,6 @@ jobs:
             done
 
             # Prisma migrate ใช้ Supabase URL
-            docker exec -i -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy
-            docker exec -i -e DATABASE_URL="$DATABASE_URL" server npx prisma generate
+            docker exec -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy
+            docker exec -e DATABASE_URL="$DATABASE_URL" server npx prisma generate
 
