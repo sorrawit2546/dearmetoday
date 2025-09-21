@@ -118,12 +118,26 @@ jobs:
                 echo "✅ Server is running"
                 break
               fi
+
+              if [ $i -eq 10 ]; then
+                echo "❌ Server container failed to start in time"
+                docker logs server
+                exit 1
+              fi
+
               echo "⌛ Waiting ($i/10)..."
               sleep 5
             done
 
-            docker logs server --tail=50
-
             # Prisma migrate ใช้ Supabase URL
-            docker exec -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy
-            docker exec -e DATABASE_URL="$DATABASE_URL" server npx prisma generate
+            docker exec -i -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy || {
+              echo "❌ prisma migrate failed"
+              docker logs server
+              exit 1
+            }
+
+            docker exec -i -e DATABASE_URL="$DATABASE_URL" server npx prisma generate || {
+              echo "❌ prisma generate failed"
+              docker logs server
+              exit 1
+            }
