@@ -9,7 +9,7 @@ import {
 } from './Dto/create-positive-note';
 import { getAllNoteSendById } from './entity/positive-note.entity';
 import { moodToScore } from './utils/positive-note.mood.utils';
-import { SummaryGateway } from 'src/summary/summary.gateway';
+import { SummaryGateway } from '../summary/summary.gateway';
 
 @Injectable()
 export class PositiveNoteRepository {
