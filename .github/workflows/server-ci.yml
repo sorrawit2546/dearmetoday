@@ -90,7 +90,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: DATABASE_URL
+          envs: DATABASE_URL,DIRECT_URL,SENDGRID_API_KEY,MAIL_FROM,FRONTEND_URL,SERVER_URL,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,JWT_SECRET,COOKIE_DOMAIN,COOKIE_SECURE,COOKIE_SAMESITE
           script: |
             set -euo pipefail
 
