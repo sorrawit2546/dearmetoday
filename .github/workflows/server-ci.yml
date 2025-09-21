@@ -111,33 +111,26 @@ jobs:
             docker compose -f docker-compose.yml -f docker-compose.prod.yml build --build-arg VERSION="$IMAGE_VERSION" server
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d server
 
-            # 🟢 รอ container server ขึ้นมาจริง
             echo "⏳ Waiting for server container to be ready..."
             for i in {1..10}; do
+              # ถ้ามี status running
               if docker ps --filter "name=server" --filter "status=running" | grep server; then
                 echo "✅ Server is running"
                 break
               fi
 
+              echo "⌛ Waiting ($i/10)..."
+              docker ps -a
+              docker logs server --tail=50 || true
+              sleep 5
+
               if [ $i -eq 10 ]; then
-                echo "❌ Server container failed to start in time"
-                docker logs server
+                echo "❌ Server container did not become ready"
                 exit 1
               fi
-
-              echo "⌛ Waiting ($i/10)..."
-              sleep 5
             done
 
             # Prisma migrate ใช้ Supabase URL
-            docker exec -i -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy || {
-              echo "❌ prisma migrate failed"
-              docker logs server
-              exit 1
-            }
+            docker exec -i -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy
+            docker exec -i -e DATABASE_URL="$DATABASE_URL" server npx prisma generate
 
-            docker exec -i -e DATABASE_URL="$DATABASE_URL" server npx prisma generate || {
-              echo "❌ prisma generate failed"
-              docker logs server
-              exit 1
-            }
