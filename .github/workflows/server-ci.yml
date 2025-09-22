@@ -107,9 +107,10 @@ jobs:
             export IMAGE_VERSION="$VERSION"
 
             # 🔥 บังคับ rebuild ทุกครั้ง
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml down --remove-orphans || true
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml build --no-cache --build-arg VERSION="$IMAGE_VERSION" server
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d server
+            echo "🔍 Using docker-compose files: docker-compose.prod.yml only"
+            docker compose -f docker-compose.prod.yml down --remove-orphans || true
+            docker compose -f docker-compose.prod.yml build --no-cache --build-arg VERSION="$IMAGE_VERSION" server
+            docker compose -f docker-compose.prod.yml up -d server
 
             echo "⏳ Waiting for containers..."
             sleep 15
@@ -141,6 +142,10 @@ jobs:
             echo "🔍 Debug: ตรวจสอบ working directory"
             docker exec server pwd || true
             docker exec server ls -la /app/ || true
+            
+            # Debug: ตรวจสอบ volume mapping
+            echo "🔍 Debug: ตรวจสอบ volume mapping"
+            docker inspect server | grep -A 10 -B 10 "Mounts" || true
 
             # ✅ Prisma migrate/generate รันนอก container หลัก
             echo "🔍 Testing database connection..."
@@ -156,13 +161,15 @@ jobs:
             
             # ตรวจสอบ DATABASE_URL
             echo "🔍 DATABASE_URL: $DATABASE_URL"
+            echo "🔍 DIRECT_URL: $DIRECT_URL"
+            echo "🔍 NODE_ENV: $NODE_ENV"
             
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma db pull --print || true
+            docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma db pull --print || true
             
             echo "🔄 Running Prisma migrate deploy..."
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma migrate deploy
+            docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma migrate deploy
             
             echo "🔄 Running Prisma generate..."
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma generate
+            docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma generate
 
             echo "✅ Deployment complete"
