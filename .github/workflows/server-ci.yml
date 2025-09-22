@@ -159,26 +159,36 @@ jobs:
             echo "🔍 Testing port connectivity..."
             docker exec server nc -zv db.efkinmzzhrsnvqkkznxg.supabase.co 5432 || true
             
-            # ตรวจสอบ IPv4 connectivity
-            echo "🔍 Testing IPv4 connectivity..."
-            docker exec server nc -zv -4 db.efkinmzzhrsnvqkkznxg.supabase.co 5432 || true
+            # ตรวจสอบ Supabase Pooler connectivity
+            echo "🔍 Testing Supabase Pooler connectivity..."
+            docker exec server nc -zv aws-1-ap-southeast-1.pooler.supabase.com 6543 || true
+            docker exec server nc -zv aws-1-ap-southeast-1.pooler.supabase.com 5432 || true
             
             # ตรวจสอบ DATABASE_URL
             echo "🔍 DATABASE_URL: $DATABASE_URL"
             echo "🔍 DIRECT_URL: $DIRECT_URL"
             echo "🔍 NODE_ENV: $NODE_ENV"
             
-            # แก้ไข DATABASE_URL ให้ใช้ IPv4
-            echo "🔍 Converting DATABASE_URL to IPv4..."
-            export DATABASE_URL_IPV4=$(echo "$DATABASE_URL" | sed 's/db\.efkinmzzhrsnvqkkznxg\.supabase\.co/34.87.176.147/g')
+            # แก้ไข DIRECT_URL ให้ใช้ Direct Connection (IPv4) และ encode password
+            echo "🔍 Converting DIRECT_URL to use Direct Connection..."
+            export DIRECT_URL_IPV4=$(echo "$DIRECT_URL" | sed 's/db\.efkinmzzhrsnvqkkznxg\.supabase\.co:5432/aws-1-ap-southeast-1.pooler.supabase.com:5432/g' | sed 's/@Dearmetoday1809/%40Dearmetoday1809/g')
+            echo "🔍 DIRECT_URL_IPV4: $DIRECT_URL_IPV4"
+            
+            # แก้ไข DATABASE_URL ให้ใช้ Supabase Pooler (IPv4) และ encode password
+            echo "🔍 Converting DATABASE_URL to use Supabase Pooler..."
+            export DATABASE_URL_IPV4=$(echo "$DATABASE_URL" | sed 's/db\.efkinmzzhrsnvqkkznxg\.supabase\.co:5432/aws-1-ap-southeast-1.pooler.supabase.com:6543/g' | sed 's/@Dearmetoday1809/%40Dearmetoday1809/g' | sed 's/$/\&pgbouncer=true/g')
             echo "🔍 DATABASE_URL_IPV4: $DATABASE_URL_IPV4"
             
-            docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL" server npx prisma db pull --print || true
+            # ตรวจสอบว่า DATABASE_URL_IPV4 ถูกต้องหรือไม่
+            echo "🔍 Verifying DATABASE_URL_IPV4..."
+            echo "$DATABASE_URL_IPV4" | grep -q "aws-1-ap-southeast-1.pooler.supabase.com:6543" && echo "✅ Pooler conversion successful" || echo "❌ Pooler conversion failed"
+            
+            docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL_IPV4" server npx prisma db pull --print || true
             
             echo "🔄 Running Prisma migrate deploy..."
-            docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL" server npx prisma migrate deploy
+            docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL_IPV4" server npx prisma migrate deploy
             
             echo "🔄 Running Prisma generate..."
-            docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL" server npx prisma generate
+            docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL_IPV4" server npx prisma generate
 
             echo "✅ Deployment complete"
