@@ -136,6 +136,11 @@ jobs:
             # Debug: ตรวจสอบ environment variables
             echo "🔍 Debug: ตรวจสอบ environment variables"
             docker exec server env | grep -E "(DATABASE_URL|NODE_ENV|PORT)" || true
+            
+            # Debug: ตรวจสอบ working directory
+            echo "🔍 Debug: ตรวจสอบ working directory"
+            docker exec server pwd || true
+            docker exec server ls -la /app/ || true
 
             # ✅ Prisma migrate/generate รันนอก container หลัก
             echo "🔍 Testing database connection..."
@@ -144,6 +149,10 @@ jobs:
             echo "🔍 Testing network connectivity..."
             docker exec server ping -c 3 8.8.8.8 || true
             docker exec server nslookup db.efkinmzzhrsnvqkkznxg.supabase.co || true
+            
+            # ตรวจสอบ port connectivity
+            echo "🔍 Testing port connectivity..."
+            docker exec server nc -zv db.efkinmzzhrsnvqkkznxg.supabase.co 5432 || true
             
             # ตรวจสอบ DATABASE_URL
             echo "🔍 DATABASE_URL: $DATABASE_URL"
