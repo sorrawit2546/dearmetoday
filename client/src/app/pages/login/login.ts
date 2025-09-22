@@ -9,6 +9,6 @@ import { Component } from '@angular/core';
 export class Login {
   constructor(){}
   navigateToGoogleProvide(){
-    window.location.href = 'http://localhost:3000/api/auth/google';
+    window.location.href = 'https://api.dearmetoday.com/api/auth/google';
   }
 }
