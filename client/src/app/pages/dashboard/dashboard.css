@@ -1,5 +1,3 @@
-
-
 .loading-state {
   text-align: center;
   padding: 50px;
@@ -16,8 +14,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-state {
@@ -51,7 +53,7 @@
   background-color: #f8f9fa;
   border-radius: 10px;
   padding: 30px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .header-section {
@@ -86,7 +88,7 @@
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .user-text {
@@ -121,17 +123,16 @@
   }
 }
 
-
 .cat {
-  position: fixed;         /* ลอยอยู่บนจอ */
-  bottom: 20px;            /* ห่างจากขอบล่าง 20px */
-  right: 20px;             /* ห่างจากขอบขวา 20px */
+  position: fixed; /* ลอยอยู่บนจอ */
+  bottom: 20px; /* ห่างจากขอบล่าง 20px */
+  right: 20px; /* ห่างจากขอบขวา 20px */
   width: 100px;
   height: 100px;
-  background: url('https://cliply.co/wp-content/uploads/2021/09/142109670_SAD_CAT_400.gif')
-              no-repeat center/contain;
-  z-index: 9999;           /* ให้อยู่บนสุด */
-  pointer-events: none;    /* กันไม่ให้บังการคลิก */
+  background: url("https://cliply.co/wp-content/uploads/2021/09/142109670_SAD_CAT_400.gif")
+    no-repeat center/contain;
+  z-index: 9999; /* ให้อยู่บนสุด */
+  pointer-events: none; /* กันไม่ให้บังการคลิก */
 }
 
 .join .btn {
@@ -157,38 +158,54 @@
 }
 
 .card-gradient {
-  background: radial-gradient(circle at center, #CEEFF6 0%, rgb(255, 255, 255) 50%);
+  background: radial-gradient(
+    circle at center,
+    #ceeff6 0%,
+    rgb(255, 255, 255) 50%
+  );
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
 
 .card-gradient-green {
-  background: radial-gradient(circle at center, #D6F6CE 0%, rgb(255, 255, 255) 50%);
+  background: radial-gradient(
+    circle at center,
+    #d6f6ce 0%,
+    rgb(255, 255, 255) 50%
+  );
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
 .card-gradient-blue {
-  background: radial-gradient(circle farthest-side at center,
-  #cef4f6 0%,
-  #e6f9fa 60%,
-  #ffffff 100%);
+  background: radial-gradient(circle at center, #cef4f6 0%, #ffffff 50%);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
 .card-gradient-yellow {
-  background: radial-gradient(circle at center, #f6f6ce 0%, rgb(255, 255, 255) 50%);
+  background: radial-gradient(
+    circle at center,
+    #f6f6ce 0%,
+    rgb(255, 255, 255) 50%
+  );
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
 .card-gradient-orange {
-  background: radial-gradient(circle at center, #f6ddce 0%, rgb(255, 255, 255) 50%);
+  background: radial-gradient(
+    circle at center,
+    #f6ddce 0%,
+    rgb(255, 255, 255) 50%
+  );
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
 
 .card-gradient-red {
-  background: radial-gradient(circle at center, #f2c0c0 0%, rgb(255, 255, 255) 50%);
+  background: radial-gradient(
+    circle at center,
+    #f2c0c0 0%,
+    rgb(255, 255, 255) 50%
+  );
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
-

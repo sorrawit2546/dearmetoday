@@ -73,19 +73,19 @@ export class Dashboard implements OnInit, OnDestroy {
   // Dashboard stats computed values
   weeklyAverage = computed(() => {
     const s = this.summary();
-    if (!s?.weekly?.currentWeek?.avgMood) return '4.1';
+    if (!s?.weekly?.currentWeek?.avgMood) return '-';
     return s.weekly.currentWeek.avgMood.toFixed(1);
   });
 
   weeklyMoodEntries = computed(() => {
     const s = this.summary();
-    if (!s?.weekly?.currentWeek?.count) return '87';
+    if (!s?.weekly?.currentWeek?.count) return '-';
     return s.weekly.currentWeek.count.toString();
   });
 
   weeklyProgress = computed(() => {
     const s = this.summary();
-    if (!s?.weekly?.diffPercent) return '+17.6%';
+    if (!s?.weekly?.diffPercent) return '-%';
     return s.weekly.diffPercent > 0
       ? `+${s.weekly.diffPercent.toFixed(1)}%`
       : `${s.weekly.diffPercent.toFixed(1)}%`;
@@ -496,6 +496,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   getWeeklyAverageLabel(): string {
     const avg = parseFloat(this.weeklyAverage());
+    if (avg <= 0) return 'No notes yet. Start by creating your first one!'
     if (avg < 1.5) return 'Very Low';
     if (avg < 2.5) return 'Low';
     if (avg < 3.5) return 'Moderate';
