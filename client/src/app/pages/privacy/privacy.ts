@@ -39,8 +39,8 @@ import { CommonModule } from '@angular/common';
 
       <p class="mb-4">
         For any questions or data deletion requests, please contact us at
-        <a href="mailto:support@dearmetoday.com" class="text-blue-600 underline">
-          support@dearmetoday.com
+        <a href="mailto:contact@dearmetoday.com" class="text-blue-600 underline">
+          contact@dearmetoday.com
         </a>
       </p>
 

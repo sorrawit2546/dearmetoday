@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
         </li>
         <li>
           For support or questions, contact us at
-          <a href="mailto:support@dearme.today" class="text-blue-600 underline">support@dearmetoday.com</a>
+          <a href="mailto:contact@dearmetoday.com" class="text-blue-600 underline">contact@dearmetoday.com</a>
         </li>
       </ol>
 
