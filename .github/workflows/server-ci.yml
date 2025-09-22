@@ -112,7 +112,19 @@ jobs:
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d server
 
             echo "⏳ Waiting for containers..."
-            sleep 10
+            sleep 15
+            
+            # รอให้ container ทำงาน
+            echo "🔄 Waiting for server to be ready..."
+            for i in {1..30}; do
+              if docker ps | grep -q "server.*Up"; then
+                echo "✅ Server is running"
+                break
+              fi
+              echo "⏳ Attempt $i/30: Server not ready yet..."
+              sleep 2
+            done
+            
             docker ps
             docker logs server --tail=30 || true
             
@@ -122,7 +134,13 @@ jobs:
             docker exec server cat /app/dist/main.js | head -10 || true
 
             # ✅ Prisma migrate/generate รันนอก container หลัก
+            echo "🔍 Testing database connection..."
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma db pull --print || true
+            
+            echo "🔄 Running Prisma migrate deploy..."
             docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma migrate deploy
+            
+            echo "🔄 Running Prisma generate..."
             docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma generate
 
             echo "✅ Deployment complete"

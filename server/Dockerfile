@@ -28,6 +28,9 @@
     COPY --from=builder /app/prisma ./prisma
     COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
     
+    # Debug: ตรวจสอบไฟล์ที่ copy
+    RUN ls -la /app/dist/ && echo "=== main.js content ===" && head -5 /app/dist/main.js
+    
     EXPOSE 3000
     CMD ["node", "dist/main.js"]
     
