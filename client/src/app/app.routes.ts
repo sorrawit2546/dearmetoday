@@ -5,6 +5,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { Login } from './pages/login/login';
 import { Community } from './pages/community/community';
 import { About } from './pages/about/about';
+import { PrivacyComponent } from './pages/privacy/privacy';
+import { TermsComponent } from './pages/terms/terms';
 
 export const routes: Routes = [
   { component: Home, path: '' },
@@ -12,4 +14,6 @@ export const routes: Routes = [
   { component: Login, path: 'login'},
   { component: Community, path: 'community', canActivate: [AuthGuard]},
   { component: About, path: 'aboutdearme'},
+  { component: PrivacyComponent, path: 'privacy' },
+  { component: TermsComponent, path: 'terms'},
 ];
