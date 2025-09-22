@@ -106,8 +106,9 @@ jobs:
             export NODE_ENV=production
             export IMAGE_VERSION="$VERSION"
 
+            # 🔥 บังคับ rebuild ทุกครั้ง
             docker compose -f docker-compose.yml -f docker-compose.prod.yml down --remove-orphans || true
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml build --build-arg VERSION="$IMAGE_VERSION" server
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml build --no-cache --build-arg VERSION="$IMAGE_VERSION" server
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d server
 
             echo "⏳ Waiting for containers..."
@@ -115,10 +116,8 @@ jobs:
             docker ps
             docker logs server --tail=30 || true
 
-            # ✅ Prisma migrate/generate รันนอก container หลัก (safe way)
+            # ✅ Prisma migrate/generate รันนอก container หลัก
             docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy
             docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" server npx prisma generate
 
             echo "✅ Deployment complete"
-
-
