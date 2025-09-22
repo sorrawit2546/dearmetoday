@@ -496,7 +496,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   getWeeklyAverageLabel(): string {
     const avg = parseFloat(this.weeklyAverage());
-    if (avg <= 0) return 'No notes yet. Start by creating your first one!'
+    if (avg < 1) return 'No notes yet. Start by creating your first one!';
     if (avg < 1.5) return 'Very Low';
     if (avg < 2.5) return 'Low';
     if (avg < 3.5) return 'Moderate';
