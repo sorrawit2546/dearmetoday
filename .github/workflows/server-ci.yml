@@ -126,15 +126,28 @@ jobs:
             done
             
             docker ps
-            docker logs server --tail=30 || true
+            docker logs server --tail=50 || true
             
             # Debug: ตรวจสอบไฟล์ใน container
             echo "🔍 Debug: ตรวจสอบไฟล์ใน container"
             docker exec server ls -la /app/dist/ || true
             docker exec server cat /app/dist/main.js | head -10 || true
+            
+            # Debug: ตรวจสอบ environment variables
+            echo "🔍 Debug: ตรวจสอบ environment variables"
+            docker exec server env | grep -E "(DATABASE_URL|NODE_ENV|PORT)" || true
 
             # ✅ Prisma migrate/generate รันนอก container หลัก
             echo "🔍 Testing database connection..."
+            
+            # ตรวจสอบ network connectivity
+            echo "🔍 Testing network connectivity..."
+            docker exec server ping -c 3 8.8.8.8 || true
+            docker exec server nslookup db.efkinmzzhrsnvqkkznxg.supabase.co || true
+            
+            # ตรวจสอบ DATABASE_URL
+            echo "🔍 DATABASE_URL: $DATABASE_URL"
+            
             docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma db pull --print || true
             
             echo "🔄 Running Prisma migrate deploy..."

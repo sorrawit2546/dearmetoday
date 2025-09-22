@@ -1,9 +1,9 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as passport from 'passport';
-import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
+import * as passport from 'passport';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -42,4 +42,7 @@ async function bootstrap() {
   await app.listen(port);
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+  console.error('❌ Failed to start server:', error);
+  process.exit(1);
+});
