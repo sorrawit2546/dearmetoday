@@ -115,9 +115,14 @@ jobs:
             sleep 10
             docker ps
             docker logs server --tail=30 || true
+            
+            # Debug: ตรวจสอบไฟล์ใน container
+            echo "🔍 Debug: ตรวจสอบไฟล์ใน container"
+            docker exec server ls -la /app/dist/ || true
+            docker exec server cat /app/dist/main.js | head -10 || true
 
             # ✅ Prisma migrate/generate รันนอก container หลัก
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" server npx prisma migrate deploy
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" server npx prisma generate
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma migrate deploy
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL" -e DIRECT_URL="$DIRECT_URL" server npx prisma generate
 
             echo "✅ Deployment complete"
