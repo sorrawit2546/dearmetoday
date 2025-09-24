@@ -21,8 +21,7 @@
               { "glob": "**/*", "input": "src/assets", "output": "assets" }
             ],
             "styles": ["src/styles.css"],
-            "server": "src/main.server.ts",
-            "outputMode": "server"
+            "outputMode": "browser"
           },
           "configurations": {
             "production": {
