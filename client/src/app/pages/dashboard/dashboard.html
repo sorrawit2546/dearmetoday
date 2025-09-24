@@ -44,10 +44,13 @@
         </span>
         <div>
           <h3 class="font-bold">
-            You’ve written <span>{{countNote()}}</span> notes already! ✨
+            <span>You've written <span>{{countNote()}}</span> notes already! ✨</span>
           </h3>
-          <div class="text-xs">
-            They’re all meaningful — don’t forget to come back and add more. 💖
+          <div class="text-xs" *ngIf="countNote() === 0">
+            No notes have been written yet. Want to try writing one?! 💖
+          </div>
+          <div class="text-xs" *ngIf="countNote() > 0">
+            They're all meaningful — don't forget to come back and add more. 💖
           </div>
         </div>
       </div>
