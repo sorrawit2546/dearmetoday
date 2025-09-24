@@ -60,7 +60,7 @@
               Drag & drop images here<br />
               or <span class="font-medium text-amber-700">click to upload</span>
               <br />
-              <span class="text-xs">(up to 5 images)</span>
+              <span class="text-xs">(สูงสุด 5 รูป และไม่เกิน 3MB ต่อไฟล์)</span>
             </p>
           </div>
         </ng-template>
@@ -88,7 +88,7 @@
             class="col-span-2 h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
           ></textarea>
           <textarea
-            placeholder="สิ่งเล็ก ๆ ที่ทำให้คุณยิ้มได้ในวันนี้..."
+            placeholder="สิ่งเล็ก ๆ ที่ทำให้ยิ้มได้ในวันนี้..."
             [ngModel]="note2()"
             (ngModelChange)="note2.set($event); onFormChange()"
             class="w-full h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"

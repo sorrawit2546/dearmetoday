@@ -78,6 +78,9 @@ export class PositiveNoteController {
           cb(null, uniqueSuffix + extname(file.originalname));
         },
       }),
+      limits: {
+        fileSize: 3 * 1024 * 1024, // จำกัดขนาดไฟล์ไม่เกิน 3 MB
+      },
     }),
   )
   async editPositiveNoteByNoteId(
@@ -175,6 +178,9 @@ export class PositiveNoteController {
           cb(null, uniqueSuffix + extname(file.originalname));
         },
       }),
+      limits: {
+        fileSize: 3 * 1024 * 1024, // จำกัดขนาดไฟล์ไม่เกิน 3 MB
+      },
     }),
   )
   async createPositiveNote(
