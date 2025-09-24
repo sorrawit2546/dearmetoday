@@ -21,7 +21,7 @@
               { "glob": "**/*", "input": "src/assets", "output": "assets" }
             ],
             "styles": ["src/styles.css"],
-            "outputMode": "browser"
+            "outputMode": "static"
           },
           "configurations": {
             "production": {
