@@ -192,3 +192,8 @@ jobs:
             docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL_IPV4" server npx prisma generate
 
             echo "✅ Deployment complete"
+
+            # 🔍 ตรวจสอบว่า container ที่กำลังรันใช้ image/tag อะไร
+            echo "🔍 Checking running container images..."
+            docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}" | grep -E "frontyard|backyard" || true
+
