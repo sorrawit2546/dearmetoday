@@ -1,13 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dearmetoday">
-<head>
-  <meta charset="utf-8">
-  <title>Dearme,Today</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Dearme,Today</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Dearme,Today — a journaling platform founded by Sorrawit Sangmanee and co-founded by Thanathan Junto, helping people reflect and grow with positivity."
+    />
+    <!-- 🔍 JSON-LD Schema for SEO -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Dearme,Today",
+        "url": "https://dearmetoday.com",
+        "founders": [
+          {
+            "@type": "Person",
+            "name": "Sorrawit Sangmanee"
+          },
+          {
+            "@type": "Person",
+            "name": "Thanathan Janto"
+          }
+        ],
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "email": "contact@dearmetoday.com",
+            "contactType": "customer support",
+            "availableLanguage": ["Thai"]
+          }
+        ],
+        "foundingDate": "2025",
+        "sameAs": ["https://github.com/sorrawit2546"]
+      }
+    </script>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
 </html>

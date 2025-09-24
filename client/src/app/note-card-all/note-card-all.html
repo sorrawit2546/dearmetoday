@@ -154,5 +154,44 @@
 
     <!-- Modals -->
     <!-- (คงโครงสร้างเดิมทั้งหมด ไม่แตะฟังก์ชัน/ชื่อ/format) -->
+    <!-- Confirm Note Form Modal -->
+    <div
+      *ngIf="showNoteForm()"
+      class="fixed inset-0 z-[9999] flex items-end md:items-center justify-center bg-black/40"
+      (click)="closeNoteForm()"
+    >
+      <div
+        class="w-full md:w-auto md:min-w-[640px] max-w-full rounded-t-2xl md:rounded-2xl p-4 md:p-6"
+        (click)="$event.stopPropagation()"
+      >
+        <app-note-form
+          *ngIf="showNoteForm() && id"
+          [noteId]="id"
+        ></app-note-form>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      *ngIf="showDeleteDialog()"
+      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40"
+      (click)="closeDeleteDialog()"
+    >
+      <div
+        class="w-full max-w-md mx-4 rounded-2xl bg-white p-6"
+        (click)="$event.stopPropagation()"
+      >
+        <h3 class="font-bold text-lg text-red-600 mb-4">ยืนยันการลบข้อความ?</h3>
+
+        <p class="py-2 text-gray-600">
+          ระบบจะลบข้อความนี้อย่างถาวรภายใน 15 วันและไม่สามารถกู้คืนได้ หากอยากกู้กรุณาติดต่อแอดมิน!
+        </p>
+
+        <div class="modal-action mt-6">
+          <button class="btn btn-ghost rounded-2xl hover:rounded-2xl" (click)="closeDeleteDialog()">ยกเลิก</button>
+          <button class="btn btn-error rounded-2xl" (click)="confirmDelete()">ลบ</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
