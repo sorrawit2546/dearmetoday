@@ -157,7 +157,7 @@ export class PositiveNoteService {
       if (accessToken) {
         try {
           const description = [
-            `💡 ${createEntryDto.line1}`,
+            `📝 ${createEntryDto.line1}`,
             createEntryDto.line2 && `📝 ${createEntryDto.line2}`,
             createEntryDto.line3 && `📝 ${createEntryDto.line3}`,
             createEntryDto.imageUrls?.length

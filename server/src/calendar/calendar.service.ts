@@ -17,7 +17,7 @@ export class CalendarService {
 
     const event = {
       summary: `Positive Note - ${note.mood}`,
-      description: `💡 ${note.line1}`,
+      description: ` ${note.line1}`,
       start: { dateTime: start.toISOString(), timeZone: 'Asia/Bangkok' },
       end: { dateTime: end.toISOString(), timeZone: 'Asia/Bangkok' },
       attachments: note.imageUrl.map((url, i) => ({
