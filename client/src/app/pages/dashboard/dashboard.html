@@ -156,30 +156,24 @@
               #chartContainer
               class="ml-8 h-full relative bg-gradient-to-t from-gray-100 to-transparent rounded-lg"
             >
-              <!-- เส้นกราฟ -->
-              <svg class="absolute inset-0 w-full h-full pointer-events-none">
-                <polyline
-                  [attr.points]="getPolylinePoints(weeklyMoodData())"
-                  fill="none"
-                  stroke="#0A8050"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="animate-dash"
-                ></polyline>
-              </svg>
               <!-- Data Points -->
               <div class="absolute inset-0 flex justify-between px-2 sm:px-4">
                 <div
                   *ngFor="let day of weeklyMoodData(); let i = index"
                   class="group flex flex-col items-center h-full relative flex-1"
                 >
-                  <!-- จุดกราฟ -->
-                  <div
-                    class="w-2 h-2 sm:w-3 sm:h-3 rounded-full absolute transition-transform duration-300 group-hover:scale-125 group-hover:animate-bounce"
-                    [style.background-color]="getMoodColor(day.mood)"
+                  <!-- จุดกราฟเป็นดอกไม้ -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="absolute w-6 h-6 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-6"
                     [style.top]="(100 - getMoodPosition(day.mood)) + '%'"
-                  ></div>
+                    [attr.fill]="getMoodColor(day.mood)"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 4c-1.5-3-6-3-7.5 0-1.2 2.4.3 5.4 3 6.2-2.7.8-4.2 3.8-3 6.2 1.5 3 6 3 7.5 0 1.2 2.4 5.7 2.4 6.9 0 1.2-2.4-.3-5.4-3-6.2 2.7-.8 4.2-3.8 3-6.2-1.5-3-6-3-7.5 0z"
+                    />
+                  </svg>
 
                   <!-- Tooltip -->
                   <div
@@ -195,6 +189,41 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          <div class="flex justify-center my-6">
+            <div
+              class="relative inline-flex bg-gray-100 rounded-full p-1 shadow-inner"
+            >
+              <!-- Active background slider -->
+              <div
+                class="absolute top-1 bottom-1 w-1/2 rounded-full transition-all duration-300 ease-in-out"
+                [class.translate-x-0]="selectedWeek() === 'prev'"
+                [class.translate-x-full]="selectedWeek() === 'current'"
+                [ngClass]="selectedWeek() === 'prev' 
+                  ? 'bg-gradient-to-r from-pink-400 to-gray-200' 
+                  : 'bg-gradient-to-r from-gray-200 to-blue-500'"
+              ></div>
+
+              <!-- Previous Week -->
+              <button
+                (click)="selectedWeek.set('prev')"
+                class="relative z-10 px-6 py-2 text-sm font-medium rounded-full transition-all duration-300"
+                [class.text-white]="selectedWeek() === 'prev'"
+                [class.text-gray-600]="selectedWeek() !== 'prev'"
+              >
+                🍂 Previous
+              </button>
+
+              <!-- This Week -->
+              <button
+                (click)="selectedWeek.set('current')"
+                class="relative z-10 px-6 py-2 text-sm font-medium rounded-full transition-all duration-300"
+                [class.text-white]="selectedWeek() === 'current'"
+                [class.text-gray-600]="selectedWeek() !== 'current'"
+              >
+                🌞 This Week
+              </button>
             </div>
           </div>
         </div>

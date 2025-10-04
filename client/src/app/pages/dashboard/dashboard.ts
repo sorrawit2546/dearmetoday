@@ -72,6 +72,8 @@ export class Dashboard implements OnInit, OnDestroy {
   itemsNoteSearch = signal<(entryNote & { isActive: boolean })[]>([]);
   searchTerm = signal('');
   searchDate = signal('');
+  selectedWeek = signal<'current' | 'prev'>('current');
+  
 
   // Dashboard stats computed values
   weeklyAverage = computed(() => {
@@ -96,9 +98,14 @@ export class Dashboard implements OnInit, OnDestroy {
 
   weeklyMoodData = computed(() => {
     const s = this.summary();
-    if (!s?.daily?.currentWeek) return this.getDefaultWeeklyData();
-
-    return s.daily.currentWeek.map((day) => ({
+    if (!s?.daily) return this.getDefaultWeeklyData();
+  
+    const key = this.selectedWeek() === 'current' ? 'currentWeek' : 'prevWeek';
+    const weekData = s.daily[key];
+  
+    if (!weekData || weekData.length === 0) return this.getDefaultWeeklyData();
+  
+    return weekData.map((day) => ({
       date: this.formatDate(day.date),
       mood: day.avgMood || 3,
       count: day.count || 0,
@@ -226,34 +233,6 @@ export class Dashboard implements OnInit, OnDestroy {
       ro.observe(this.chartContainer.nativeElement);
     }
   }
-
-  getPolylinePoints(data: { date: string; mood: number }[]): string {
-    if (!data || data.length === 0 || !this.chartContainer) {
-      console.warn('⚠️ No data or chart container not ready');
-      return '';
-    }
-  
-    const container = this.chartContainer.nativeElement as HTMLElement;
-    const chartWidth = container.offsetWidth;
-    const chartHeight = container.offsetHeight;
-  
-    if (chartWidth === 0 || chartHeight === 0) {
-      console.warn('⚠️ Chart size is zero', { chartWidth, chartHeight });
-      return '';
-    }
-  
-    const totalPoints = data.length;
-  
-    return data
-      .map((day, index) => {
-        const x = (index / (totalPoints - 1)) * chartWidth;
-        const y = chartHeight - (this.getMoodPosition(day.mood) / 100) * chartHeight;
-        console.log(`Point ${index}: x=${x}, y=${y}, mood=${day.mood}`);
-        return `${x},${y}`;
-      })
-      .join(' ');
-  }
-
   updateNoteIsActive(id: string, newValue: boolean) {
     this.itemsNoteSearch.update((notes) =>
       notes.map((n) => (n.id === id ? { ...n, showMessage: newValue } : n))
