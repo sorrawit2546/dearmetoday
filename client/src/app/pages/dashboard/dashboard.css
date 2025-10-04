@@ -123,16 +123,19 @@
   }
 }
 
-.cat {
-  position: fixed; /* ลอยอยู่บนจอ */
-  bottom: 20px; /* ห่างจากขอบล่าง 20px */
-  right: 20px; /* ห่างจากขอบขวา 20px */
-  width: 100px;
-  height: 100px;
-  background: url("https://cliply.co/wp-content/uploads/2021/09/142109670_SAD_CAT_400.gif")
-    no-repeat center/contain;
-  z-index: 9999; /* ให้อยู่บนสุด */
-  pointer-events: none; /* กันไม่ให้บังการคลิก */
+@keyframes dash {
+  from {
+    stroke-dasharray: 0, 1000;
+  }
+  to {
+    stroke-dasharray: 1000, 0;
+  }
+}
+
+.animate-dash {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 1.5s ease-in-out forwards;
 }
 
 .join .btn {

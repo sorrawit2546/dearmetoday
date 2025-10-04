@@ -2,10 +2,12 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
   NgZone,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
+  ViewChild,
   computed,
   effect,
   inject,
@@ -44,6 +46,7 @@ import { ToastService } from '../../services/toast.service';
   styleUrls: ['./dashboard.css'],
 })
 export class Dashboard implements OnInit, OnDestroy {
+  @ViewChild('chartContainer', { static: true }) chartContainer!: ElementRef;
   // Services
   private authSubscription: Subscription | null = null;
   private authService = inject(AuthService);
@@ -207,6 +210,48 @@ export class Dashboard implements OnInit, OnDestroy {
         this.flushFromLocal();
       }
     }, 100);
+  }
+
+  ngAfterViewInit(): void {
+    if (this.chartContainer) {
+      // รอให้ DOM render เสร็จ 1 tick
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      }, 0);
+  
+      // ติด ResizeObserver ด้วย เผื่อ container resize
+      const ro = new ResizeObserver(() => {
+        this.cdr.detectChanges();
+      });
+      ro.observe(this.chartContainer.nativeElement);
+    }
+  }
+
+  getPolylinePoints(data: { date: string; mood: number }[]): string {
+    if (!data || data.length === 0 || !this.chartContainer) {
+      console.warn('⚠️ No data or chart container not ready');
+      return '';
+    }
+  
+    const container = this.chartContainer.nativeElement as HTMLElement;
+    const chartWidth = container.offsetWidth;
+    const chartHeight = container.offsetHeight;
+  
+    if (chartWidth === 0 || chartHeight === 0) {
+      console.warn('⚠️ Chart size is zero', { chartWidth, chartHeight });
+      return '';
+    }
+  
+    const totalPoints = data.length;
+  
+    return data
+      .map((day, index) => {
+        const x = (index / (totalPoints - 1)) * chartWidth;
+        const y = chartHeight - (this.getMoodPosition(day.mood) / 100) * chartHeight;
+        console.log(`Point ${index}: x=${x}, y=${y}, mood=${day.mood}`);
+        return `${x},${y}`;
+      })
+      .join(' ');
   }
 
   updateNoteIsActive(id: string, newValue: boolean) {

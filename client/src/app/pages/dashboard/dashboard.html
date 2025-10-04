@@ -44,7 +44,10 @@
         </span>
         <div>
           <h3 class="font-bold">
-            <span>You've written <span>{{countNote()}}</span> notes already! ✨</span>
+            <span
+              >You've written <span>{{countNote()}}</span> notes already!
+              ✨</span
+            >
           </h3>
           <div class="text-xs" *ngIf="countNote() === 0">
             No notes have been written yet. Want to try writing one?! 💖
@@ -149,7 +152,22 @@
             </div>
 
             <!-- Chart Area -->
-            <div class="ml-8 h-full relative">
+            <div
+              #chartContainer
+              class="ml-8 h-full relative bg-gradient-to-t from-gray-100 to-transparent rounded-lg"
+            >
+              <!-- เส้นกราฟ -->
+              <svg class="absolute inset-0 w-full h-full pointer-events-none">
+                <polyline
+                  [attr.points]="getPolylinePoints(weeklyMoodData())"
+                  fill="none"
+                  stroke="#0A8050"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="animate-dash"
+                ></polyline>
+              </svg>
               <!-- Data Points -->
               <div class="absolute inset-0 flex justify-between px-2 sm:px-4">
                 <div
@@ -158,23 +176,23 @@
                 >
                   <!-- จุดกราฟ -->
                   <div
-                    class="w-2 h-2 sm:w-3 sm:h-3 rounded-full absolute"
+                    class="w-2 h-2 sm:w-3 sm:h-3 rounded-full absolute transition-transform duration-300 group-hover:scale-125 group-hover:animate-bounce"
                     [style.background-color]="getMoodColor(day.mood)"
                     [style.top]="(100 - getMoodPosition(day.mood)) + '%'"
                   ></div>
 
                   <!-- Tooltip -->
                   <div
-                    class="absolute -top-10 px-2 py-1 text-[10px] sm:text-xs text-white bg-gray-800 rounded-md shadow-md opacity-0 group-hover:opacity-100 transition duration-200 whitespace-nowrap"
+                    class="absolute -top-10 px-2 py-1 text-[10px] sm:text-xs text-white bg-gray-800 rounded-md shadow-md opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-300 whitespace-nowrap"
                   >
                     {{ day.date }} : {{ day.mood.toFixed(1) }}
                   </div>
                   <!-- Label วันที่ -->
-                  <!-- <div
+                  <div
                     class="absolute bottom-0 text-[10px] sm:text-xs text-black font-bold text-center w-full truncate"
                   >
                     {{ day.date }}
-                  </div> -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -273,7 +291,7 @@
     <!-- Floating Action Button (+) -->
     <button
       (click)="openNoteForm()"
-      class="fixed w-24 bottom-6 right-6 btn btn-primary btn-circle shadow-lg z-40"
+      class="fixed text-2xl w-24 bottom-6 right-6 btn btn-primary btn-circle shadow-lg z-40 animate-pulse hover:scale-110 hover:shadow-2xl transition-transform duration-300"
       aria-label="สร้างบันทึกใหม่"
     >
       +
