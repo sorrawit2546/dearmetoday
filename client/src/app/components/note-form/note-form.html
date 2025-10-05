@@ -78,26 +78,26 @@
       <!-- Positive Note Field -->
       <div class="mb-3 mt-6">
         <label class="block text-sm font-semibold text-amber-900 mb-2"
-          >Positive note for today.</label
+          >Positive note for today</label
         >
         <div class="grid grid-cols-2 gap-4">
           <textarea
             placeholder="เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้..."
             [ngModel]="note()"
             (ngModelChange)="note.set($event); onFormChange()"
-            class="col-span-2 h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
+            class="col-span-2 h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner placeholder-gray-400"
           ></textarea>
           <textarea
-            placeholder="สิ่งเล็ก ๆ ที่ทำให้คยิ้มได้ในวันนี้..."
+            placeholder="สิ่งเล็ก ๆ ที่ทำให้ยิ้มได้ในวันนี้..."
             [ngModel]="note2()"
             (ngModelChange)="note2.set($event); onFormChange()"
-            class="w-full h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
+            class="w-full h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner placeholder-gray-400"
           ></textarea>
           <textarea
             placeholder="เรื่องราวที่ทำให้รู้สึกภูมิใจ.."
             [ngModel]="note3()"
             (ngModelChange)="note3.set($event); onFormChange()"
-            class="w-full h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner"
+            class="w-full h-20 resize-none border border-[#e4dfd1] rounded-xl px-4 py-3 text-gray-700 bg-[#fffdf8] shadow-inner placeholder-gray-400"
           ></textarea>
         </div>
       </div>
