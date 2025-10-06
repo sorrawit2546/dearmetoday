@@ -34,12 +34,11 @@
 }
 
 @keyframes loop-scroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); } /* เลื่อนไปครึ่งหนึ่งของเนื้อหา */
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
-
 .animate-loop-scroll {
   display: flex;
   animation: loop-scroll 25s linear infinite;
-  width: max-content; /* ให้ flex ยาวตามเนื้อหา */
+  width: max-content;
 }

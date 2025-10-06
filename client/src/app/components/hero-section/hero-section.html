@@ -111,23 +111,19 @@
           </p>
         </section>
 
-        <section class="overflow-hidden">
+        <section class=" py-12 overflow-hidden">
           <h2 class="text-2xl font-bold text-gray-800 text-center mb-8">
             Features that make Dearme special
           </h2>
 
+          <!-- Container -->
           <div class="relative w-full group">
-            <div class="flex gap-6 animate-loop-scroll group-hover:[animation-play-state:paused]">
-              <!-- 🔁 Duplicate cards set 1 -->
-              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
-                <div class="text-4xl mb-4">
-                  <div class="flex justify-center">
-                    <img
-                      src="assets/images/01.png"
-                      alt=""
-                      class="h-10 w-16 md:h-20 md:w-32 mb-4"
-                    />
-                  </div>
+            <!-- Mobile / Tablet: grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 px-6 lg:hidden">
+              <!-- Card -->
+              <div class="bg-white rounded-2xl shadow-md p-6 transition-transform duration-300 hover:scale-105">
+                <div class="flex justify-center">
+                  <img src="assets/images/01.png" alt="" class="h-12 w-12 md:h-16 md:w-16 mb-4" />
                 </div>
                 <h3 class="font-semibold text-lg text-gray-800">Daily 3-line Notes</h3>
                 <p class="text-gray-600 text-sm mt-2">
@@ -135,13 +131,9 @@
                 </p>
               </div>
 
-              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+              <div class="bg-white rounded-2xl shadow-md p-6 transition-transform duration-300 hover:scale-105">
                 <div class="flex justify-center">
-                  <img
-                    src="assets/images/02.png"
-                    alt=""
-                    class="h-10 w-16 md:h-20 md:w-32 mb-4"
-                  />
+                  <img src="assets/images/02.png" alt="" class="h-12 w-12 md:h-16 md:w-16 mb-4" />
                 </div>
                 <h3 class="font-semibold text-lg text-gray-800">Mood & Insights</h3>
                 <p class="text-gray-600 text-sm mt-2">
@@ -149,63 +141,81 @@
                 </p>
               </div>
 
-              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+              <div class="bg-white rounded-2xl shadow-md p-6 transition-transform duration-300 hover:scale-105">
                 <div class="flex justify-center">
-                  <img
-                    src="assets/images/03.png"
-                    alt=""
-                    class="h-16 w-16 md:h-20 md:w-32 mb-4"
-                  />
+                  <img src="assets/images/03.png" alt="" class="h-12 w-12 md:h-16 md:w-16 mb-4" />
                 </div>
                 <h3 class="font-semibold text-lg text-gray-800">Seed-to-Tree Growth</h3>
                 <p class="text-gray-600 text-sm mt-2">
                   Watch your journal turn into a growing tree as you stay consistent with your notes.
                 </p>
               </div>
+            </div>
 
-              <!-- 🔁 Duplicate cards set 2 (เหมือนชุดแรก เพื่อให้ loop ดูต่อเนื่อง) -->
-              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
-                <div class="text-4xl mb-4">
+            <!-- Desktop: auto scroll loop -->
+            <div class="hidden lg:block overflow-hidden">
+              <div class="flex gap-6 animate-loop-scroll group-hover:[animation-play-state:paused] px-6">
+                <!-- Duplicate set 1 -->
+                <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
                   <div class="flex justify-center">
-                    <img
-                      src="assets/images/01.png"
-                      alt=""
-                      class="h-10 w-16 md:h-20 md:w-32 mb-4"
-                    />
+                    <img src="assets/images/01.png" alt="" class="h-12 w-12 md:h-16 md:w-16 mb-4" />
                   </div>
+                  <h3 class="font-semibold text-lg text-gray-800">Daily 3-line Notes</h3>
+                  <p class="text-gray-600 text-sm mt-2">
+                    Reflect on your day in just three simple lines to build a habit of gratitude and positivity.
+                  </p>
                 </div>
-                <h3 class="font-semibold text-lg text-gray-800">Daily 3-line Notes</h3>
-                <p class="text-gray-600 text-sm mt-2">
-                  Reflect on your day in just three simple lines to build a habit of gratitude and positivity.
-                </p>
-              </div>
 
-              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
-                <div class="flex justify-center">
-                  <img
-                    src="assets/images/02.png"
-                    alt=""
-                    class="h-10 w-16 md:h-20 md:w-32 mb-4"
-                  />
+                <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                  <div class="flex justify-center">
+                    <img src="assets/images/02.png" alt="" class="h-12 w-12 md:h-16 md:w-16 mb-4" />
+                  </div>
+                  <h3 class="font-semibold text-lg text-gray-800">Mood & Insights</h3>
+                  <p class="text-gray-600 text-sm mt-2">
+                    Track your emotions and view weekly insights to understand your personal growth journey.
+                  </p>
                 </div>
-                <h3 class="font-semibold text-lg text-gray-800">Mood & Insights</h3>
-                <p class="text-gray-600 text-sm mt-2">
-                  Track your emotions and view weekly insights to understand your personal growth journey.
-                </p>
-              </div>
 
-              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
-                <div class="flex justify-center">
-                  <img
-                    src="assets/images/03.png"
-                    alt=""
-                    class="h-16 w-16 md:h-20 md:w-32 mb-4"
-                  />
+                <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                  <div class="flex justify-center">
+                    <img src="assets/images/03.png" alt="" class="h-12 w-12 md:h-16 md:w-16 mb-4" />
+                  </div>
+                  <h3 class="font-semibold text-lg text-gray-800">Seed-to-Tree Growth</h3>
+                  <p class="text-gray-600 text-sm mt-2">
+                    Watch your journal turn into a growing tree as you stay consistent with your notes.
+                  </p>
                 </div>
-                <h3 class="font-semibold text-lg text-gray-800">Seed-to-Tree Growth</h3>
-                <p class="text-gray-600 text-sm mt-2">
-                  Watch your journal turn into a growing tree as you stay consistent with your notes.
-                </p>
+
+                <!-- Duplicate set 2 (for infinite loop) -->
+                <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                  <div class="flex justify-center">
+                    <img src="assets/images/01.png" alt="" class="h-12 w-12 md:h-16 md:w-16 mb-4" />
+                  </div>
+                  <h3 class="font-semibold text-lg text-gray-800">Daily 3-line Notes</h3>
+                  <p class="text-gray-600 text-sm mt-2">
+                    Reflect on your day in just three simple lines to build a habit of gratitude and positivity.
+                  </p>
+                </div>
+
+                <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                  <div class="flex justify-center">
+                    <img src="assets/images/02.png" alt="" class="h-12 w-12 md:h-16 md:w-16 mb-4" />
+                  </div>
+                  <h3 class="font-semibold text-lg text-gray-800">Mood & Insights</h3>
+                  <p class="text-gray-600 text-sm mt-2">
+                    Track your emotions and view weekly insights to understand your personal growth journey.
+                  </p>
+                </div>
+
+                <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                  <div class="flex justify-center">
+                    <img src="assets/images/03.png" alt="" class="h-12 w-12 md:h-16 md:w-16 mb-4" />
+                  </div>
+                  <h3 class="font-semibold text-lg text-gray-800">Seed-to-Tree Growth</h3>
+                  <p class="text-gray-600 text-sm mt-2">
+                    Watch your journal turn into a growing tree as you stay consistent with your notes.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
