@@ -12,9 +12,6 @@ async function bootstrap() {
 
   const frontendUrl = configService.get<string>('FRONTEND_URL');
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  app.use(cookieParser()); // ✅ ใส่ตรงนี้
-
   // ปรับปรุง CORS configuration
   app.enableCors({
     origin: frontendUrl,
@@ -22,6 +19,9 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  app.use(cookieParser()); // ✅ ใส่ตรงนี้
 
   // ✅ กำหนดให้ทุก route มี prefix เป็น /api
   app.setGlobalPrefix('api');
