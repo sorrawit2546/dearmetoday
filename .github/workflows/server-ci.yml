@@ -68,6 +68,7 @@ jobs:
       SSH_KEY: ${{ secrets.SSH_KEY }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       DIRECT_URL: ${{ secrets.DIRECT_URL }}
+      RESEND_API_KEY : ${{ secrets.RESEND_API_KEY }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       MAIL_FROM: ${{ secrets.MAIL_FROM }}
       FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
@@ -89,7 +90,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: DATABASE_URL,DIRECT_URL,SENDGRID_API_KEY,MAIL_FROM,FRONTEND_URL,SERVER_URL,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,JWT_SECRET,COOKIE_DOMAIN,COOKIE_SECURE,COOKIE_SAMESITE
+          envs: DATABASE_URL,DIRECT_URL,SENDGRID_API_KEY,RESEND_API_KEY,MAIL_FROM,FRONTEND_URL,SERVER_URL,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,JWT_SECRET,COOKIE_DOMAIN,COOKIE_SECURE,COOKIE_SAMESITE
           script: |
             set -euo pipefail
 
