@@ -181,14 +181,25 @@
                   >
                     {{ day.date }} : {{ day.mood.toFixed(1) }}
                   </div>
-                  <!-- Label วันที่ -->
+                  <!-- Label วันที่
                   <div
                     class="absolute bottom-0 text-[10px] sm:text-xs text-black font-bold text-center w-full truncate"
                   >
                     {{ day.date }}
-                  </div>
+                  </div> -->
                 </div>
               </div>
+            </div>
+          </div>
+          <!-- X-axis labels (วันที่) -->
+          <div
+            class="ml-8 mt-2 flex justify-between px-2 sm:px-4 text-[10px] sm:text-xs text-black font-bold"
+          >
+            <div
+              *ngFor="let day of weeklyMoodData(); let i = index"
+              class="flex-1 text-center truncate"
+            >
+              {{ day.date }}
             </div>
           </div>
           <div class="flex justify-center my-6">

@@ -73,7 +73,7 @@ export class Dashboard implements OnInit, OnDestroy {
   searchTerm = signal('');
   searchDate = signal('');
   selectedWeek = signal<'current' | 'prev'>('current');
-  
+
 
   // Dashboard stats computed values
   weeklyAverage = computed(() => {
@@ -98,13 +98,13 @@ export class Dashboard implements OnInit, OnDestroy {
 
   weeklyMoodData = computed(() => {
     const s = this.summary();
-    if (!s?.daily) return this.getDefaultWeeklyData();
-  
+    if (!s?.daily) return;
+
     const key = this.selectedWeek() === 'current' ? 'currentWeek' : 'prevWeek';
     const weekData = s.daily[key];
-  
-    if (!weekData || weekData.length === 0) return this.getDefaultWeeklyData();
-  
+
+    if (!weekData || weekData.length === 0) return ;
+
     return weekData.map((day) => ({
       date: this.formatDate(day.date),
       mood: day.avgMood || 3,
@@ -225,7 +225,7 @@ export class Dashboard implements OnInit, OnDestroy {
       setTimeout(() => {
         this.cdr.detectChanges();
       }, 0);
-  
+
       // ติด ResizeObserver ด้วย เผื่อ container resize
       const ro = new ResizeObserver(() => {
         this.cdr.detectChanges();
