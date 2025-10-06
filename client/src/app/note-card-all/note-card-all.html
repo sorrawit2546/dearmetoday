@@ -126,19 +126,19 @@
 
     <!-- Note Content -->
     <div class="text-sm leading-relaxed text-gray-800 mt-4 space-y-3">
-      <div class="border-l-4 border-amber-300 pl-3">
+      <div class="border-l-4 border-amber-300 pl-3 " *ngIf="line1">
         <div class="font-semibold text-amber-800">เรื่องราวดี ๆ ที่อยากขอบคุณ</div>
         <p class="whitespace-pre-line mt-1">
           {{ displayIsActive ? (line1 ?? '') : ((line1?.length ?? 0) > 50 ? (line1 | slice:0:50) + '...' : (line1 ?? '')) }}
         </p>
       </div>
-      <div class="border-l-4 border-amber-300 pl-3">
+      <div class="border-l-4 border-amber-300 pl-3" *ngIf="line2">
         <div class="font-semibold text-amber-800">สิ่งเล็ก ๆ ที่ทำให้ยิ้มได้</div>
         <p class="whitespace-pre-line mt-1">
           {{ displayIsActive ? (line2 ?? '') : ((line2?.length ?? 0) > 50 ? (line2 | slice:0:50) + '...' : (line2 ?? '')) }}
         </p>
       </div>
-      <div class="border-l-4 border-amber-300 pl-3">
+      <div class="border-l-4 border-amber-300 pl-3" *ngIf="line3">
         <div class="font-semibold text-amber-800">เรื่องราวที่ทำให้ภูมิใจ</div>
         <p class="whitespace-pre-line mt-1">
           {{ displayIsActive ? (line3 ?? '') : ((line3?.length ?? 0) > 50 ? (line3 | slice:0:50) + '...' : (line3 ?? '')) }}
