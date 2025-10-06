@@ -19,7 +19,11 @@ async function bootstrap() {
 
   // ปรับปรุง CORS configuration
   app.enableCors({
-    origin: frontendUrl,
+    origin: [
+      frontendUrl,
+      'https://dearmetoday.com',
+      'https://www.dearmetoday.com',
+    ],
     credentials: true, // ต้องเปิดเพื่อให้ cookie ทำงาน
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
