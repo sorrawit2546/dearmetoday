@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 import { AppModule } from './app.module';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,10 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   const frontendUrl = configService.get<string>('FRONTEND_URL');
+
+  // ✅ body size limit
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
   // ปรับปรุง CORS configuration
   app.enableCors({
