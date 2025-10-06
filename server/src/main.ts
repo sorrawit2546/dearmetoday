@@ -20,7 +20,7 @@ async function bootstrap() {
     origin: frontendUrl,
     credentials: true, // ต้องเปิดเพื่อให้ cookie ทำงาน
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   // ✅ กำหนดให้ทุก route มี prefix เป็น /api
