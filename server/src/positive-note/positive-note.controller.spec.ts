@@ -76,12 +76,12 @@ describe('PositiveNoteController', () => {
     (jwt.verify as jest.Mock).mockReset();
   });
 
-  it('should get all positive note in dearme', async () => {
+  it('should get all positive note in dearme', () => {
     const mockResultData = 21;
     mockService.getAllPositiveNoteInDearme = jest
       .fn()
       .mockResolvedValue(mockResultData);
-    const result = await controller.getAllPositiveNoteInDearme();
+    const result = controller.getAllPositiveNoteInDearme();
     expect(result).toBe(mockResultData);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockService.getAllPositiveNoteInDearme).toHaveBeenCalledTimes(1);
