@@ -23,6 +23,7 @@ import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 import { ToastComponent } from '../toast/toast.component';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-hero-section',
@@ -33,10 +34,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class HeroSection implements OnInit, OnDestroy {
   constructor(private router: Router, private apiService: Api, private toastService: ToastService) {}
   ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+    this.noteCountSub?.unsubscribe();
   }
   private authService = inject(AuthService);
   private platformId = inject(PLATFORM_ID);
+  private noteCountSub?: Subscription;
   quickNoteFromLocalStorage = signal<string>('');
   pending = signal<boolean>(false);
   error = signal<string | null>(null);
@@ -54,7 +56,7 @@ export class HeroSection implements OnInit, OnDestroy {
     //     this.flushFromLocal();
     //   }
     // }, 100);
-    this.apiService.getAllPositiveNoteCountStream().subscribe({
+    this.noteCountSub = this.apiService.getAllPositiveNoteCountStream().subscribe({
       next: (count) => this.noteCount.set(count),
       error: (err) => console.error('SSE error', err),
     });
