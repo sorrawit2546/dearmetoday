@@ -40,5 +40,4 @@
 .animate-loop-scroll {
   display: flex;
   animation: loop-scroll 25s linear infinite;
-  width: max-content;
 }
