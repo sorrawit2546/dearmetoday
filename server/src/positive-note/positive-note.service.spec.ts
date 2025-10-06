@@ -26,6 +26,7 @@ describe('PositiveNoteService', () => {
     getPositiveNoteById: jest.fn(),
     editPositiveNoteById: jest.fn<Promise<Entry>, [string, string, any]>(),
     deletePositiveNoteById: jest.fn(),
+    getAllPositiveNoteInDearme: jest.fn(),
   };
 
   const mockSendgridService = {
@@ -64,6 +65,20 @@ describe('PositiveNoteService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('Count Positive Note', () => {
+    it('Should Count Collect Positive Note in Dearme Today', async () => {
+      const mockResponse = 21;
+      mockRepository.getAllPositiveNoteInDearme = jest
+        .fn()
+        .mockResolvedValue(mockResponse);
+      const result = await service.getAllPositiveNoteInDearme();
+      expect(result).toBe(mockResponse);
+      expect(mockRepository.getAllPositiveNoteInDearme).toHaveBeenCalledTimes(
+        1,
+      );
+    });
   });
 
   describe('Delete Positive Note', () => {

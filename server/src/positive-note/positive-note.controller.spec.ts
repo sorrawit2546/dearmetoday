@@ -55,6 +55,7 @@ describe('PositiveNoteController', () => {
             getPositiveNoteById: jest.fn(),
             editPositiveNoteById: jest.fn(),
             deletePositiveNoteById: jest.fn(),
+            getAllPositiveNoteInDearme: jest.fn(),
           },
         },
         {
@@ -73,6 +74,17 @@ describe('PositiveNoteController', () => {
 
     // reset mocks each test
     (jwt.verify as jest.Mock).mockReset();
+  });
+
+  it('should get all positive note in dearme', async () => {
+    const mockResultData = 21;
+    mockService.getAllPositiveNoteInDearme = jest
+      .fn()
+      .mockResolvedValue(mockResultData);
+    const result = await controller.getAllPositiveNoteInDearme();
+    expect(result).toBe(mockResultData);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(mockService.getAllPositiveNoteInDearme).toHaveBeenCalledTimes(1);
   });
 
   it('should delete positive note (softdelete)', async () => {

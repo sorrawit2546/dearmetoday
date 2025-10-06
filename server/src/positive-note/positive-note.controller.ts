@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Req,
+  Sse,
   UnauthorizedException,
   UploadedFiles,
   UseGuards,
@@ -32,6 +33,7 @@ import {
   IpositiveNoteByNoteId,
 } from './entity/positive-note.entity';
 import { PositiveNoteService } from './positive-note.service';
+import { interval, Observable, switchMap } from 'rxjs';
 
 interface JwtUser {
   userId: string;
@@ -45,6 +47,18 @@ export class PositiveNoteController {
   constructor(private readonly positivenoteService: PositiveNoteService) {}
   BASE_URL = process.env.SERVER_URL;
 
+  @Sse('allnote-dearme/stream')
+  getAllPositiveNoteInDearme(): Observable<MessageEvent> {
+    return interval(5000).pipe(
+      switchMap(async () => {
+        const count =
+          await this.positivenoteService.getAllPositiveNoteInDearme();
+        return {
+          data: { count },
+        } as MessageEvent;
+      }),
+    );
+  }
   @Put('note/:id')
   async deletePositiveNoteById(
     @Param('id') noteId: string,

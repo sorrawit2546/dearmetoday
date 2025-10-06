@@ -30,6 +30,10 @@ export class PositiveNoteService {
     private readonly calendarService: CalendarService,
   ) {}
 
+  async getAllPositiveNoteInDearme() {
+    return await this.repositoryPositiveNote.getAllPositiveNoteInDearme();
+  }
+
   async deletePositiveNoteById(
     noteId: string,
     userId: string,

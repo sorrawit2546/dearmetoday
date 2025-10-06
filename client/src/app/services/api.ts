@@ -17,6 +17,29 @@ export class Api {
   // Emits when positive notes are created/updated/deleted
   positiveNoteChanged$ = new Subject<void>();
 
+  getAllPositiveNoteCountStream(): Observable<number> {
+    return new Observable<number>((observer) => {
+      const eventSource = new EventSource(`${environment.apiUrl}/positive-note/allnote-dearme/stream`);
+  
+      eventSource.onmessage = (event) => {
+        try {
+          const parsed = JSON.parse(event.data) as { count: number };
+          observer.next(parsed.count);
+        } catch (err) {
+          observer.error(err);
+        }
+      };
+  
+      eventSource.onerror = (error) => {
+        observer.error(error);
+        eventSource.close();
+      };
+  
+      return () => eventSource.close();
+    });
+  }
+
+  
   deletePositiveNoteById(
     noteId: string,
     dto: { isDelete: boolean }

@@ -18,6 +18,11 @@ export class PositiveNoteRepository {
     private summaryGateway: SummaryGateway,
   ) {}
 
+  async getAllPositiveNoteInDearme() {
+    const countAllNoteInDearme = await this.prisma.entry.count({});
+    return countAllNoteInDearme;
+  }
+
   async deletePositiveNoteById(
     noteId: string,
     userId: string,

@@ -9,6 +9,7 @@ import {
   computed,
   effect,
   afterNextRender,
+  OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Login } from '../../pages/login/login';
@@ -29,8 +30,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
   templateUrl: './hero-section.html',
   styleUrl: './hero-section.css',
 })
-export class HeroSection implements OnInit {
+export class HeroSection implements OnInit, OnDestroy {
   constructor(private router: Router, private apiService: Api, private toastService: ToastService) {}
+  ngOnDestroy(): void {
+    throw new Error('Method not implemented.');
+  }
   private authService = inject(AuthService);
   private platformId = inject(PLATFORM_ID);
   quickNoteFromLocalStorage = signal<string>('');
@@ -38,6 +42,7 @@ export class HeroSection implements OnInit {
   error = signal<string | null>(null);
   user = toSignal(this.authService.currentUser$, { initialValue: null });
   isAuthed = computed(() => !!this.user());
+  noteCount = signal<number>(0);
   navigateToGoogleProvide() {
     window.location.href = `${environment.apiUrl}/auth/google`;
   }
@@ -49,6 +54,10 @@ export class HeroSection implements OnInit {
     //     this.flushFromLocal();
     //   }
     // }, 100);
+    this.apiService.getAllPositiveNoteCountStream().subscribe({
+      next: (count) => this.noteCount.set(count),
+      error: (err) => console.error('SSE error', err),
+    });
   }
 
   saveThankInLocalStorage() {
