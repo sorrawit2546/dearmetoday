@@ -200,9 +200,9 @@
                 class="absolute top-1 bottom-1 w-1/2 rounded-full transition-all duration-300 ease-in-out"
                 [class.translate-x-0]="selectedWeek() === 'prev'"
                 [class.translate-x-full]="selectedWeek() === 'current'"
-                [ngClass]="selectedWeek() === 'prev' 
-                  ? 'bg-gradient-to-r from-pink-400 to-gray-200' 
-                  : 'bg-gradient-to-r from-gray-200 to-blue-500'"
+                [ngClass]="selectedWeek() === 'prev'
+                  ? 'bg-gradient-to-r from-pink-400 to-gray-300'
+                  : 'bg-gradient-to-r from-gray-300 to-[#20b2aa]'"
               ></div>
 
               <!-- Previous Week -->
@@ -212,7 +212,7 @@
                 [class.text-white]="selectedWeek() === 'prev'"
                 [class.text-gray-600]="selectedWeek() !== 'prev'"
               >
-                🍂 Previous
+                Previous
               </button>
 
               <!-- This Week -->
@@ -222,7 +222,7 @@
                 [class.text-white]="selectedWeek() === 'current'"
                 [class.text-gray-600]="selectedWeek() !== 'current'"
               >
-                🌞 This Week
+                This Week
               </button>
             </div>
           </div>
@@ -320,7 +320,7 @@
     <!-- Floating Action Button (+) -->
     <button
       (click)="openNoteForm()"
-      class="fixed text-2xl w-24 bottom-6 right-6 btn btn-primary btn-circle shadow-lg z-40 animate-pulse hover:scale-110 hover:shadow-2xl transition-transform duration-300"
+      class="fixed text-2xl w-24 bottom-6 right-6 btn btn-primary bg-[#20b2aa] btn-circle shadow-lg z-40 animate-pulse hover:scale-110 hover:shadow-2xl transition-transform duration-300 border-none"
       aria-label="สร้างบันทึกใหม่"
     >
       +

@@ -11,14 +11,14 @@
       <div class="flex items-center space-x-3">
         <button
           type="button"
-          class="btn btn-soft btn-primary border border-[#ac7f5e] px-4 py-2 rounded"
+          class="btn btn-soft btn-primary text-[#20b2aa] border-2 rounded-3xl border-[#20b2aa] px-4 py-2 bg-white hover:text-[#333]"
           routerLink="/login"
         >
-          Sign In
+          Join Now
         </button>
         <button
           type="button"
-          class="btn btn-soft btn-primary bg-[#2c2c2c] text-[#ffffff] hover:bg-[#1e1e1e] px-4 py-2 rounded"
+          class="btn btn-soft btn-primary bg-[#2c2c2c] text-[#ffffff] hover:bg-[#1e1e1e] px-4 py-2 rounded-3xl"
           routerLink="/aboutdearme"
         >
           About
@@ -43,14 +43,14 @@
         Dear me, Today..
       </h1>
       <h2 class="text-3xl md:text-4xl font-bold text-[#000000] mb-4">
-        Keep smiling and stay <span class="text-blue-600">positive!</span>
+        Keep smiling and stay <span class="text-[#20b2aa]">positive!</span>
       </h2>
       <p class="text-[#323330] text-lg mb-8 w-full">
         วันนี้เหนื่อยไหม มีอะไรดี ๆ เกิดขึ้นบ้างนะ ลองเขียนเก็บไว้ดูไหม :)
       </p>
       <button
         (click)="navigateToGoogleProvide()"
-        class="btn btn-primary px-8 py-3 text-lg rounded-md"
+        class="btn btn-primary bg-[#20b2aa] px-8 py-3 text-lg rounded-2xl border-none"
       >
         เริ่มบันทึกเรื่องราวดี ๆ ของคุณ
       </button>
@@ -94,12 +94,161 @@
           Send
         </button>
       </div>
-      <!-- Features Section -->
-      <div class="mt-6">
-        <!-- <a routerLink="/aboutdearme" class="text-[12px] text-blue-600 hover:underline">
-          Learn more about Dearme,Today
-        </a> -->
+      <div class="mouse">
+        <div class="wheel"></div>
       </div>
+      <p class="scroll-text">SCROLL DOWN</p>
+      <!-- Features Section -->
+      <div class="min-h-screen">
+        <!-- Hero -->
+        <section class="text-center py-16 sm:py-20 px-4">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-snug">
+            Dearme is where your positive notes grow
+          </h1>
+          <p class="mt-4 text-base sm:text-lg md:text-xl text-gray-600 max-w-md sm:max-w-xl mx-auto leading-relaxed">
+            Write 3 lines a day. Build your tree of positivity.
+            A small step every day makes a big change in your life.
+          </p>
+        </section>
+
+        <section class="overflow-hidden">
+          <h2 class="text-2xl font-bold text-gray-800 text-center mb-8">
+            Features that make Dearme special
+          </h2>
+
+          <div class="relative w-full group">
+            <div class="flex gap-6 animate-loop-scroll group-hover:[animation-play-state:paused]">
+              <!-- 🔁 Duplicate cards set 1 -->
+              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                <div class="text-4xl mb-4">
+                  <div class="flex justify-center">
+                    <img
+                      src="assets/images/01.png"
+                      alt=""
+                      class="h-10 w-16 md:h-20 md:w-32 mb-4"
+                    />
+                  </div>
+                </div>
+                <h3 class="font-semibold text-lg text-gray-800">Daily 3-line Notes</h3>
+                <p class="text-gray-600 text-sm mt-2">
+                  Reflect on your day in just three simple lines to build a habit of gratitude and positivity.
+                </p>
+              </div>
+
+              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                <div class="flex justify-center">
+                  <img
+                    src="assets/images/02.png"
+                    alt=""
+                    class="h-10 w-16 md:h-20 md:w-32 mb-4"
+                  />
+                </div>
+                <h3 class="font-semibold text-lg text-gray-800">Mood & Insights</h3>
+                <p class="text-gray-600 text-sm mt-2">
+                  Track your emotions and view weekly insights to understand your personal growth journey.
+                </p>
+              </div>
+
+              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                <div class="flex justify-center">
+                  <img
+                    src="assets/images/03.png"
+                    alt=""
+                    class="h-16 w-16 md:h-20 md:w-32 mb-4"
+                  />
+                </div>
+                <h3 class="font-semibold text-lg text-gray-800">Seed-to-Tree Growth</h3>
+                <p class="text-gray-600 text-sm mt-2">
+                  Watch your journal turn into a growing tree as you stay consistent with your notes.
+                </p>
+              </div>
+
+              <!-- 🔁 Duplicate cards set 2 (เหมือนชุดแรก เพื่อให้ loop ดูต่อเนื่อง) -->
+              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                <div class="text-4xl mb-4">
+                  <div class="flex justify-center">
+                    <img
+                      src="assets/images/01.png"
+                      alt=""
+                      class="h-10 w-16 md:h-20 md:w-32 mb-4"
+                    />
+                  </div>
+                </div>
+                <h3 class="font-semibold text-lg text-gray-800">Daily 3-line Notes</h3>
+                <p class="text-gray-600 text-sm mt-2">
+                  Reflect on your day in just three simple lines to build a habit of gratitude and positivity.
+                </p>
+              </div>
+
+              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                <div class="flex justify-center">
+                  <img
+                    src="assets/images/02.png"
+                    alt=""
+                    class="h-10 w-16 md:h-20 md:w-32 mb-4"
+                  />
+                </div>
+                <h3 class="font-semibold text-lg text-gray-800">Mood & Insights</h3>
+                <p class="text-gray-600 text-sm mt-2">
+                  Track your emotions and view weekly insights to understand your personal growth journey.
+                </p>
+              </div>
+
+              <div class="min-w-[280px] bg-white rounded-2xl shadow-md p-6 flex-shrink-0 transition-transform duration-300 hover:scale-105">
+                <div class="flex justify-center">
+                  <img
+                    src="assets/images/03.png"
+                    alt=""
+                    class="h-16 w-16 md:h-20 md:w-32 mb-4"
+                  />
+                </div>
+                <h3 class="font-semibold text-lg text-gray-800">Seed-to-Tree Growth</h3>
+                <p class="text-gray-600 text-sm mt-2">
+                  Watch your journal turn into a growing tree as you stay consistent with your notes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <section class="">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <!-- Left : Mockup Images -->
+          <div class="flex justify-center relative">
+            <!-- Mockup phone 1 -->
+            <div class="w-80 sm:w-56 lg:w-auto z-10">
+              <img src="assets/images/04.png"
+                   alt="Phone mockup 1"
+                   class="rounded-3xl shadow-lg" />
+            </div>
+          </div>
+
+          <!-- Right : About Us Text -->
+          <div class="text-center lg:text-left space-y-6">
+            <div class="flex justify-center lg:justify-start items-center gap-3">
+              <!-- Mascot -->
+              <div class="text-5xl">🐱✨</div>
+              <h2 class="text-3xl font-bold text-gray-800">About Us</h2>
+            </div>
+
+            <p class="text-gray-700 leading-relaxed">
+              We're just note lovers who know the struggle—wanting to be more consistent,
+              but finding motivation every day can be hard. We believe journaling should
+              be easy, meaningful, and fun.
+            </p>
+            <p class="text-gray-700 leading-relaxed">
+              Our goal is to build a friendly space where everyone can reflect daily,
+              grow positivity, and share inspiring thoughts. If you've ever wished for a
+              better way to track your feelings and see progress, you're in the right place.
+            </p>
+            <p class="text-gray-700 leading-relaxed">
+              Join our waitlist and help us grow Dearme for everyone who seeks peace and positivity!
+            </p>
+          </div>
+        </div>
+      </section>
+
+
       <!-- Shared Toast Component -->
       <app-toast></app-toast>
     </div>
