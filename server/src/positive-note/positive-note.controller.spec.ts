@@ -11,6 +11,7 @@ import { getAllNoteSendById } from './entity/positive-note.entity';
 import { PositiveNoteController } from './positive-note.controller';
 import { PositiveNoteService } from './positive-note.service';
 import { SummaryGateway } from '../summary/summary.gateway';
+import { firstValueFrom } from 'rxjs';
 
 jest.mock('jsonwebtoken', () => ({
   verify: jest.fn(),
@@ -76,13 +77,20 @@ describe('PositiveNoteController', () => {
     (jwt.verify as jest.Mock).mockReset();
   });
 
-  it('should get all positive note in dearme', () => {
-    const mockResultData = 21;
-    mockService.getAllPositiveNoteInDearme = jest
-      .fn()
+  it('should get all positive note in dearme', async () => {
+    const mockResultData: number = 21;
+    jest
+      .spyOn(mockService, 'getAllPositiveNoteInDearme')
       .mockResolvedValue(mockResultData);
-    const result = controller.getAllPositiveNoteInDearme();
-    expect(result).toBe(mockResultData);
+
+    jest.useFakeTimers();
+    const resultPromise = firstValueFrom(
+      controller.getAllPositiveNoteInDearme(),
+    ) as Promise<{ data: { count: number } }>;
+    jest.advanceTimersByTime(5000);
+    const result = await resultPromise;
+    jest.useRealTimers();
+    expect(result.data.count).toBe(mockResultData);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(mockService.getAllPositiveNoteInDearme).toHaveBeenCalledTimes(1);
   });
