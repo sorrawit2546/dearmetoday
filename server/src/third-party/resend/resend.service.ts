@@ -4,6 +4,7 @@ import type { Attachment } from 'resend';
 
 @Injectable()
 export class ResendService {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   private readonly resend = new Resend(process.env.RESEND_API_KEY);
   private readonly logger = new Logger(ResendService.name);
   private readonly mailFrom = process.env.MAIL_FROM;

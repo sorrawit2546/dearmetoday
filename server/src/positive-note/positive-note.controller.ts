@@ -198,12 +198,24 @@ export class PositiveNoteController {
     const user = req.user as JwtUser;
     const emailToUse = user?.email ?? body.email;
 
-    return this.positivenoteService.createPositiveNote({
-      ...body,
-      email: emailToUse,
-      imageUrls,
-      showMessage: Boolean(body.showMessage),
-    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const googleAccessToken =
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-member-access
+      (req.cookies as any)?.google_access_token ??
+      (req.headers.authorization?.startsWith('Bearer ')
+        ? req.headers.authorization.slice(7)
+        : undefined);
+
+    return this.positivenoteService.createPositiveNote(
+      {
+        ...body,
+        email: emailToUse,
+        imageUrls,
+        showMessage: Boolean(body.showMessage),
+      },
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      googleAccessToken,
+    );
   }
 
   // @Post('create-auth')
