@@ -1,4 +1,5 @@
-import { mkdir, writeFile } from 'fs/promises';
+import { mkdir, writeFile, access } from 'fs/promises';
+import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
 import { join } from 'path';
@@ -8,14 +9,22 @@ export async function downloadAvatar(
   userId: string,
 ): Promise<string> {
   try {
-    const uploadsDir = join(process.cwd(), 'uploads'); // ✅ ใช้ root ของโปรเจกต์
-    const filename = `${userId}-${Date.now()}.jpg`;
+    const uploadsDir = join(process.cwd(), 'uploads');
+    const filename = `${userId}.jpg`; // ✅ ใช้ชื่อคงที่สำหรับแต่ละ user
     const filepath = join(uploadsDir, filename);
 
-    // ✅ สร้างโฟลเดอร์หากยังไม่มี
+    // ✅ สร้างโฟลเดอร์ถ้ายังไม่มี
     await mkdir(uploadsDir, { recursive: true });
 
-    // ใช้ Node.js built-in modules แทน fetch
+    // ✅ ถ้ามีไฟล์อยู่แล้ว ให้ข้ามการดาวน์โหลด
+    try {
+      await access(filepath, fs.constants.F_OK);
+      return `/uploads/${filename}`;
+    } catch {
+      // file ไม่พบ → ไปโหลดต่อ
+    }
+
+    // ✅ โหลด avatar ถ้าไฟล์ยังไม่มี
     const buffer = await new Promise<Buffer>((resolve, reject) => {
       const protocol = url.startsWith('https:') ? https : http;
       protocol
@@ -33,11 +42,9 @@ export async function downloadAvatar(
     });
 
     await writeFile(filepath, buffer);
-
-    return `/uploads/${filename}`; // path ที่ client จะใช้เข้าถึง
+    return `/uploads/${filename}`;
   } catch (error) {
     console.error('Error downloading avatar:', error);
-    // Return a default avatar or empty string if download fails
     return '';
   }
 }

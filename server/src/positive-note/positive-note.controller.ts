@@ -11,18 +11,17 @@ import {
   Sse,
   UnauthorizedException,
   UploadedFiles,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Entry } from '@prisma/client';
 import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+// import { diskStorage } from 'multer';
+import * as multer from 'multer';
+import { interval, Observable, switchMap } from 'rxjs';
+import { StorageService } from '../storage/storage.service';
 import {
-  CreatePositiveNoteAuthDto,
   CreatePositiveNoteDto,
   UpdatePositiveNoteDeleteDto,
   UpdatePositiveNoteDto,
@@ -33,7 +32,6 @@ import {
   IpositiveNoteByNoteId,
 } from './entity/positive-note.entity';
 import { PositiveNoteService } from './positive-note.service';
-import { interval, Observable, switchMap } from 'rxjs';
 
 interface JwtUser {
   userId: string;
@@ -44,7 +42,10 @@ interface JwtUser {
 
 @Controller('positive-note')
 export class PositiveNoteController {
-  constructor(private readonly positivenoteService: PositiveNoteService) {}
+  constructor(
+    private readonly positivenoteService: PositiveNoteService,
+    private readonly storageService: StorageService,
+  ) {}
   BASE_URL = process.env.SERVER_URL;
 
   @Sse('allnote-dearme/stream')
@@ -80,20 +81,9 @@ export class PositiveNoteController {
   @Patch('note/:id')
   @UseInterceptors(
     FilesInterceptor('imageUrls', 10, {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (
-          req: Request,
-          file: Express.Multer.File,
-          cb: (error: Error | null, filename: string) => void,
-        ) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, uniqueSuffix + extname(file.originalname));
-        },
-      }),
+      storage: multer.memoryStorage(),
       limits: {
-        fileSize: 3 * 1024 * 1024, // จำกัดขนาดไฟล์ไม่เกิน 3 MB
+        fileSize: 3 * 1024 * 1024, // จำกัดขนาดไฟล์ไม่เกิน 3MB
       },
     }),
   )
@@ -101,9 +91,10 @@ export class PositiveNoteController {
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: Request,
     @Param('id') noteId: string,
-    @Body() body: any, // ← ต้องเป็น any เพื่อรับจาก FormData
+    @Body() body: any, // ← ใช้ any เพื่อรองรับ FormData
   ): Promise<Partial<IpositiveNoteByNoteId>> {
     if (!req) throw new UnauthorizedException();
+
     const token = (req.cookies as { [key: string]: string })?.access_token;
     if (!token) throw new UnauthorizedException('Token not found');
 
@@ -112,7 +103,7 @@ export class PositiveNoteController {
     };
     const userId = decoded.sub;
 
-    // ✅ แปลง string กลับเป็น type ที่ต้องการ
+    // ✅ เตรียม DTO สำหรับ update
     const Dto: Partial<UpdatePositiveNoteDto> = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       line1: body?.line1 ?? undefined,
@@ -126,29 +117,31 @@ export class PositiveNoteController {
       showMessage: body?.showMessage ? body.showMessage === 'true' : undefined,
     };
 
-    // Handle image URLs (existing + new)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (body?.existingImageUrls || files?.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-      const existingUrls = Array.isArray(body.existingImageUrls)
+    // ✅ จัดการรูปภาพ (existing + new)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const existingUrls = Array.isArray(body?.existingImageUrls)
+      ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        body.existingImageUrls
+      : // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        body?.existingImageUrls
         ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          body.existingImageUrls
-        : // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          body.existingImageUrls
-          ? // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            [body.existingImageUrls]
-          : [];
+          [body.existingImageUrls]
+        : [];
 
-      // Generate URLs for new uploaded files
-      const newImageUrls = files.map(
-        (file) => `${this.BASE_URL}/uploads/${file.filename}`,
-      );
+    const newImageUrls: string[] = [];
 
-      // Combine existing and new image URLs
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      Dto.imageUrls = [...existingUrls, ...newImageUrls];
+    // ถ้ามีไฟล์ใหม่ → upload ขึ้น Supabase
+    for (const file of files) {
+      const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.originalname}`;
+      const url = await this.storageService.uploadBuffer(file, uniqueName);
+      newImageUrls.push(url);
     }
 
+    // รวมภาพเดิม + ภาพใหม่
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    Dto.imageUrls = [...existingUrls, ...newImageUrls];
+
+    // ✅ เรียก service เพื่อบันทึก
     return await this.positivenoteService.editPositiveNoteById(
       noteId,
       userId,
@@ -180,21 +173,8 @@ export class PositiveNoteController {
   @Post('create')
   @UseInterceptors(
     FilesInterceptor('imageUrls', 10, {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (
-          req: Request,
-          file: Express.Multer.File,
-          cb: (error: Error | null, filename: string) => void,
-        ) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, uniqueSuffix + extname(file.originalname));
-        },
-      }),
-      limits: {
-        fileSize: 3 * 1024 * 1024, // จำกัดขนาดไฟล์ไม่เกิน 3 MB
-      },
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 3 * 1024 * 1024 }, // จำกัด 3MB
     }),
   )
   async createPositiveNote(
@@ -202,69 +182,67 @@ export class PositiveNoteController {
     @Body() body: CreatePositiveNoteDto,
     @Req() req: Request,
   ): Promise<Entry> {
-    const imageUrls = files.map(
-      (file) => `${this.BASE_URL}/uploads/${file.filename}`,
-    );
+    const imageUrls: string[] = [];
 
-    // ตรวจสอบว่ามี token หรือไม่
-    const user = req.user as JwtUser;
-    let emailToUse = body.email; // ใช้ email จาก body เป็นค่าเริ่มต้น
-
-    const access_token_google = req.cookies as { google_access_token?: string };
-    const token = access_token_google?.google_access_token;
-    // ถ้ามี token ให้ใช้ email จาก token แทน
-    if (user?.email) {
-      emailToUse = user.email;
+    for (const file of files) {
+      const uniqueName =
+        Date.now() +
+        '-' +
+        Math.round(Math.random() * 1e9) +
+        '-' +
+        file.originalname;
+      const url = await this.storageService.uploadBuffer(file, uniqueName);
+      imageUrls.push(url);
     }
 
-    return this.positivenoteService.createPositiveNote(
-      {
-        ...body,
-        email: emailToUse,
-        imageUrls: imageUrls,
-        showMessage: Boolean(body.showMessage),
-      },
-      token ?? '',
-    );
-  }
-
-  @Post('create-auth')
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(
-    FilesInterceptor('imageUrls', 10, {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (
-          req: Request,
-          file: Express.Multer.File,
-          cb: (error: Error | null, filename: string) => void,
-        ) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, uniqueSuffix + extname(file.originalname));
-        },
-      }),
-    }),
-  )
-  async createPositiveNoteWithAuth(
-    @UploadedFiles() files: Express.Multer.File[],
-    @Body() body: CreatePositiveNoteAuthDto,
-    @Req() req: Request,
-  ): Promise<Entry> {
-    const imageUrls = files.map(
-      (file) => `${this.BASE_URL}/uploads/${file.filename}`,
-    );
     const user = req.user as JwtUser;
-    if (!user?.email) {
-      throw new UnauthorizedException('ไม่พบ email ใน token');
-    }
+    const emailToUse = user?.email ?? body.email;
 
     return this.positivenoteService.createPositiveNote({
       ...body,
-      email: user.email, // ใช้ email จาก token แทน
-      imageUrls: imageUrls,
+      email: emailToUse,
+      imageUrls,
+      showMessage: Boolean(body.showMessage),
     });
   }
+
+  // @Post('create-auth')
+  // @UseGuards(JwtAuthGuard)
+  // @UseInterceptors(
+  //   FilesInterceptor('imageUrls', 10, {
+  //     storage: diskStorage({
+  //       destination: './uploads',
+  //       filename: (
+  //         req: Request,
+  //         file: Express.Multer.File,
+  //         cb: (error: Error | null, filename: string) => void,
+  //       ) => {
+  //         const uniqueSuffix =
+  //           Date.now() + '-' + Math.round(Math.random() * 1e9);
+  //         cb(null, uniqueSuffix + extname(file.originalname));
+  //       },
+  //     }),
+  //   }),
+  // )
+  // async createPositiveNoteWithAuth(
+  //   @UploadedFiles() files: Express.Multer.File[],
+  //   @Body() body: CreatePositiveNoteAuthDto,
+  //   @Req() req: Request,
+  // ): Promise<Entry> {
+  //   const imageUrls = files.map(
+  //     (file) => `${this.BASE_URL}/uploads/${file.filename}`,
+  //   );
+  //   const user = req.user as JwtUser;
+  //   if (!user?.email) {
+  //     throw new UnauthorizedException('ไม่พบ email ใน token');
+  //   }
+
+  //   return this.positivenoteService.createPositiveNote({
+  //     ...body,
+  //     email: user.email, // ใช้ email จาก token แทน
+  //     imageUrls: imageUrls,
+  //   });
+  // }
 
   @Post('getnote-userid')
   async getAllpositiveNoteById(@Req() req: Request) {
