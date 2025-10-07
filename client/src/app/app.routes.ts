@@ -7,6 +7,7 @@ import { Community } from './pages/community/community';
 import { About } from './pages/about/about';
 import { PrivacyComponent } from './pages/privacy/privacy';
 import { TermsComponent } from './pages/terms/terms';
+import { CollectStampComponent } from './components/collect-stamp-component/collect-stamp-component';
 
 export const routes: Routes = [
   { component: Home, path: '' },
@@ -16,4 +17,5 @@ export const routes: Routes = [
   { component: About, path: 'aboutdearme'},
   { component: PrivacyComponent, path: 'privacy' },
   { component: TermsComponent, path: 'terms'},
+  { component: CollectStampComponent, path: 'collection', canActivate: [AuthGuard]},
 ];

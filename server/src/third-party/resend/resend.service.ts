@@ -159,6 +159,7 @@ export class ResendService {
     `;
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       const { data, error } = await this.resend.emails.send({
         from: this.mailFrom,
         to: toEmail,
@@ -173,6 +174,7 @@ export class ResendService {
       this.logger.log(
         `✅ Resend sent cozy email to ${toEmail} with ${attachments.length} image(s)`,
       );
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return data;
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
