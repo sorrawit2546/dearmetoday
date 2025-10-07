@@ -47,6 +47,7 @@ export class PositiveNoteController {
     private readonly storageService: StorageService,
   ) {}
   BASE_URL = process.env.SERVER_URL;
+  publicUrl = process.env.SUPABASE_PUBLICURL;
 
   @Sse('allnote-dearme/stream')
   getAllPositiveNoteInDearme(): Observable<MessageEvent> {
@@ -183,7 +184,6 @@ export class PositiveNoteController {
     @Req() req: Request,
   ): Promise<Entry> {
     const imageUrls: string[] = [];
-
     for (const file of files) {
       const uniqueName =
         Date.now() +

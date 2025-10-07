@@ -6,11 +6,19 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { SendgridModule } from '../third-party/sendgrid/sendgrid.module';
 import { CalendarModule } from 'src/calendar/calendar.module';
 import { SummaryModule } from 'src/summary/summary.module';
-import { StorageService } from 'src/storage/storage.service';
+import { ResendModule } from 'src/third-party/resend/resend.module';
+import { StorageModule } from 'src/storage/storage.module';
 
 @Module({
-  imports: [PrismaModule, SendgridModule, CalendarModule, SummaryModule],
-  providers: [PositiveNoteService, PositiveNoteRepository, StorageService],
+  imports: [
+    PrismaModule,
+    SendgridModule,
+    CalendarModule,
+    SummaryModule,
+    ResendModule,
+    StorageModule,
+  ],
+  providers: [PositiveNoteService, PositiveNoteRepository],
   controllers: [PositiveNoteController],
 })
 export class PositiveNoteModule {}

@@ -21,6 +21,7 @@ import {
 } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
 import { CalendarService } from '../calendar/calendar.service';
+import { ResendService } from 'src/third-party/resend/resend.service';
 
 @Injectable()
 export class PositiveNoteService {
@@ -28,6 +29,7 @@ export class PositiveNoteService {
     private readonly repositoryPositiveNote: PositiveNoteRepository,
     private readonly sendgridService: SendgridService,
     private readonly calendarService: CalendarService,
+    private readonly resendService: ResendService,
   ) {}
 
   async getAllPositiveNoteInDearme() {
@@ -135,7 +137,7 @@ export class PositiveNoteService {
       // ส่งอีเมลเฉพาะเมื่อมี email
       if (createEntryDto.email) {
         try {
-          await this.sendgridService.sendPositiveNoteEmail(
+          await this.resendService.sendPositiveNoteEmail(
             createEntryDto.email,
             createEntryDto.imageUrls,
             createEntryDto.line1,
