@@ -20,12 +20,8 @@ export class PopUp implements OnInit {
       if (user) {
         const key = `onboarding_shown_session_${user.email}`;
         const hasShownThisSession = sessionStorage.getItem(key);
-        if (!hasShownThisSession) {
-          this.showPopup = true;
-          sessionStorage.setItem(key, 'true');
-        } else {
-          this.showPopup = false;
-        }
+        // แสดง popup หากยังไม่เคยปิดใน session นี้ (อย่าเพิ่งเขียน flag ที่นี่)
+        this.showPopup = !hasShownThisSession;
       } else {
         this.showPopup = false;
       }
@@ -33,6 +29,12 @@ export class PopUp implements OnInit {
   }
 
   closePopup() {
+    // เขียน flag เมื่อผู้ใช้กดปิดจริง ๆ เพื่อลดโอกาส flicker จากการ emit ซ้ำของ currentUser$
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      const key = `onboarding_shown_session_${user.email}`;
+      sessionStorage.setItem(key, 'true');
+    }
     this.showPopup = false;
   }
 
