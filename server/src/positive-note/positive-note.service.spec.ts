@@ -13,6 +13,7 @@ import {
 import { PositiveNoteRepository } from './positive-note.repository';
 import { PositiveNoteService } from './positive-note.service';
 import { SummaryGateway } from '../summary/summary.gateway';
+import { ResendService } from '../third-party/resend/resend.service';
 
 describe('PositiveNoteService', () => {
   let service: PositiveNoteService;
@@ -37,6 +38,10 @@ describe('PositiveNoteService', () => {
     addEvent: jest.fn().mockResolvedValue(undefined),
   };
 
+  const mockResendService = {
+    addEvent: jest.fn().mockResolvedValue(undefined),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -56,6 +61,10 @@ describe('PositiveNoteService', () => {
         {
           provide: SummaryGateway,
           useValue: {},
+        },
+        {
+          provide: ResendService,
+          useValue: mockResendService,
         },
       ],
     }).compile();

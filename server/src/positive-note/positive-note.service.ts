@@ -21,7 +21,7 @@ import {
 } from './entity/positive-note.entity';
 import { PositiveNoteRepository } from './positive-note.repository';
 import { CalendarService } from '../calendar/calendar.service';
-import { ResendService } from 'src/third-party/resend/resend.service';
+import { ResendService } from '../third-party/resend/resend.service';
 
 @Injectable()
 export class PositiveNoteService {
