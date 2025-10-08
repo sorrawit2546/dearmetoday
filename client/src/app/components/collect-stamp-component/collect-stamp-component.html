@@ -9,202 +9,130 @@
 
 <!-- 📖 Cozy Notebook Calendar -->
 <div
-  class="book-wrapper mx-auto max-w-7xl relative mb-10 select-none touch-pan-x border border-[#E5D7C0] bg-[#FFFDF8] rounded-[24px] shadow-[6px_8px_0_#E0D3B5] before:absolute before:inset-x-0 before:-top-[1px] before:h-[10px] before:bg-[repeating-linear-gradient(90deg,#FFFDF8_0_8px,transparent_8px_16px)] before:opacity-70 before:mix-blend-multiply after:absolute after:inset-x-0 after:-bottom-[1px] after:h-[10px] after:bg-[repeating-linear-gradient(90deg,#FFFDF8_0_8px,transparent_8px_16px)] after:opacity-70 after:mix-blend-multiply"
+  class="book-wrapper mx-auto max-w-screen-xl relative mb-10 select-none border border-[#E5D7C0] bg-[#FFFDF8] rounded-[24px] shadow-[6px_8px_0_#E0D3B5]"
   (touchstart)="onTouchStart($event)"
   (touchend)="onTouchEnd($event)"
-  (touchmove)="$event.stopPropagation()"
 >
   <!-- ปุ่มซ้าย -->
   <button
     (click)="changeMonth(-1)"
-    class="hidden md:block absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-[#F8F5EE] hover:bg-[#EAE4DA] border border-[#DDD2BF] rounded-full shadow-sm transition"
+    class="hidden lg:block absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-[#F8F5EE] hover:bg-[#EAE4DA] border border-[#DDD2BF] rounded-full shadow-sm transition"
   >
     ‹
   </button>
 
-  <!-- --- Mobile Version (หน้าเดียวครบทุกวัน) --- -->
-  <div
-    class="md:hidden bg-paper-book border border-[#E5D7C0] rounded-[20px] mx-3 p-4 shadow-sm"
-  >
-    <img
-      src="assets/images/yourcollection-bg.png"
-      alt="note image"
-      class="object-cover rounded-[10px]"
-    />
-    <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
-      <div
-        *ngFor="let day of calendarDays().slice(0, 21); let i = index"
-        class="relative aspect-square flex items-center justify-center rounded-[18px] cursor-pointer bg-white border border-[#E8DECA] shadow-inner hover:bg-[#F8F3EB] transition"
-        (click)="flipAndOpen(day, i)"
-      >
-        <div class="absolute top-1 right-2 text-xs text-[#B8A98C] font-medium">
-          {{ day.date | date: 'd' }}
-        </div>
-
-        <ng-container *ngIf="day.notes.length; else emptyDay">
-          <div
-            class="relative w-24 h-24 transition-transform duration-700 [transform-style:preserve-3d]"
-            [class.rotate-y-180]="flippedDay === i"
-          >
-            <!-- ด้านหน้า: stamp -->
-            <div
-              class="absolute inset-0 backface-hidden flex items-center justify-center"
-            >
-              <img
-                [src]="getStampImage(day.notes[0].mood)"
-                [alt]="day.notes[0].mood + ' stamp'"
-                class="w-full h-full object-contain opacity-90"
-              />
-            </div>
-
-            <!-- ด้านหลัง: รูปจริง -->
-            <div
-              class="absolute inset-0 backface-hidden rotate-y-180 flex items-center justify-center"
-            >
-              <img
-                [src]="day.image"
-                alt="note image"
-                class="w-full h-full object-cover rounded-[10px] border border-[#E8DECA] shadow-sm"
-              />
-            </div>
-          </div>
-        </ng-container>
-
-        <ng-template #emptyDay>
-          <div class="text-[10px] text-[#C7BCA6] italic opacity-60">
-            (empty)
-          </div>
-        </ng-template>
-      </div>
-    </div>
-    <img
-      src="assets/images/yourcollection-2.png"
-      alt="note image"
-      class="object-cover rounded-[10px]"
-    />
-  </div>
-
-  <!-- --- Desktop Version (สมุดเปิด 2 หน้า) --- -->
-  <div class="hidden md:flex flex-row ml-8 mr-3 book-content">
-    <!-- หน้าซ้าย -->
+  <!-- Responsive Book Layout -->
+  <div class="flex flex-col md:flex-row gap-2 md:gap-4 p-4 md:p-6">
+    <!-- 📖 Left Page -->
     <div
-      class="book-page left-page bg-paper-book border-r border-[#E5D7C0] flex-1"
+      class="flex-1 border-r border-[#E5D7C0] bg-[#FFFDF8] p-4 rounded-[20px]"
     >
       <img
         src="assets/images/yourcollection-bg.png"
-        alt="note image"
-        class="object-cover rounded-[10px] mt-3"
+        alt="background"
+        class="hidden sm:block w-[350px] h-auto rounded-[10px] mb-3"
       />
-      <div class="p-2">
-        <div
-          class="grid grid-cols-5 gap-3 transition-all duration-300"
-          [class.opacity-0]="isTransitioning()"
-        >
-          <div
-            *ngFor="let day of calendarDays().slice(0, 21); let i = index"
-            class="relative aspect-square flex items-center justify-center rounded-[18px] cursor-pointer bg-white border border-[#E8DECA] shadow-inner hover:bg-[#F8F3EB] transition"
-            (click)="flipAndOpen(day, i)"
-          >
-            <div
-              class="absolute top-1 right-2 text-xs text-[#B8A98C] font-medium"
-            >
-              {{ day.date | date: 'd' }}
-            </div>
 
-            <ng-container *ngIf="day.notes.length; else emptyDay">
+      <div
+        class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 lg:gap-5"
+      >
+        <div
+          *ngFor="let day of calendarDays().slice(0, 21); let i = index"
+          class="relative aspect-square flex items-center justify-center rounded-[16px] bg-white border border-[#E8DECA] shadow-inner hover:bg-[#F8F3EB] transition cursor-pointer"
+          (click)="flipAndOpen(day, i)"
+        >
+          <span
+            class="absolute top-1 right-2 text-xs sm:text-sm text-[#B8A98C] font-medium"
+            >{{ day.date | date: 'd' }}</span
+          >
+
+          <ng-container *ngIf="day.notes.length; else emptyDay">
+            <div
+              class="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d]"
+              [class.rotate-y-180]="flippedDay === i"
+            >
+              <!-- ด้านหน้า -->
               <div
-                class="relative w-24 h-24 transition-transform duration-700 [transform-style:preserve-3d]"
-                [class.rotate-y-180]="flippedDay === i"
+                class="absolute inset-0 backface-hidden flex items-center justify-center"
               >
-                <!-- ด้านหน้า: stamp -->
-                <div
-                  class="absolute inset-0 backface-hidden flex items-center justify-center"
-                >
-                  <img
-                    [src]="getStampImage(day.notes[0].mood)"
-                    [alt]="day.notes[0].mood + ' stamp'"
-                    class="w-full h-full object-contain opacity-90 animate-fadeShake"
-                  />
-                </div>
-
-                <!-- ด้านหลัง: รูปจริง -->
-                <div
-                  class="absolute inset-0 backface-hidden rotate-y-180 flex items-center justify-center"
-                >
-                  <img
-                    [src]="day.image"
-                    alt="note image"
-                    class="w-full h-full object-cover rounded-[10px] border border-[#E8DECA] shadow-sm"
-                  />
-                </div>
+                <img
+                  [src]="getStampImage(day.notes[0].mood)"
+                  alt="stamp"
+                  class="w-[90%] h-[90%] object-contain opacity-90"
+                />
               </div>
-            </ng-container>
 
-            <ng-template #emptyDay>
-              <div class="text-[10px] text-[#C7BCA6] italic opacity-60">
-                (empty)
+              <!-- ด้านหลัง -->
+              <div
+                class="absolute inset-0 backface-hidden rotate-y-180 flex items-center justify-center"
+              >
+                <img
+                  [src]="day.image"
+                  alt="note image"
+                  class="w-full h-full object-cover rounded-[10px] border border-[#E8DECA] shadow-sm"
+                />
               </div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- หน้าขวา -->
-    <div
-      class="book-page right-page bg-paper-book border-l border-[#E5D7C0] flex-1"
-    >
-      <div class="p-8">
-        <div
-          class="grid grid-cols-5 gap-3 transition-all duration-300"
-          [class.opacity-0]="isTransitioning()"
-        >
-          <div
-            *ngFor="let day of calendarDays().slice(21)"
-            (click)="day.notes.length && openNotes(day)"
-            class="relative aspect-square flex items-center justify-center rounded-[18px] cursor-pointer bg-white border border-[#E8DECA] shadow-inner hover:bg-[#F8F3EB] transition"
-          >
-            <div
-              class="absolute top-1 right-2 text-xs text-[#B8A98C] font-medium"
-            >
-              {{ day.date | date: 'd' }}
             </div>
-            <ng-container *ngIf="day.notes.length; else emptyRight">
-              <img
-                [src]="getStampImage(day.notes[0].mood)"
-                alt="stamp"
-                class="w-16 h-16 object-contain opacity-90"
-              />
-            </ng-container>
-            <ng-template #emptyRight>
-              <div class="text-[10px] text-[#C7BCA6] italic opacity-60">
-                (empty)
-              </div>
-            </ng-template>
-          </div>
+          </ng-container>
+
+          <ng-template #emptyDay>
+            <div class="text-[10px] text-[#C7BCA6] italic opacity-60">
+              (empty)
+            </div>
+          </ng-template>
         </div>
       </div>
-      <img
-        src="assets/images/yourcollection-2.png"
-        alt="note image"
-        class="object-cover rounded-[10px] mt-88 ml-32"
-      />
     </div>
-  </div>
 
-  <!-- สันหนังสือ (เฉพาะจอใหญ่) -->
-  <div class="book-spine hidden md:block"></div>
+    <!-- 📖 Right Page -->
+    <div
+      class="flex-1 border-t md:border-t-0 md:border-l border-[#E5D7C0] bg-[#FFFDF8] p-4 rounded-[20px]"
+    >
+      <div
+        class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4 lg:gap-5"
+      >
+        <div
+          *ngFor="let day of calendarDays().slice(21)"
+          class="relative aspect-square flex items-center justify-center rounded-[16px] bg-white border border-[#E8DECA] shadow-inner hover:bg-[#F8F3EB] transition cursor-pointer"
+          (click)="day.notes.length && openNotes(day)"
+        >
+          <span
+            class="absolute top-1 right-2 text-xs sm:text-sm text-[#B8A98C] font-medium"
+            >{{ day.date | date: 'd' }}</span
+          >
+          <ng-container *ngIf="day.notes.length; else emptyRight">
+            <img
+              [src]="getStampImage(day.notes[0].mood)"
+              alt="stamp"
+              class="w-[70%] sm:w-[80%] h-auto object-contain opacity-90"
+            />
+          </ng-container>
+
+          <ng-template #emptyRight>
+            <div class="text-[10px] text-[#C7BCA6] italic opacity-60">
+              (empty)
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <!-- 🌸 ตกแต่งภาพล่างขวา -->
+    <img
+      src="assets/images/yourcollection-2.png"
+      alt="decoration"
+      class="absolute bottom-0 right-0 w-[180px] md:w-[220px] lg:w-[400px] object-contain opacity-95 pointer-events-none select-none"
+    />
+  </div>
 
   <!-- ปุ่มขวา -->
   <button
     (click)="changeMonth(1)"
-    class="hidden md:block absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[#F8F5EE] hover:bg-[#EAE4DA] border border-[#DDD2BF] rounded-full shadow-sm transition"
+    class="hidden lg:block absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[#F8F5EE] hover:bg-[#EAE4DA] border border-[#DDD2BF] rounded-full shadow-sm transition"
   >
     ›
   </button>
 </div>
 
-<!-- 📘 Modal -->
 <!-- 🗒️ Note Modal (Paper Style) -->
 <div
   *ngIf="showModal"
@@ -227,16 +155,22 @@
 
   <!-- Note List -->
   <div *ngIf="selectedNotes.length; else noNotes">
-    <div class="flex flex-col gap-4 pb-3 max-h-[70vh] overflow-y-auto scrollbar-hide">
+    <div
+      class="flex flex-col gap-4 pb-3 max-h-[70vh] overflow-y-auto scrollbar-hide"
+    >
       <div
         *ngFor="let note of selectedNotes"
         class="p-5 sm:p-6 border border-[#E9DFCA] rounded-[16px] bg-[#FFFBF6] shadow-[0_3px_6px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1"
       >
         <div class="text-2xl sm:text-3xl mb-2">{{ note.mood }}</div>
 
-        <div class="text-[#6B5C4C] text-sm font-medium leading-relaxed space-y-3 break-words">
+        <div
+          class="text-[#6B5C4C] text-sm font-medium leading-relaxed space-y-3 break-words"
+        >
           <div *ngIf="note.line1">
-            <h2 class="text-black mb-1">เรื่องราวดี ๆ ที่อยากขอบคุณหรือเก็บไว้ในวันนี้</h2>
+            <h2 class="text-black mb-1">
+              เรื่องราวดี ๆ ที่อยากขอบคุณหรือเก็บไว้ในวันนี้
+            </h2>
             <p class="whitespace-pre-line">- {{ note.line1 }}</p>
           </div>
 
@@ -251,7 +185,10 @@
           </div>
         </div>
 
-        <div *ngIf="note.imageUrls?.length" class="flex gap-2 mt-3 overflow-x-auto">
+        <div
+          *ngIf="note.imageUrls?.length"
+          class="flex gap-2 mt-3 overflow-x-auto"
+        >
           <img
             *ngFor="let img of note.imageUrls; let i = index"
             [src]="img"
@@ -323,5 +260,4 @@
     </div>
   </ng-template>
 </div>
-
 <app-footer></app-footer>

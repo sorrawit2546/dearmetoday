@@ -28,6 +28,7 @@ import { Api } from '../../services/api';
 import { AuthService } from '../../services/auth.service';
 import { SummaryService } from '../../services/summary.service';
 import { ToastService } from '../../services/toast.service';
+import { PopUp } from '../../components/pop-up/pop-up';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,6 +42,7 @@ import { ToastService } from '../../services/toast.service';
     Header,
     ToastComponent,
     Footer,
+    PopUp
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
@@ -588,4 +590,5 @@ export class Dashboard implements OnInit, OnDestroy {
     if (progress.startsWith('-')) return 'card-gradient-red';
     return 'card-gradient-green';
   }
+
 }

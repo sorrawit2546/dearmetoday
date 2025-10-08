@@ -19,6 +19,7 @@
   <!-- User Data -->
   <div *ngIf="user() && !isLoading() && !error()" class="">
     <app-header></app-header>
+    <app-pop-up></app-pop-up>
     <div class="flex flex-col justify-center items-center mt-7">
       <div class="w-full max-w-6xl flex justify-start text-2xl">
         <div class="flex flex-row">
@@ -32,7 +33,7 @@
       <!-- 🪶 Overview Alert -->
       <div
         role="alert"
-        class="mt-3 mb-3 w-full max-w-6xl flex items-center gap-4 border border-[#EAE4DA] rounded-[20px] h-auto py-4 px-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
+        class="mt-3 mb-3 w-full max-w-6xl flex items-center gap-4 border bg-[#FFFDF8] border-[#EAE4DA] rounded-[20px] h-auto py-4 px-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
       >
         <div class="relative flex items-center justify-center w-5 h-5">
           <span
@@ -348,11 +349,10 @@
       </div>
     </div>
 
-    <!-- Floating Action Button (+) -->
+    <!-- ปุ่มบวก -->
     <button
       (click)="openNoteForm()"
-      class="fixed text-2xl w-24 bottom-6 right-6 btn btn-primary bg-[#20b2aa] btn-circle shadow-lg z-40 animate-pulse hover:scale-110 hover:shadow-2xl transition-transform duration-300 border-none"
-      aria-label="สร้างบันทึกใหม่"
+      class="fixed bottom-8 right-8 bg-[#20B2AA] text-white rounded-full w-14 h-14 text-3xl shadow-lg hover:scale-110 transition z-20"
     >
       +
     </button>
