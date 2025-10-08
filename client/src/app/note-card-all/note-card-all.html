@@ -84,12 +84,12 @@
       <button *ngIf="(photos?.length ?? 0) > 1"
         class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md"
         (click)="prevPhoto(); $event.stopPropagation()" aria-label="Previous photo">
-        ◀
+        <
       </button>
       <button *ngIf="(photos?.length ?? 0) > 1"
         class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md"
         (click)="nextPhoto(); $event.stopPropagation()" aria-label="Next photo">
-        ▶
+        >
       </button>
       <!-- Counter -->
       <div *ngIf="(photos?.length ?? 0) > 0"

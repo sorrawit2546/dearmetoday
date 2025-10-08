@@ -3,7 +3,7 @@
 <!-- 📅 Header -->
 <div class="flex justify-center items-center mb-4 mt-3">
   <div
-    class="font-semibold text-lg md:text-xl tracking-wide text-[#5C5042] font-bold"
+    class=" text-lg md:text-4xl tracking-wide text-[#5C5042] font-bold"
   >
     {{ currentMonth() | date: 'MMMM yyyy' }}
   </div>
@@ -35,26 +35,47 @@
     />
     <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
       <div
-        *ngFor="let day of calendarDays()"
-        (click)="day.notes.length && openNotes(day)"
-        class="relative aspect-square flex items-center justify-center rounded-[14px] cursor-pointer bg-[#FFFDF8] border border-[#E8DECA] shadow-inner hover:bg-[#F8F3EB] transition"
+        *ngFor="let day of calendarDays().slice(0, 21); let i = index"
+        class="relative aspect-square flex items-center justify-center rounded-[18px] cursor-pointer bg-white border border-[#E8DECA] shadow-inner hover:bg-[#F8F3EB] transition"
+        (click)="flipAndOpen(day, i)"
       >
-        <div
-          class="absolute top-1 right-2 text-[10px] text-[#B8A98C] font-medium"
-        >
+        <div class="absolute top-1 right-2 text-xs text-[#B8A98C] font-medium">
           {{ day.date | date: 'd' }}
         </div>
 
-        <ng-container *ngIf="day.notes.length; else emptyDayMobile">
-          <img
-            [src]="day.image"
-            alt="note image"
-            class="w-20 h-20 object-cover rounded-[10px] border border-[#E8DECA] shadow-sm"
-          />
+        <ng-container *ngIf="day.notes.length; else emptyDay">
+          <div
+            class="relative w-24 h-24 transition-transform duration-700 [transform-style:preserve-3d]"
+            [class.rotate-y-180]="flippedDay === i"
+          >
+            <!-- ด้านหน้า: stamp -->
+            <div
+              class="absolute inset-0 backface-hidden flex items-center justify-center"
+            >
+              <img
+                [src]="getStampImage(day.notes[0].mood)"
+                [alt]="day.notes[0].mood + ' stamp'"
+                class="w-full h-full object-contain opacity-90"
+              />
+            </div>
+
+            <!-- ด้านหลัง: รูปจริง -->
+            <div
+              class="absolute inset-0 backface-hidden rotate-y-180 flex items-center justify-center"
+            >
+              <img
+                [src]="day.image"
+                alt="note image"
+                class="w-full h-full object-cover rounded-[10px] border border-[#E8DECA] shadow-sm"
+              />
+            </div>
+          </div>
         </ng-container>
 
-        <ng-template #emptyDayMobile>
-          <div class="text-[9px] text-[#C7BCA6] italic opacity-60">(empty)</div>
+        <ng-template #emptyDay>
+          <div class="text-[10px] text-[#C7BCA6] italic opacity-60">
+            (empty)
+          </div>
         </ng-template>
       </div>
     </div>
@@ -74,7 +95,7 @@
       <img
         src="assets/images/yourcollection-bg.png"
         alt="note image"
-        class="object-cover rounded-[10px]"
+        class="object-cover rounded-[10px] mt-3"
       />
       <div class="p-2">
         <div
@@ -168,7 +189,7 @@
       <img
         src="assets/images/yourcollection-2.png"
         alt="note image"
-        class="object-cover rounded-[10px] mt-85 ml-32"
+        class="object-cover rounded-[10px] mt-88 ml-32"
       />
     </div>
   </div>
