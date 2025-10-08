@@ -173,11 +173,9 @@ export class PositiveNoteRepository {
   async getAllpositiveNotesWithoutLatest(
     userId: string,
   ): Promise<getAllNoteSendById[]> {
-    const resultRecentNoteByUserId = this.recentNoteByUserId(userId);
     return await this.prisma.entry.findMany({
       where: {
         userId: userId,
-        id: { not: (await resultRecentNoteByUserId).id },
       },
       orderBy: {
         createdAt: 'desc',

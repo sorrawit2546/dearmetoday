@@ -42,6 +42,33 @@
   --color-error-content: #ffffff;
 }
 
+/* 🌼 Fade + Shake เล็กน้อย (เหมือนโยกตัวเบา ๆ ตอนแสดงผล) */
+@keyframes fadeShake {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) rotate(-1.5deg) scale(0.95);
+  }
+  30% {
+    opacity: 0.7;
+    transform: translateY(4px) rotate(1.5deg) scale(1.02);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) rotate(-1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+/* 🪄 ใช้กับ element ใดก็ได้ */
+.animate-fadeShake {
+  animation: fadeShake 1s ease-in-out both;
+  will-change: transform, opacity;
+}
+
+
 /* 3️⃣ ใส่ custom base layer หลังจาก Tailwind */
 @layer base {
   /* ฟอนต์หลักทั้งเว็บ */
@@ -59,5 +86,5 @@
   .font-sarabun {
     font-family: "Sarabun", sans-serif;
   }
-  
+
 }

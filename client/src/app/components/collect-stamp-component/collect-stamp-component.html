@@ -2,9 +2,7 @@
 
 <!-- 📅 Header -->
 <div class="flex justify-center items-center mb-4 mt-3">
-  <div
-    class=" text-lg md:text-4xl tracking-wide text-[#5C5042] font-bold"
-  >
+  <div class="text-lg md:text-4xl tracking-wide text-[#5C5042] font-bold">
     {{ currentMonth() | date: 'MMMM yyyy' }}
   </div>
 </div>
@@ -125,7 +123,7 @@
                   <img
                     [src]="getStampImage(day.notes[0].mood)"
                     [alt]="day.notes[0].mood + ' stamp'"
-                    class="w-full h-full object-contain opacity-90"
+                    class="w-full h-full object-contain opacity-90 animate-fadeShake"
                   />
                 </div>
 
@@ -229,30 +227,36 @@
 
   <!-- Note List -->
   <div *ngIf="selectedNotes.length; else noNotes">
-    <div class="flex gap-4 overflow-x-auto pb-3 scrollbar-hide">
+    <div class="flex flex-col gap-4 pb-3 max-h-[70vh] overflow-y-auto scrollbar-hide">
       <div
         *ngFor="let note of selectedNotes"
-        class="min-w-[240px] sm:min-w-[320px] flex-shrink-0 p-5 sm:p-6 border border-[#E9DFCA] rounded-[16px] bg-[#FFFBF6] shadow-[0_3px_6px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1"
+        class="p-5 sm:p-6 border border-[#E9DFCA] rounded-[16px] bg-[#FFFBF6] shadow-[0_3px_6px_rgba(0,0,0,0.08)] transition-transform duration-300 hover:-translate-y-1"
       >
         <div class="text-2xl sm:text-3xl mb-2">{{ note.mood }}</div>
 
-        <div
-          class="text-[#6B5C4C] text-xs sm:text-sm font-medium leading-relaxed space-y-1"
-        >
-          <div *ngIf="note.line1">{{ note.line1 }}</div>
-          <div *ngIf="note.line2">{{ note.line2 }}</div>
-          <div *ngIf="note.line3">{{ note.line3 }}</div>
+        <div class="text-[#6B5C4C] text-sm font-medium leading-relaxed space-y-3 break-words">
+          <div *ngIf="note.line1">
+            <h2 class="text-black mb-1">เรื่องราวดี ๆ ที่อยากขอบคุณหรือเก็บไว้ในวันนี้</h2>
+            <p class="whitespace-pre-line">- {{ note.line1 }}</p>
+          </div>
+
+          <div *ngIf="note.line2">
+            <h2 class="text-black mb-1">สิ่งเล็ก ๆ ที่ทำให้ยิ้มได้ในวันนี้</h2>
+            <p class="whitespace-pre-line">- {{ note.line2 }}</p>
+          </div>
+
+          <div *ngIf="note.line3">
+            <h2 class="text-black mb-1">เรื่องราวที่ทำให้รู้สึกภูมิใจ</h2>
+            <p class="whitespace-pre-line">- {{ note.line3 }}</p>
+          </div>
         </div>
 
-        <div
-          *ngIf="note.imageUrls?.length"
-          class="flex gap-2 mt-3 overflow-x-auto"
-        >
+        <div *ngIf="note.imageUrls?.length" class="flex gap-2 mt-3 overflow-x-auto">
           <img
             *ngFor="let img of note.imageUrls; let i = index"
             [src]="img"
             (click)="openImage(note.imageUrls, i)"
-            class="w-16 sm:w-20 h-16 sm:h-20 object-cover rounded-[10px] border border-[#E6D9C5] shadow-sm hover:scale-[1.05] cursor-pointer transition-transform duration-200"
+            class="w-20 h-20 object-cover rounded-[10px] border border-[#E6D9C5] shadow-sm hover:scale-[1.05] cursor-pointer transition-transform duration-200"
           />
         </div>
       </div>

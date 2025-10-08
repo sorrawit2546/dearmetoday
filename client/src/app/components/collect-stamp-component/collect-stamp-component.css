@@ -1,16 +1,17 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(10px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.8s ease-in-out both;
+  will-change: transform, opacity;
 }
 
 /* รอยขอบด้านซ้ายแบบสมุด */
@@ -101,3 +102,10 @@
 .backface-hidden {
   backface-visibility: hidden;
 }
+
+
+p {
+  white-space: pre-line; /* แสดงขึ้นบรรทัดใหม่ได้ */
+  word-break: break-word; /* ตัดคำเมื่อยาวเกิน */
+}
+

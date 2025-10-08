@@ -240,8 +240,8 @@ export class PositiveNoteService {
         await this.repositoryPositiveNote.getAllpositiveNotesWithoutLatest(
           userId,
         );
-      const mapResult: getAllNoteSendById[] = result.slice(0, 12);
-      return mapResult;
+      // const mapResult: getAllNoteSendById[] = result.slice(0, 12);
+      return result;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new BadGatewayException('External service unavailable');
