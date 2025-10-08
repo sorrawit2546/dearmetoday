@@ -33,6 +33,10 @@ services:
       # พวก config อื่น ๆ
       PORT: 3000
       NODE_ENV: ${NODE_ENV:-production}
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_KEY: ${SUPABASE_KEY}
+      SUPABASE_BUCKET: ${SUPABASE_BUCKET}
+      RESEND_API_KEY: ${RESEND_API_KEY}
       SENDGRID_API_KEY: ${SENDGRID_API_KEY}
       MAIL_FROM: ${MAIL_FROM}
       FRONTEND_URL: ${FRONTEND_URL}
