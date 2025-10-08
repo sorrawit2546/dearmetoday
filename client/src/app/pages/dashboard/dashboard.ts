@@ -582,4 +582,10 @@ export class Dashboard implements OnInit, OnDestroy {
 
     return data;
   }
+
+  getWeeklyProgressGradient(): string {
+    const progress = this.weeklyProgress();
+    if (progress.startsWith('-')) return 'card-gradient-red';
+    return 'card-gradient-green';
+  }
 }
