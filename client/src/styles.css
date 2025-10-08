@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&display=swap');
 @plugin "daisyui" {
   themes: dearmetoday --default, dark --prefersdark;
 }

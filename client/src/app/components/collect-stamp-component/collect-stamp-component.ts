@@ -136,7 +136,7 @@ export class CollectStampComponent implements OnInit {
   onTouchStart(e: TouchEvent) {
     this.touchStartX = e.changedTouches[0].screenX;
   }
-  
+
   onTouchEnd(e: TouchEvent) {
     const diff = e.changedTouches[0].screenX - this.touchStartX;
     if (diff > 80) this.changeMonth(-1); // ปัดขวา → เดือนก่อน
@@ -186,5 +186,19 @@ export class CollectStampComponent implements OnInit {
     const diff = e.changedTouches[0].screenX - this.touchStartX;
     if (diff > 60) this.prevImage(); // ปัดขวา ← ภาพก่อนหน้า
     if (diff < -60) this.nextImage(); // ปัดซ้าย → ภาพถัดไป
+  }
+
+  flippedDay: number | null = null;
+
+  flipAndOpen(day: any, index: number) {
+    if (!day.notes.length) return;
+
+    this.flippedDay = index;
+
+    // หมุน stamp → รูปจริง → เปิด modal
+    setTimeout(() => {
+      this.openNotes(day);
+      this.flippedDay = null;
+    }, 600);
   }
 }
