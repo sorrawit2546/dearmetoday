@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-pop-up',
@@ -11,17 +12,28 @@ import { Component, OnInit } from '@angular/core';
 export class PopUp implements OnInit {
   showPopup = false;
   currentSlide = 0;
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    const hasSeen = sessionStorage.getItem('hasSeenOnboarding');
-    if (!hasSeen || hasSeen === 'false') {
-      this.showPopup = true;
-    }
+    // แสดงเฉพาะครั้งแรกหลังจากผู้ใช้ login ในหนึ่ง session เท่านั้น
+    this.authService.currentUser$.subscribe((user) => {
+      if (user) {
+        const key = `onboarding_shown_session_${user.email}`;
+        const hasShownThisSession = sessionStorage.getItem(key);
+        if (!hasShownThisSession) {
+          this.showPopup = true;
+          sessionStorage.setItem(key, 'true');
+        } else {
+          this.showPopup = false;
+        }
+      } else {
+        this.showPopup = false;
+      }
+    });
   }
 
   closePopup() {
     this.showPopup = false;
-    sessionStorage.setItem('hasSeenOnboarding', 'true');
   }
 
   nextSlide() {
@@ -40,33 +52,34 @@ export class PopUp implements OnInit {
     {
       image: 'assets/popup/1.png',
       title: 'เริ่มต้น Note แรกของคุณ ✨',
-      description: 'เขียนบันทึก 3 บรรทัดสั้น ๆ เพื่อขอบคุณสิ่งดี ๆ ในวันนี้ 🌱'
+      description: 'เขียนบันทึก 3 บรรทัดสั้น ๆ เพื่อขอบคุณสิ่งดี ๆ ในวันนี้ 🌱',
     },
     {
       image: 'assets/popup/2.png',
       title: 'ติดตามอารมณ์ของคุณ',
-      description: 'ระบบจะสร้างกราฟ Daily Mood Flow ให้ดูภาพรวมทั้งสัปดาห์ 💚'
+      description: 'ระบบจะสร้างกราฟ Daily Mood Flow ให้ดูภาพรวมทั้งสัปดาห์ 💚',
     },
     {
       image: 'assets/popup/3.png',
       title: 'ดูสรุปใน Overview',
-      description: 'ดูสถิติความรู้สึก, จำนวน Note และพัฒนาการในหน้า Overview 📈'
+      description:
+        'ดูสถิติความรู้สึก, จำนวน Note และพัฒนาการในหน้า Overview 📈',
     },
     {
       image: 'assets/popup/4.png',
       title: 'Community',
-      description: 'แบ่งปันเรื่องราวดี ๆ สู่ Community เพื่อแรงบันดาลใจจากผู้อื่น 🤍'
+      description:
+        'แบ่งปันเรื่องราวดี ๆ สู่ Community เพื่อแรงบันดาลใจจากผู้อื่น 🤍',
     },
     {
       image: 'assets/popup/5.png',
       title: 'Collection!',
-      description: 'สะสม Stamp แต่ละวันตาม Mood เพื่อเก็บเป็นความทรงจำ :)'
+      description: 'สะสม Stamp แต่ละวันตาม Mood เพื่อเก็บเป็นความทรงจำ :)',
     },
     {
       image: 'assets/popup/6.png',
       title: 'Send Note To Email!',
-      description: 'ส่งข้อความพร้อมรูปของคุณไปเก็บไว้ใน Email 💌'
+      description: 'ส่งข้อความพร้อมรูปของคุณไปเก็บไว้ใน Email 💌',
     },
   ];
-
 }

@@ -203,20 +203,27 @@
   <!-- 🖼️ Image Viewer Modal -->
   <div
     *ngIf="selectedImageIndex !== null"
-    class="fixed inset-0 z-40 bg-black/60 flex items-center justify-center backdrop-blur-sm rounded-[20px]"
+    class="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center backdrop-blur-sm rounded-[20px]"
     (touchstart)="onImageTouchStart($event)"
     (touchend)="onImageTouchEnd($event)"
   >
     <div
-      class="relative bg-[#FFFDF8] border-[2.5px] border-[#E5D7C0] rounded-[22px] shadow-[6px_8px_0_#E0D4B2] p-3 sm:p-4 flex flex-col items-center"
+      class="relative bg-[#FFFDF8] border-[2.5px] border-[#E5D7C0] rounded-[22px] shadow-[6px_8px_0_#E0D4B2] p-3 sm:p-4 flex flex-col items-center max-h-[90vh] overflow-y-auto"
     >
       <!-- ปุ่มปิด -->
       <button
         (click)="closeImage()"
-        class="absolute top-2 right-3 text-[#B7A98C] hover:text-[#5A4A3B] text-2xl font-bold"
+        class="sticky top-2 right-3 self-end text-[#B7A98C] hover:text-[#5A4A3B] text-2xl font-bold bg-[#FFFDF8]/80 rounded-full px-2 py-1 z-[10000]"
       >
         ✕
       </button>
+
+      <!-- รูป -->
+      <img
+        [src]="selectedImageList[selectedImageIndex!]"
+        alt="note image"
+        class="max-w-[90vw] max-h-[80vh] object-contain rounded-[12px] border border-[#E8DECA] shadow-md"
+      />
 
       <!-- ปุ่มก่อนหน้า -->
       <button
@@ -226,13 +233,6 @@
       >
         ‹
       </button>
-
-      <!-- รูป -->
-      <img
-        [src]="selectedImageList[selectedImageIndex!]"
-        alt="note image"
-        class="max-w-[90vw] max-h-[80vh] object-contain rounded-[12px] border border-[#E8DECA] shadow-md"
-      />
 
       <!-- ปุ่มถัดไป -->
       <button
