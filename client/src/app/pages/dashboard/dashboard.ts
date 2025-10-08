@@ -74,7 +74,6 @@ export class Dashboard implements OnInit, OnDestroy {
   searchDate = signal('');
   selectedWeek = signal<'current' | 'prev'>('current');
 
-
   // Dashboard stats computed values
   weeklyAverage = computed(() => {
     const s = this.summary();
@@ -103,7 +102,7 @@ export class Dashboard implements OnInit, OnDestroy {
     const key = this.selectedWeek() === 'current' ? 'currentWeek' : 'prevWeek';
     const weekData = s.daily[key];
 
-    if (!weekData || weekData.length === 0) return ;
+    if (!weekData || weekData.length === 0) return;
 
     return weekData.map((day) => ({
       date: this.formatDate(day.date),
@@ -507,6 +506,15 @@ export class Dashboard implements OnInit, OnDestroy {
 
   getMoodPosition(mood: number): number {
     return Math.max(0, Math.min(100, ((mood - 1) / 4) * 100));
+  }
+
+  /** ✅ เพิ่มฟังก์ชันนี้ */
+  calcTopPosition(mood: number): string {
+    const moodPercent = this.getMoodPosition(mood);
+    const base = 100 - moodPercent;
+    const offset = 4; // ปรับ offset ให้ดอกไม้ไม่หล่น
+    const safeTop = Math.min(100 - offset, Math.max(0, base));
+    return `calc(${safeTop}% - 12px)`; // ลบครึ่งความสูงของ SVG (ประมาณ 12px)
   }
 
   getWeeklyAverageGradient(): string {

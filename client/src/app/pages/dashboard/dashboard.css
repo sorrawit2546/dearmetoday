@@ -165,7 +165,7 @@
     circle at center,
     #ceeff6 0%,
     rgb(255, 255, 255) 50%
-  );
+  )!important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
@@ -175,12 +175,12 @@
     circle at center,
     #d6f6ce 0%,
     rgb(255, 255, 255) 50%
-  );
+  )!important ;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
 .card-gradient-blue {
-  background: radial-gradient(circle at center, #cef4f6 0%, #ffffff 50%);
+  background: radial-gradient(circle at center, #cef4f6 0%, #ffffff 50%)!important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
@@ -189,7 +189,7 @@
     circle at center,
     #f6f6ce 0%,
     rgb(255, 255, 255) 50%
-  );
+  )!important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
@@ -198,7 +198,7 @@
     circle at center,
     #f6ddce 0%,
     rgb(255, 255, 255) 50%
-  );
+  )!important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
@@ -208,7 +208,7 @@
     circle at center,
     #f2c0c0 0%,
     rgb(255, 255, 255) 50%
-  );
+  )!important;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* ... เพิ่ม properties อื่นๆ ตามต้องการ */
 }
