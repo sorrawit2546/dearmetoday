@@ -1,5 +1,10 @@
+/* 1. โหลดฟอนต์จาก Google Fonts ก่อน */
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Goudy+Bookletter+1911&family=Comic+Neue:wght@400;700&family=Sarabun:wght@400;500;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Goudy+Bookletter+1911&family=Mitr:wght@200;300;400;500;600;700&display=swap');
+
+/* 2. โหลด Tailwind */
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&display=swap');
+
 @plugin "daisyui" {
   themes: dearmetoday --default, dark --prefersdark;
 }
@@ -35,4 +40,24 @@
 
   --color-error: #ef4444;
   --color-error-content: #ffffff;
+}
+
+/* 3️⃣ ใส่ custom base layer หลังจาก Tailwind */
+@layer base {
+  /* ฟอนต์หลักทั้งเว็บ */
+  body {
+    font-family: "Comic Neue", "Mitr", sans-serif;
+    color: #000000;
+    background-color: #fffdf8;
+  }
+
+  /* สร้าง class สำหรับฟอนต์เฉพาะ */
+  .font-comic {
+    font-family: "Comic Neue", sans-serif;
+  }
+
+  .font-sarabun {
+    font-family: "Sarabun", sans-serif;
+  }
+  
 }

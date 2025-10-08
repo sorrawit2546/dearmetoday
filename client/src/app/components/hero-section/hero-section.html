@@ -39,20 +39,21 @@
           class="h-10 w-16 md:h-20 md:w-32 mb-4"
         />
       </div>
-      <h1 class="text-4xl md:text-5xl font-bold text-[#000000] mb-2">
+      <h1 class="font-comic text-4xl md:text-6xl font-bold text-[#000000] mb-2">
         Dear me, Today..
       </h1>
-      <h2 class="text-3xl md:text-4xl font-bold text-[#000000] mb-4">
+      <h2 class="font-comic text-3xl md:text-4xl font-bold text-[#000000] mb-4">
         Keep smiling and stay <span class="text-[#20b2aa]">positive!</span>
       </h2>
       <p class="text-[#323330] text-lg mb-8 w-full">
-        วันนี้เหนื่อยไหม มีอะไรดี ๆ เกิดขึ้นบ้างนะ ลองเขียนเก็บไว้ดูไหม :)
+        Feeling tired today? Maybe something good happened — why not write it
+        down and see? :)
       </p>
       <button
         (click)="navigateToGoogleProvide()"
         class="btn btn-primary bg-[#20b2aa] px-8 py-3 text-lg rounded-2xl border-none"
       >
-        เริ่มบันทึกเรื่องราวดี ๆ ของคุณ
+        Begin your good story today
       </button>
       <div class="flex w-lg flex-col">
         <div class="divider">or</div>
@@ -82,7 +83,7 @@
               (ngModelChange)="quickNoteFromLocalStorage.set($event)"
               class="placeholder:text-blue-300 text-blue-500"
               type="text"
-              placeholder="สิ่งที่อยากขอบคุณในวันนี้"
+              placeholder="What I’m grateful for today"
               required
             />
           </label>
@@ -108,28 +109,28 @@
             Dearme is where your positive notes grow
           </h1>
           <div
-          class="mt-6 bg-white rounded-2xl shadow-md px-6 py-6 flex flex-col items-center justify-center border border-gray-100 max-w-sm mx-auto hover:shadow-lg transition-shadow duration-300 text-center"
-        >
-          <!-- Indicator -->
-          <span class="relative flex size-3 mb-3">
-            <span
-              class="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"
-            ></span>
-            <span
-              class="relative inline-flex size-3 rounded-full bg-sky-500"
-            ></span>
-          </span>
-        
-          <!-- Text -->
-          <div class="text-gray-700">
-            
-            <span class="text-4xl font-bold text-[#20b2aa]">
-              {{ noteCount() }}
+            class="mt-6 bg-white rounded-2xl shadow-md px-6 py-6 flex flex-col items-center justify-center border border-gray-100 max-w-sm mx-auto hover:shadow-lg transition-shadow duration-300 text-center"
+          >
+            <!-- Indicator -->
+            <span class="relative flex size-3 mb-3">
+              <span
+                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"
+              ></span>
+              <span
+                class="relative inline-flex size-3 rounded-full bg-sky-500"
+              ></span>
             </span>
-            <span class="block text-sm font-bold">Real Time Notes from Everyone!</span>
+
+            <!-- Text -->
+            <div class="text-gray-700">
+              <span class="text-4xl font-bold text-[#20b2aa]">
+                {{ noteCount() }}
+              </span>
+              <span class="block text-sm font-bold"
+                >Real Time Notes from Everyone!</span
+              >
+            </div>
           </div>
-        </div>
-        
 
           <p
             class="mt-4 text-base sm:text-lg md:text-xl text-gray-600 max-w-md sm:max-w-xl mx-auto leading-relaxed"
