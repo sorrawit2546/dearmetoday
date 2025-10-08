@@ -71,12 +71,12 @@ export class PopUp implements OnInit {
       image: 'assets/popup/4.png',
       title: 'Community',
       description:
-        'แบ่งปันเรื่องราวดี ๆ สู่ Community เพื่อแรงบันดาลใจจากผู้อื่น 🤍',
+        'แบ่งปันเรื่องราวดี ๆ สู่ Community เพื่อรับและส่งต่อแรงบันดาลใจให้แก่กัน 🤍',
     },
     {
       image: 'assets/popup/5.png',
       title: 'Collection!',
-      description: 'สะสม Stamp แต่ละวันตาม Mood เพื่อเก็บเป็นความทรงจำ :)',
+      description: 'สะสม Stamp แต่ละวันตาม Mood เพื่อเก็บเป็นความทรงจำในระยะยาว :)',
     },
     {
       image: 'assets/popup/6.png',

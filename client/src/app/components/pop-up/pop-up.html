@@ -4,7 +4,7 @@
   class="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 animate-fadeIn"
 >
   <div
-    class="relative bg-[#FFFDF8] border-2 border-[#E5D7C0] rounded-[24px] shadow-[8px_10px_0_#E0D4B2] w-[95%] max-w-[90%] sm:max-w-2xl lg:max-w-4xl p-4 sm:p-8 text-center overflow-hidden overflow-y-auto max-h-[90vh]"
+    class="relative bg-[#FFFDF8] border-2 border-[#E5D7C0] rounded-[24px] shadow-[8px_10px_0_#E0D4B2] w-[95%] max-w-[95vw] sm:max-w-2xl lg:max-w-4xl p-4 sm:p-8 text-center overflow-x-hidden overflow-y-auto max-h-[90vh]"
   >
     <h1
       class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-[#5A4A3B]"
@@ -37,7 +37,7 @@
           <img
             [src]="slide.image"
             [alt]="slide.title"
-            class="w-[85%] sm:w-[70%] max-h-[240px] sm:max-h-[320px] object-contain mb-3"
+            class="w-full max-w-[360px] sm:max-w-[480px] h-auto max-h-[50vh] sm:max-h-[60vh] object-contain mb-3 mx-auto"
           />
           <h2
             class="text-base sm:text-xl md:text-2xl font-semibold text-[#5A4A3B] break-words px-2 sm:px-4"
@@ -54,7 +54,7 @@
     </div>
 
     <!-- ปุ่มเลื่อน -->
-    <div class="flex justify-between items-center mt-6 px-4">
+    <div class="flex justify-between items-center mt-2 px-4">
       <button
         (click)="prevSlide()"
         class="text-[#A7977C] hover:text-[#5A4A3B] text-4xl sm:text-6xl font-bold"
@@ -81,7 +81,7 @@
     </div>
 
     <!-- ปุ่มปิดท้าย -->
-    <div class="mt-6">
+    <div class="mt-2">
       <button
         *ngIf="currentSlide === slides.length - 1"
         (click)="closePopup()"
