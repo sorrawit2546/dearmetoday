@@ -1,9 +1,9 @@
 <!-- ✅ Header -->
 <header
-  class="navbar  border-b border-[#E8DEC4] px-4 sm:px-8 md:px-16 lg:px-24 shadow-sm sticky top-0 z-40"
+  class="navbar border-b border-[#E8DEC4] px-4 sm:px-8 md:px-16 lg:px-24 shadow-sm sticky top-0 z-40 overflow-visible"
 >
   <!-- 🔹 Left section: Logo -->
-  <div class="flex items-center gap-3">
+  <div class="flex items-center gap-3 shrink-0">
     <a routerLink="/dashboard" class="flex items-center gap-2">
       <img
         src="assets/images/dearme,logo.png"
@@ -48,9 +48,9 @@
   </nav>
 
   <!-- 🔹 Right section: Tools & User -->
-  <div class="flex items-center gap-2 sm:gap-3">
+  <div class="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
     <!-- 💌 Quick Notes Dropdown -->
-    <div class="dropdown dropdown-end">
+    <div class="dropdown dropdown-end relative sm:static">
       <button
         tabindex="0"
         class="btn btn-ghost btn-circle hover:bg-[#E8F0FE]"
@@ -72,7 +72,9 @@
 
       <ul
         tabindex="0"
-        class="dropdown-content menu bg-[#FFFDF8] border border-[#E8DEC4] rounded-xl w-64 sm:w-72 max-w-[90vw] p-3 shadow-lg z-50"
+        class="dropdown-content menu bg-[#FFFDF8] border border-[#E8DEC4]
+        rounded-xl w-64 sm:w-72 max-w-[90vw] p-3 shadow-lg z-[9999]
+        absolute right-0 left-auto sm:right-0 sm:left-auto"
       >
         @if (quickNoteMessage(); as quickNotes) {
           @if (quickNotes.length > 0) {
@@ -81,7 +83,8 @@
                 <p class="text-sm text-[#5C5042]">{{ quicknote.thankMessage }}</p>
                 <span
                   class="text-xs text-[#8A7C67] block mt-1"
-                >{{ quicknote.createdAt | date:'EEEE d, MMMM' }}</span>
+                  >{{ quicknote.createdAt | date:'EEEE d, MMMM' }}</span
+                >
               </li>
             }
           } @else {
@@ -90,6 +93,7 @@
         }
       </ul>
     </div>
+
 
     <!-- 👤 User Dropdown -->
     <div class="dropdown dropdown-end">
@@ -121,7 +125,7 @@
     </div>
 
     <!-- 📱 Mobile Menu -->
-    <div class="sm:hidden dropdown dropdown-end">
+    <div class="sm:hidden dropdown dropdown-end w-full">
       <button
         tabindex="0"
         role="button"
@@ -145,7 +149,11 @@
 
       <ul
         tabindex="0"
-        class="dropdown-content menu bg-[#FFFDF8] border border-[#E8DEC4] rounded-xl z-50 w-48 p-2 shadow"
+        class="dropdown-content menu bg-[#FFFDF8] border border-[#E8DEC4] z-[9999]
+               fixed sm:absolute top-14 sm:top-auto right-0 sm:right-auto left-auto sm:left-auto
+               transform-none sm:transform
+               w-[min(20rem,90vw)] sm:w-48 mr-2 sm:mr-0 p-2 shadow-2xl rounded-l-xl sm:rounded-xl
+               max-h-[70vh] overflow-auto origin-top-right"
       >
         <li>
           <a routerLink="/dashboard" routerLinkActive="active-tab">Home</a>
