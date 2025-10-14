@@ -175,7 +175,7 @@ export class PositiveNoteController {
   @UseInterceptors(
     FilesInterceptor('imageUrls', 10, {
       storage: multer.memoryStorage(),
-      limits: { fileSize: 3 * 1024 * 1024 }, // จำกัด 3MB
+      limits: { fileSize: 5 * 1024 * 1024 }, // จำกัด 3MB
     }),
   )
   async createPositiveNote(

@@ -136,9 +136,9 @@ export class NoteForm implements OnChanges {
     const validFiles = files.slice(0, remainingSlots);
 
     validFiles.forEach((file) => {
-      if (file.size > 3 * 1024 * 1024) {
+      if (file.size > 5 * 1024 * 1024) {
         this.toastService.showToast(
-          `ไฟล์ภาพ "${file.name}" มีขนาดเกิน 3MB, กรุณาเลือกไฟล์ที่เล็กกว่า`,
+          `ไฟล์ภาพ "${file.name}" มีขนาดเกิน 5MB, กรุณาเลือกไฟล์ที่เล็กกว่า`,
           true
         );
         return; // ข้ามไฟล์นี้
