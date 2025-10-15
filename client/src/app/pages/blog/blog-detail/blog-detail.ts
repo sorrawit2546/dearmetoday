@@ -4,6 +4,7 @@ import {
   OnInit,
   PLATFORM_ID,
   ChangeDetectorRef,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
@@ -35,6 +36,13 @@ export class BlogDetail implements OnInit {
   post: BlogMeta | null = null;
   relatedPosts: BlogMeta[] = [];
   isLoading = true;
+  isMenuOpen = signal(false);
+  toggleMenu() {
+    this.isMenuOpen.update((v) => !v);
+  }
+  closeMenu() {
+    this.isMenuOpen.set(false);
+  }
 
   goBack() {
     // มี history → back, ถ้าไม่มีกลับไปหน้า /blog
@@ -44,7 +52,7 @@ export class BlogDetail implements OnInit {
       this.router.navigateByUrl('/blog');
     }
   }
-  
+
   ngOnInit() {
     const slug = this.route.snapshot.paramMap.get('slug')!;
 
