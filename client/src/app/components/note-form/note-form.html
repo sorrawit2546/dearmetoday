@@ -1,8 +1,8 @@
 <!-- Note Form -->
 <div id="note-form" class="px-6">
-  <div class="max-w-2xl mx-auto">
-    <div
-      class="bg-[#fdfcf8] border border-[#e6e2d3] rounded-[32px] shadow-[0_4px_12px_rgba(0,0,0,0.05)] p-10 relative overflow-hidden"
+    <div class="max-w-2xl mx-auto">
+      <div
+        class="bg-[#fdfcf8] border border-[#e6e2d3] rounded-[32px] shadow-[0_4px_12px_rgba(0,0,0,0.05)] p-10 relative overflow-auto max-h-[80vh]"
       style="
         background-image: linear-gradient(#fcfbf6 1px, transparent 1px),
           linear-gradient(90deg, #fcfbf6 1px, transparent 1px);
@@ -137,7 +137,7 @@
       <dialog #confirmDialog class="modal">
         <div class="modal-box rounded-2xl">
           <h3 class="font-bold text-lg">
-            {{ isEditMode ? 'ยืนยันการบันทึกการแก้ไข?' : 'ยืนยันการส่งข้อความ?'
+            {{ isEditMode ? 'ยืนยันการบันทึกการแก้ไข?' : 'Confirm sending your message??'
             }}
           </h3>
 
@@ -146,7 +146,7 @@
               <!-- Email info -->
               <div class="bg-blue-100 border-dashed border-blue-700 rounded-xl p-4">
                 <p class="text-sm text-blue-500">
-                  ระบบจะทำการส่งอีเมล พร้อมข้อความและรูปภาพของคุณไปยัง:
+                  The system will send an email containing your message and image to:
                 </p>
                 <p
                   class="mt-2 text-center text-lg font-semibold text-blue-500"
@@ -163,7 +163,7 @@
                 class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col gap-2"
               >
                 <legend class="text-sm font-semibold text-gray-700 mb-1">
-                  แชร์ข้อความนี้เข้าสู่ Community ด้วยหรือไม่?
+                  Would you also like to share this message with the Community?
                 </legend>
 
                 <label
@@ -175,32 +175,34 @@
                     type="checkbox"
                     class="checkbox checkbox-primary rounded-md"
                   />
-                  <span class="text-gray-700">แน่นอนเลย 🌱</span>
+                  <span class="text-gray-700">Absolutely 🌱</span>
                 </label>
 
                 <p class="text-xs text-gray-500 ml-7">
-                  *เมื่อเปิดใช้งาน ข้อความของคุณจะปรากฏในหน้า Community Feed
+                  *When enabled, your message will appear on the Community Feed.
                 </p>
               </fieldset>
+              <h2 class="md-render bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col gap-2 ">Do things consistently and persistently,
+                because every reward in life ultimately comes from the power of compounding.</h2>
             </div>
           </ng-container>
 
           <ng-template #editHint>
             <p class="py-2 text-gray-600">
-              ระบบจะบันทึกการแก้ไข โดยไม่ส่งอีเมลซ้ำอีกครั้ง
+              The system will save your edits without sending the email again.
             </p>
           </ng-template>
 
           <div class="modal-action">
             <form method="dialog" class="flex gap-2">
               <button class="btn rounded-2xl border-none" (click)="cancelSend()">
-                ยกเลิก
+                Cancel
               </button>
               <button
                 class="btn btn-primary rounded-2xl"
                 (click)="confirmSend()"
               >
-                ยืนยัน
+                Confirm
               </button>
             </form>
           </div>

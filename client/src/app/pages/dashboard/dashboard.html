@@ -271,7 +271,7 @@
             class="text-lg font-bold text-[#5A4A3B] mb-4 font-['Sarabun'] flex items-center"
           >
             <span class="mr-2">📖</span>
-            บทความล่าสุด
+            latest Blog
           </h3>
           <div class="space-y-4">
             <div *ngFor="let post of blogPosts()" class="group">
@@ -300,14 +300,14 @@
               *ngIf="blogPosts().length === 0"
               class="text-center text-[#9B8E7B] text-sm py-4"
             >
-              กำลังโหลดบทความ...
+              loading...
             </div>
             <div class="pt-2 border-t border-[#EAE4DA]">
               <a
                 routerLink="/blog"
                 class="text-sm text-[#907D62] hover:text-[#5A4A3B] transition-colors"
               >
-                ดูบทความทั้งหมด →
+                see all dearme blog →
               </a>
             </div>
           </div>
@@ -418,9 +418,16 @@
       (click)="closeNoteForm()"
     >
       <div
-        class="w-full md:w-auto md:min-w-[640px] max-w-full rounded-t-2xl md:rounded-2xl p-4 md:p-6"
+        class="w-full md:w-auto md:min-w-[640px] max-w-full rounded-t-2xl md:rounded-2xl p-4 md:p-6 relative"
         (click)="$event.stopPropagation()"
       >
+        <button
+          (click)="closeNoteForm()"
+          aria-label="Close"
+          class="absolute top-3 right-3 btn btn-ghost btn-sm rounded-full bg-white/80 hover:bg-white shadow"
+        >
+          ✕
+        </button>
         <div class="cat2"></div>
         <app-note-form
           (noteCreated)="onNoteUpdated($event)"
