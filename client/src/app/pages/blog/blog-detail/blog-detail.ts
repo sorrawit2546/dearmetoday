@@ -5,6 +5,7 @@ import {
   PLATFORM_ID,
   ChangeDetectorRef,
   signal,
+  Inject,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
@@ -17,6 +18,7 @@ import { Header } from '../../../components/header/header';
 import { RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-blog-detail',
@@ -24,6 +26,7 @@ import { Router } from '@angular/router';
   imports: [MarkdownModule, CommonModule, Header, Footer, RouterModule],
 })
 export class BlogDetail implements OnInit {
+  constructor(@Inject(DOCUMENT) private document: Document) {}
   private route = inject(ActivatedRoute);
   private blogService = inject(BlogService);
   private titleService = inject(Title);
@@ -78,6 +81,33 @@ export class BlogDetail implements OnInit {
       });
     } else {
       this.isLoading = false;
+    }
+    if (this.post) {
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": this.post.title,
+        "articleSection": "Productivity",
+        "keywords": ["อ่านหนังสือ", "จดโน้ต", "Sticky Notes", "สรุปหนังสือ"],
+        "description": "อ่านหนังสือแล้วจำไม่ได้? ลองเทคนิค Sticky Notes...",
+        "mainEntityOfPage": `https://dearmetoday.com/blog/${this.post.slug}`,
+        "author": { "@type": "Person", "name": "Sorrawit Sangmanee" },
+        "datePublished": this.post.date,
+        "image": this.post.cover,
+        "publisher": {
+          "@type": "Organization",
+          "name": "Dearme,Today",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://dearmetoday.com/assets/logo.png"
+          }
+        }
+      };
+
+      const script = this.document.createElement('script');
+      script.type = 'application/ld+json';
+      script.text = JSON.stringify(schema);
+      this.document.head.appendChild(script);
     }
   }
 
