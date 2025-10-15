@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Footer } from '../../components/footer/footer';
 import { Header } from '../../components/header/header';
@@ -29,6 +29,7 @@ import { AuthService } from '../../services/auth.service';
 import { SummaryService } from '../../services/summary.service';
 import { ToastService } from '../../services/toast.service';
 import { PopUp } from '../../components/pop-up/pop-up';
+import { BlogService, BlogMeta } from '../blog/blog.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,6 +37,7 @@ import { PopUp } from '../../components/pop-up/pop-up';
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     NoteForm,
     NoteCardComponent,
     NoteCardAll,
@@ -59,11 +61,13 @@ export class Dashboard implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private toastService = inject(ToastService);
   private summaryService = inject(SummaryService);
+  private blogService = inject(BlogService);
 
   // State signals
   summary = this.summaryService.summary;
   user = toSignal(this.authService.currentUser$, { initialValue: null });
   isAuthed = computed(() => !!this.user());
+  blogPosts = signal<BlogMeta[]>([]);
   quickNoteFromLocalStorage = signal<string>('');
   pending = signal<boolean>(false);
   error = signal<string | null>(null);
@@ -209,6 +213,18 @@ export class Dashboard implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.summaryService.connect();
     console.log(this.summary());
+
+    // โหลด blog posts
+    console.log('Dashboard: Loading blog posts...');
+    this.blogService.getAllPosts().subscribe({
+      next: (posts) => {
+        console.log('Dashboard: Blog posts received:', posts);
+        this.blogPosts.set(posts.slice(0, 3)); // แสดงแค่ 3 บทความล่าสุด
+      },
+      error: (error) => {
+        console.error('Dashboard: Error loading blog posts:', error);
+      }
+    });
 
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) this.authService.checkAuthState();

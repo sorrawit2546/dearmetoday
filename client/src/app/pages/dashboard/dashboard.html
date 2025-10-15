@@ -30,10 +30,11 @@
           /><span class="pl-1.5 font-bold">Overview Section</span>
         </div>
       </div>
+
       <!-- 🪶 Overview Alert -->
       <div
         role="alert"
-        class="mt-3 mb-3 w-full max-w-6xl flex items-center gap-4 border  border-[#EAE4DA] rounded-[20px] h-auto py-4 px-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
+        class="mt-3 mb-3 w-full max-w-6xl flex items-center gap-4 border border-[#EAE4DA] rounded-[20px] h-auto py-4 px-6 shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
       >
         <div class="relative flex items-center justify-center w-5 h-5">
           <span
@@ -261,6 +262,57 @@
         </div>
       </div>
 
+      <!-- Blog Sidebar -->
+      <div class="w-full max-w-6xl mb-6">
+        <div
+          class="bg-[#FFFDF8] rounded-[20px] border border-[#EAE4DA] shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-6"
+        >
+          <h3
+            class="text-lg font-bold text-[#5A4A3B] mb-4 font-['Sarabun'] flex items-center"
+          >
+            <span class="mr-2">📖</span>
+            บทความล่าสุด
+          </h3>
+          <div class="space-y-4">
+            <div *ngFor="let post of blogPosts()" class="group">
+              <a [routerLink]="['/blog', post.slug]" class="block">
+                <div class="flex gap-4 items-start">
+                  <img
+                    *ngIf="post.cover"
+                    [src]="post.cover"
+                    [alt]="post.title"
+                    class="w-16 h-16 object-cover rounded-lg border border-[#EAE4DA] flex-shrink-0"
+                  />
+                  <div class="flex-1 min-w-0">
+                    <h4
+                      class="font-semibold text-[#5A4A3B] text-sm group-hover:text-[#907D62] transition-colors line-clamp-2"
+                    >
+                      {{ post.title }}
+                    </h4>
+                    <p class="text-xs text-[#9B8E7B] mt-1">
+                      {{ post.date | date:'mediumDate' }}
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <div
+              *ngIf="blogPosts().length === 0"
+              class="text-center text-[#9B8E7B] text-sm py-4"
+            >
+              กำลังโหลดบทความ...
+            </div>
+            <div class="pt-2 border-t border-[#EAE4DA]">
+              <a
+                routerLink="/blog"
+                class="text-sm text-[#907D62] hover:text-[#5A4A3B] transition-colors"
+              >
+                ดูบทความทั้งหมด →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="w-full max-w-6xl flex justify-start text-2xl my-4">
         <img
           class="w-[30px] h-[30px]"
@@ -320,7 +372,9 @@
         </label>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-6xl mb-5">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-6xl mb-5"
+      >
         @for (note of paginatedPosts(); track note.id; let i = $index) {
         <div
           [ngClass]="{
@@ -337,7 +391,7 @@
             [line3]="note.line3"
             [mood]="note.mood"
             [photos]="note.imageUrls"
-            [isActive]="note.showMessage"
+            [isActive]="isCardActive(i)"
             (isActiveChange)="updateNoteIsActive(note.id, $event)"
             (cardClick)="toggleCard(i)"
             (noteDeleted)="onNoteDeleted($event)"
