@@ -20,7 +20,11 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
-declare let gtag: Function;
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
 
 @Component({
   selector: 'app-blog-detail',
@@ -84,14 +88,16 @@ export class BlogDetail implements OnInit {
         this.relatedPosts = all.filter((p) => p.slug !== post.slug).slice(0, 3);
       });
 
-      // ✅ ยิง Event GA4 เพื่อ track ผู้อ่านรายบทความ
-      gtag('event', 'view_blog_post', {
-        post_slug: slug,
-        post_title: post.title,
-        page_path: `/blog/${slug}`,
-        page_title: post.title,
-      });
-      console.log('📊 GA4: view_blog_post sent for', slug);
+       // ✅ ยิง Event GA4 เพื่อ track ผู้อ่านรายบทความ
+       if (typeof window !== 'undefined' && window.gtag) {
+         window.gtag('event', 'view_blog_post', {
+           post_slug: slug,
+           post_title: post.title,
+           page_path: `/blog/${slug}`,
+           page_title: post.title,
+         });
+         console.log('📊 GA4: view_blog_post sent for', slug);
+       }
 
       // ✅ เพิ่ม Schema.org Article (E-E-A-T)
       const schema = {
