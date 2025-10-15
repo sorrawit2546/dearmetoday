@@ -18,7 +18,7 @@
 
     <!-- Dropdown -->
     <div
-      class="flex justify-end dropdown dropdown-right dropdown-end relative z-20"
+      class="flex justify-end dropdown dropdown-left md:dropdown-right dropdown-end relative z-20 mr-2"
       *ngIf="!isCommunity"
     >
       <div
@@ -34,7 +34,7 @@
       </div>
       <ul
         tabindex="0"
-        class="rounded-xl dropdown-content menu bg-base-100 rounded-box z-10 w-40 p-2 shadow"
+        class="rounded-xl dropdown-content menu bg-base-100 rounded-box z-10 w-56 md:w-40 max-w-[90vw] overflow-x-auto p-2 shadow left-0 md:left-auto right-auto md:right-0"
       >
         <div class="flex flex-row ml-3 my-2">
           <img src="assets/images/public.svg" alt="" class="w-6 h-6 mr-1" />
