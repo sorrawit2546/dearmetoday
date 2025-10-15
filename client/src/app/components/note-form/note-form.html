@@ -9,6 +9,7 @@
         background-size: 32px 32px;
       "
     >
+
       <!-- Paper holes -->
       <div
         class="absolute top-6 left-4 w-3 h-3 rounded-full bg-[#d8d4c4]"
@@ -20,9 +21,13 @@
         class="absolute top-28 left-4 w-3 h-3 rounded-full bg-[#d8d4c4]"
       ></div>
 
-      <!-- Date Header -->
-      <div class="text-sm text-gray-500 mb-4 text-right font-medium">
-        {{ createdAt() }}
+      <!-- Date Header (today) -->
+      <div class="text-lg mb-2 text-center font-medium">
+        Date {{ formattedDate() }}
+      </div>
+      <div *ngIf="selectedQuote() as q" class="mb-4 text-center">
+        <p class="text-sm text-gray-700 italic">“{{ q.text }}”</p>
+        <p class="text-xs text-gray-500 mt-1">— {{ q.author }}</p>
       </div>
 
       <!-- Dropzone with preview inside -->
@@ -60,7 +65,7 @@
               Drag & drop images here<br />
               or <span class="font-medium text-amber-700">click to upload</span>
               <br />
-              <span class="text-xs">(สูงสุด 5 รูป และไม่เกิน 3MB ต่อไฟล์)</span>
+              <span class="text-xs">(Max 5 pic. and 3MB per file)</span>
             </p>
           </div>
         </ng-template>
@@ -78,7 +83,7 @@
       <!-- Positive Note Field -->
       <div class="mb-3 mt-6">
         <label class="block text-sm font-semibold text-amber-900 mb-2"
-          >Positive note for today</label
+          >Gratitude Journal for today</label
         >
         <div class="grid grid-cols-2 gap-4">
           <textarea
@@ -132,6 +137,9 @@
           class="loading loading-dots loading-md"
         ></span>
       </button>
+      <blockquote class="mt-3 border-l-4 border-amber-700 pl-4 italic text-amber-700">
+        “เขียนสิ่งที่รู้สึกขอบคุณในทุก ๆ วัน ช่วยลดความเครียด และเพิ่มความสุข”
+      </blockquote>
 
       <!-- Confirm Modal -->
       <dialog #confirmDialog class="modal">
