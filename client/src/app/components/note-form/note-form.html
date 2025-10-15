@@ -35,7 +35,7 @@
         (click)="fileInput.click()"
       >
         <ng-container *ngIf="previewImages().length > 0; else dropHint">
-          <div class="w-full h-full grid grid-cols-5 gap-3 p-2">
+          <div class="w-full h-full grid grid-cols-3 md:grid-cols-5 gap-3 p-2">
             <div
               *ngFor="let img of previewImages(); let i = index"
               class="relative h-full aspect-square rounded-xl overflow-hidden border border-[#e5e1d5]"
@@ -44,7 +44,7 @@
               <button
                 type="button"
                 (click)="removeImage(i); $event.stopPropagation()"
-                class="absolute top-1 right-1 bg-black/50 text-white text-xs px-1.5 py-0.5 rounded-full hover:bg-red-600"
+                class="absolute top-1 right-1 z-20 bg-black/60 text-white text-sm w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-600 shadow-md"
               >
                 ✕
               </button>

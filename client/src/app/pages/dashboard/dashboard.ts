@@ -121,6 +121,7 @@ export class Dashboard implements OnInit, OnDestroy {
   currentPage = signal(1);
   itemsPerPage = 9;
   activeCard: number | null = null;
+  isMobile = signal<boolean>(false);
 
   // Refresh triggers
   private refreshTrigger = signal<number>(0);
@@ -234,6 +235,15 @@ export class Dashboard implements OnInit, OnDestroy {
         this.flushFromLocal();
       }
     }, 100);
+
+    // detect mobile viewport
+    if (isPlatformBrowser(this.platformId)) {
+      const mq = window.matchMedia('(max-width: 640px)');
+      const update = (e: MediaQueryList | MediaQueryListEvent) =>
+        this.isMobile.set('matches' in e ? e.matches : (e as MediaQueryList).matches);
+      update(mq);
+      mq.addEventListener?.('change', update as any);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -357,6 +367,7 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   toggleCard(index: number) {
+    if (this.isMobile()) return;
     console.log('toggleCard called with index:', index);
     const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
     console.log(

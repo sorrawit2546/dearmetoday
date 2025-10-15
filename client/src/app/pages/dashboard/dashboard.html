@@ -378,8 +378,8 @@
         @for (note of paginatedPosts(); track note.id; let i = $index) {
         <div
           [ngClass]="{
-            'col-span-3': isCardActive(i),
-            'col-span-1': !isCardActive(i)
+            'col-span-3': !isMobile() && isCardActive(i),
+            'col-span-1': isMobile() || !isCardActive(i)
           }"
           class="transition-all duration-300"
         >
@@ -391,7 +391,7 @@
             [line3]="note.line3"
             [mood]="note.mood"
             [photos]="note.imageUrls"
-            [isActive]="isCardActive(i)"
+            [isActive]="!isMobile() && isCardActive(i)"
             (isActiveChange)="updateNoteIsActive(note.id, $event)"
             (cardClick)="toggleCard(i)"
             (noteDeleted)="onNoteDeleted($event)"

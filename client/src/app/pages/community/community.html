@@ -11,16 +11,15 @@
         <span class="pl-1.5 font-bold">Community Section</span>
       </div>
 
-      <!-- ใช้ CSS columns -->
-      <div class="grid grid-cols-12 gap-4 max-w-7xl mx-auto mb-10">
+      <!-- ใช้โครงแบบเดียวกับ dashboard: 1/2/3 คอลัมน์ตาม breakpoint -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-7xl mx-auto mb-10">
         <div
           *ngFor="let note of communityPost.value(); let i = index"
           [ngClass]="{
-            'col-span-12': isCardActive(i),
-            'col-span-4': !isCardActive(i)
+            'col-span-3': !isMobile() && isCardActive(i),
+            'col-span-1': isMobile() || !isCardActive(i)
           }"
           class="transition-all duration-300"
-          (click)="toggleCard(i)"
         >
           <app-note-card-all
             [id]="note.id"
@@ -33,8 +32,10 @@
             [photos]="note.imageUrls"
             [name]="note.user?.name"
             [avatarUrl]="note.user?.avatarUrl"
-            [isActive]="isCardActive(i)"
+            [isActive]="!isMobile() && isCardActive(i)"
             (isActiveChange)="updateNoteIsActive(note.id, $event)"
+            (cardClick)="toggleCard(i)"
+            class="w-full my-2 pr-2 cursor-pointer"
           >
           </app-note-card-all>
         </div>
