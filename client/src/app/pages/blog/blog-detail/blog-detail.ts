@@ -20,6 +20,8 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
+declare let gtag: Function;
+
 @Component({
   selector: 'app-blog-detail',
   templateUrl: './blog-detail.html',
@@ -59,41 +61,50 @@ export class BlogDetail implements OnInit {
   ngOnInit() {
     const slug = this.route.snapshot.paramMap.get('slug')!;
 
-    if (isPlatformBrowser(this.platformId)) {
-      this.blogService.getPost(slug).subscribe((post) => {
-        this.post = post;
-        this.isLoading = false;
-        if (post) {
-          this.titleService.setTitle(`${post.title} | Dearme,Today`);
-          this.meta.updateTag({
-            name: 'description',
-            content: post.description,
-          });
-
-          // ✅ โหลดบทความอื่น (ยกเว้นอันปัจจุบัน)
-          this.blogService.getAllPosts().subscribe((all) => {
-            this.relatedPosts = all
-              .filter((p) => p.slug !== post.slug)
-              .slice(0, 3); // แสดง 3 บทความ
-          });
-        }
-        this.cdr.markForCheck();
-      });
-    } else {
+    if (!isPlatformBrowser(this.platformId)) {
       this.isLoading = false;
+      return;
     }
-    if (this.post) {
+
+    this.blogService.getPost(slug).subscribe((post) => {
+      this.post = post;
+      this.isLoading = false;
+
+      if (!post) {
+        this.cdr.markForCheck();
+        return;
+      }
+
+      // ✅ ตั้ง Title + Meta
+      this.titleService.setTitle(`${post.title} | Dearme,Today`);
+      this.meta.updateTag({ name: 'description', content: post.description });
+
+      // ✅ โหลดบทความอื่น
+      this.blogService.getAllPosts().subscribe((all) => {
+        this.relatedPosts = all.filter((p) => p.slug !== post.slug).slice(0, 3);
+      });
+
+      // ✅ ยิง Event GA4 เพื่อ track ผู้อ่านรายบทความ
+      gtag('event', 'view_blog_post', {
+        post_slug: slug,
+        post_title: post.title,
+        page_path: `/blog/${slug}`,
+        page_title: post.title,
+      });
+      console.log('📊 GA4: view_blog_post sent for', slug);
+
+      // ✅ เพิ่ม Schema.org Article (E-E-A-T)
       const schema = {
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": this.post.title,
+        "headline": post.title,
         "articleSection": "Productivity",
         "keywords": ["อ่านหนังสือ", "จดโน้ต", "Sticky Notes", "สรุปหนังสือ"],
-        "description": "อ่านหนังสือแล้วจำไม่ได้? ลองเทคนิค Sticky Notes...",
-        "mainEntityOfPage": `https://dearmetoday.com/blog/${this.post.slug}`,
+        "description": post.description,
+        "mainEntityOfPage": `https://dearmetoday.com/blog/${post.slug}`,
         "author": { "@type": "Person", "name": "Sorrawit Sangmanee" },
-        "datePublished": this.post.date,
-        "image": this.post.cover,
+        "datePublished": post.date,
+        "image": post.cover || "https://dearmetoday.com/assets/logo.png",
         "publisher": {
           "@type": "Organization",
           "name": "Dearme,Today",
@@ -108,8 +119,11 @@ export class BlogDetail implements OnInit {
       script.type = 'application/ld+json';
       script.text = JSON.stringify(schema);
       this.document.head.appendChild(script);
-    }
+
+      this.cdr.markForCheck();
+    });
   }
+
 
   shareToFacebook() {
     const url = encodeURIComponent(window.location.href);
