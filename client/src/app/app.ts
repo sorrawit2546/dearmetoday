@@ -3,7 +3,11 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
-declare let gtag: Function; // ← ใช้ฟังก์ชันจาก gtag.js ที่โหลดใน index.html
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
 
 @Component({
   selector: 'app-root',
@@ -23,13 +27,13 @@ export class App {
         const pagePath = event.urlAfterRedirects;
 
         // ส่งข้อมูล page_view ไป GA4
-        gtag('event', 'page_view', {
-          page_path: pagePath,
-          page_title: document.title,
-        });
-
-        // (ถ้าอยาก log ใน console ด้วย)
-        console.log('📊 GA4 page_view tracked:', pagePath);
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('event', 'page_view', {
+            page_path: pagePath,
+            page_title: document.title,
+          });
+          console.log('📊 GA4 page_view tracked:', pagePath);
+        }
       });
   }
 }
