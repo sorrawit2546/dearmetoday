@@ -6,6 +6,8 @@ import {
   ChangeDetectorRef,
   signal,
   Inject,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title, Meta } from '@angular/platform-browser';
@@ -46,6 +48,8 @@ export class BlogDetail implements OnInit {
   relatedPosts: BlogMeta[] = [];
   isLoading = true;
   isMenuOpen = signal(false);
+  toc: { id: string; text: string; level: number }[] = [];
+  @ViewChild('content', { static: false }) contentRef?: ElementRef<HTMLDivElement>;
   toggleMenu() {
     this.isMenuOpen.update((v) => !v);
   }
@@ -70,7 +74,7 @@ export class BlogDetail implements OnInit {
       return;
     }
 
-    this.blogService.getPost(slug).subscribe((post) => {
+      this.blogService.getPost(slug).subscribe((post) => {
       this.post = post;
       this.isLoading = false;
 
@@ -126,7 +130,9 @@ export class BlogDetail implements OnInit {
       script.text = JSON.stringify(schema);
       this.document.head.appendChild(script);
 
-      this.cdr.markForCheck();
+       // สร้าง TOC หลังจากเนื้อหาถูก render แล้วเล็กน้อย
+       setTimeout(() => this.buildToc(), 0);
+       this.cdr.markForCheck();
     });
   }
 
@@ -135,6 +141,44 @@ export class BlogDetail implements OnInit {
     const url = encodeURIComponent(window.location.href);
     const fb = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
     window.open(fb, '_blank', 'width=600,height=400');
+  }
+
+  private slugify(text: string): string {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\u0E00-\u0E7F\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
+
+  buildToc() {
+    if (!this.contentRef) return;
+    const root = this.contentRef.nativeElement;
+    const headings = Array.from(root.querySelectorAll('h1, h2, h3')) as HTMLHeadingElement[];
+    const usedIds = new Set<string>();
+    this.toc = headings.map((h) => {
+      const baseId = this.slugify(h.textContent || '');
+      let id = baseId || 'section';
+      let suffix = 1;
+      while (usedIds.has(id)) {
+        id = `${baseId}-${suffix++}`;
+      }
+      usedIds.add(id);
+      h.id = id;
+      const level = h.tagName === 'H1' ? 1 : h.tagName === 'H2' ? 2 : 3;
+      return { id, text: h.textContent || '', level };
+    });
+  }
+
+  scrollTo(id: string) {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const el = this.document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // อัปเดต fragment ใน URL (optional)
+      history.replaceState(null, '', `#${id}`);
+    }
   }
 
   shareToTwitter() {

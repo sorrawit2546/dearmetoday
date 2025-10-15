@@ -213,10 +213,34 @@
       </div>
 
       <!-- 📷 Markdown Content -->
-      <markdown
-        [data]="post.content || ''"
-        class="md-render prose prose-lg max-w-none prose-img:rounded-2xl prose-img:mx-auto prose-img:my-8 prose-img:border prose-img:border-[#EAE4DA] prose-img:shadow-[0_6px_20px_rgba(0,0,0,0.08)] prose-headings:text-[#4B3E2E] prose-p:text-[#5C5042] prose-strong:text-[#3F3528] prose-blockquote:border-[#DCCDB7] prose-blockquote:text-[#7A6C5E]"
-      ></markdown>
+      <div #content>
+        <div class="mb-6 bg-white/70 rounded-2xl border border-[#EAE4DA] p-4">
+          <h3 class="text-sm font-semibold text-[#4C4030] mb-3">Table of contents</h3>
+          <nav *ngIf="toc.length > 0; else noToc" class="space-y-1">
+            <button
+              *ngFor="let item of toc"
+              (click)="scrollTo(item.id)"
+              class="block w-full text-left text-xs text-[#5C5042] hover:text-[#907D62] hover:bg-[#F6F2EA] rounded-md px-2 py-1 transition"
+              [ngClass]="{
+                'pl-2': item.level === 1,
+                'pl-4': item.level === 2,
+                'pl-6': item.level === 3
+              }"
+            >
+              {{ item.text }}
+            </button>
+          </nav>
+          <ng-template #noToc>
+            <p class="text-xs text-[#9B8E7B] italic">No headings</p>
+          </ng-template>
+        </div>
+
+        <markdown
+          [data]="post.content || ''"
+          (ready)="buildToc()"
+          class="md-render prose prose-lg max-w-none prose-img:rounded-2xl prose-img:mx-auto prose-img:my-8 prose-img:border prose-img:border-[#EAE4DA] prose-img:shadow-[0_6px_20px_rgba(0,0,0,0.08)] prose-headings:text-[#4B3E2E] prose-p:text-[#5C5042] prose-strong:text-[#3F3528] prose-blockquote:border-[#DCCDB7] prose-blockquote:text-[#7A6C5E]"
+        ></markdown>
+      </div>
 
       <!-- 🌿 Cozy Promotion Banner -->
       <div
