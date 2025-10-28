@@ -162,6 +162,18 @@
 
       <!-- Card Content -->
       <div class="p-6">
+        <div class="flex items-center gap-3 mb-2">
+          <img
+            *ngIf="post.authorImage"
+            [src]="post.authorImage"
+            alt="{{ post.author }}"
+            class="w-8 h-8 rounded-full border border-[#EAE4DA] shadow-sm object-cover"
+          />
+          <div>
+            <p class="font-semibold text-[#4B3E2E] text-sm">{{ post.author }}</p>
+            <p class="text-xs text-[#9B8E7B]">ผู้เขียนบทความนี้</p>
+          </div>
+        </div>
         <h2
           class="text-xl font-semibold text-[#5A4A3B] mb-2 leading-snug group-hover:text-[#907D62] transition-colors"
         >

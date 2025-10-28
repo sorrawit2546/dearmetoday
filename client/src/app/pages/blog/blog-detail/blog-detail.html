@@ -1,17 +1,30 @@
 <!-- Navigation -->
-<nav class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-[#EAE4DA]">
+<nav
+  class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-[#EAE4DA]"
+>
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between">
       <!-- Brand -->
-      <a routerLink="/" class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2c2c2c]">
+      <a
+        routerLink="/"
+        class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2c2c2c]"
+      >
         Dearme,Today
       </a>
 
       <!-- Desktop actions -->
       <div class="hidden md:flex items-center gap-4">
-        <a routerLink="/privacy" class="text-sm text-[#5C5042] hover:text-[#2c2c2c]">Privacy</a>
+        <a
+          routerLink="/privacy"
+          class="text-sm text-[#5C5042] hover:text-[#2c2c2c]"
+          >Privacy</a
+        >
         <span class="text-[#C8BFB0]">|</span>
-        <a routerLink="/terms" class="text-sm text-[#5C5042] hover:text-[#2c2c2c]">Terms</a>
+        <a
+          routerLink="/terms"
+          class="text-sm text-[#5C5042] hover:text-[#2c2c2c]"
+          >Terms</a
+        >
 
         <button
           type="button"
@@ -38,32 +51,59 @@
         [attr.aria-expanded]="isMenuOpen()"
         (click)="toggleMenu()"
       >
-        <svg *ngIf="!isMenuOpen()" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        <svg
+          *ngIf="!isMenuOpen()"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
         </svg>
-        <svg *ngIf="isMenuOpen()" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        <svg
+          *ngIf="isMenuOpen()"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
     </div>
   </div>
 
   <!-- Mobile menu -->
-  <div
-    id="mobile-menu"
-    class="md:hidden"
-    *ngIf="isMenuOpen()"
-  >
+  <div id="mobile-menu" class="md:hidden" *ngIf="isMenuOpen()">
     <div class="space-y-2 px-4 pb-4">
-      <a routerLink="/aboutdearme" class="block rounded-xl px-4 py-3 text-[#4C4030] bg-white border border-[#EAE4DA]">
+      <a
+        routerLink="/aboutdearme"
+        class="block rounded-xl px-4 py-3 text-[#4C4030] bg-white border border-[#EAE4DA]"
+      >
         About
       </a>
-      <a routerLink="/privacy" class="block rounded-xl px-4 py-3 text-[#4C4030] hover:bg-[#F6F2EA] border border-transparent">
+      <a
+        routerLink="/privacy"
+        class="block rounded-xl px-4 py-3 text-[#4C4030] hover:bg-[#F6F2EA] border border-transparent"
+      >
         Privacy
       </a>
-      <a routerLink="/terms" class="block rounded-xl px-4 py-3 text-[#4C4030] hover:bg-[#F6F2EA] border border-transparent">
+      <a
+        routerLink="/terms"
+        class="block rounded-xl px-4 py-3 text-[#4C4030] hover:bg-[#F6F2EA] border border-transparent"
+      >
         Terms
       </a>
       <div class="flex gap-3 pt-1">
@@ -87,7 +127,6 @@
     </div>
   </div>
 </nav>
-
 
 <div
   class="max-w-7xl mx-auto px-6 py-10 font-['Sarabun'] text-[#5C5042] grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12"
@@ -149,9 +188,7 @@
         class="w-full rounded-[28px] mb-8 border border-[#EAE4DA] shadow-[0_6px_20px_rgba(0,0,0,0.08)] object-cover max-h-[420px]"
       />
 
-      <h1
-        class="text-3xl font-bold mb-6 text-[#5A4A3B] leading-snug"
-      >
+      <h1 class="text-3xl font-bold mb-6 text-[#5A4A3B] leading-snug">
         {{ post.title }}
       </h1>
 
@@ -159,16 +196,23 @@
         เขียนเมื่อ {{ post.date | date: "longDate" }}
       </p>
 
+      <!-- ✍️ Author Section -->
+      <div class="flex items-center gap-3 mb-10">
+        <img
+          *ngIf="post.authorImage"
+          [src]="post.authorImage"
+          alt="{{ post.author }}"
+          class="w-12 h-12 rounded-full border border-[#EAE4DA] shadow-sm object-cover"
+        />
+        <div>
+          <p class="font-semibold text-[#4B3E2E] text-sm">{{ post.author }}</p>
+          <p class="text-xs text-[#9B8E7B]">ผู้เขียนบทความนี้</p>
+        </div>
+      </div>
+
       <!-- 🌸 ปุ่มแชร์ -->
       <div class="flex items-center gap-3 mb-8">
         <span class="text-[#7A6C5E] text-sm">แชร์บทความนี้:</span>
-
-        <button
-          (click)="shareToFacebook()"
-          class="bg-[#E6DACA] hover:bg-[#DCCDB7] text-[#4C4030] px-3 py-1.5 text-sm rounded-full transition"
-        >
-          Facebook
-        </button>
 
         <button
           (click)="shareToTwitter()"
@@ -215,7 +259,9 @@
       <!-- 📷 Markdown Content -->
       <div #content>
         <div class="mb-6 bg-white/70 rounded-2xl border border-[#EAE4DA] p-4">
-          <h3 class="text-sm font-semibold text-[#4C4030] mb-3">Table of contents</h3>
+          <h3 class="text-sm font-semibold text-[#4C4030] mb-3">
+            Table of contents
+          </h3>
           <nav *ngIf="toc.length > 0; else noToc" class="space-y-1">
             <button
               *ngFor="let item of toc"

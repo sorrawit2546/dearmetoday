@@ -4,6 +4,8 @@ slug: "จำไม่ได้-ใช้-sticky-notes"
 description: "รวมเทคนิคการจดบันทึกออนไลน์ให้สนุกและต่อเนื่องด้วย Dearme,Today"
 date: "2025-10-10"
 cover: "assets/blogs/images/1.png"
+author: "Sorrawit Sangmanee"
+authorImage: "assets/blogs/authors/sorrawit.png"
 ---
 
 # อ่านหนังสือแล้วจำไม่ได้? ลองใช้ Sticky Notes จัดระบบจำให้แม่นขึ้น

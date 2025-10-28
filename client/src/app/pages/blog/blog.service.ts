@@ -10,6 +10,8 @@ export interface BlogMeta {
   date: string;
   cover?: string;
   content?: string;
+  author?: string;
+  authorImage?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -35,12 +37,12 @@ export class BlogService {
     return this.http.get<{ files: string[] }>('assets/blogs/index.json').pipe(
       switchMap((index) => {
         console.log('📄 index.json loaded:', index);
-  
+
         const requests = index.files.map((f) => {
           console.log('🔹 fetching markdown:', f);
           return this.http.get(`assets/blogs/${f}`, { responseType: 'text' });
         });
-  
+
         return forkJoin(requests).pipe(
           map((responses) => {
             console.log('✅ markdown responses:', responses);
@@ -58,7 +60,7 @@ export class BlogService {
       })
     );
   }
-  
+
 
   getPost(slug: string): Observable<BlogMeta | null> {
     return this.getAllPosts().pipe(
