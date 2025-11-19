@@ -10,18 +10,22 @@
             </div>
         </div>
         <div class="flex-1 min-w-full md:min-w-[50%] p-6 flex flex-col justify-center text-center">
-            <img class="object-contain object-center mx-auto 
-                    w-[70vw] h-[70vw] max-w-[360px] max-h-[360px] md:w-[360px] md:h-[360px]"
-                src="assets/images/testFlower.png" alt="plant" id="plant">
+            <img
+                *ngIf="plant()"
+                class="object-contain object-center mx-auto w-[70vw] h-[70vw] max-w-[360px] max-h-[360px] md:w-[360px] md:h-[360px]"
+                [src]="plant()" 
+                alt="plant" id="plant" >
             <div class="text-center" id="Section-footer">
-                <div class="w-full max-w-[300px] border border-black rounded-full p-[2px] mx-auto">
+                <div 
+                    *ngIf="stackRecord() && stackRecord().stack > 0"
+                    class="w-full max-w-[300px] border border-black rounded-full p-[2px] mx-auto">
                     <div
                         class="w-[100%] bg-gradient-to-r from-[#7EC7FF] to-[#D6F4FF] rounded-full text-center text-xs py-[2px]">
-                        17/24 Level Grow
+                        {{stackRecord().stack}}/{{seed().growthDays}} Until Bloom
                     </div>
                 </div>
-                <div id="quote">
-                    วันนี้คุณเขียนบันทึกแล้ว กลับมารดน้ำใหม่พรุ่งนี้นะ
+                <div id="dialyMessage">
+                    {{dialyMessage}}
                 </div>
             </div>
         </div>
@@ -34,7 +38,7 @@
                     <div id="tools"></div>
                     <div id="market"></div>
                 </div>
-                <div class="text-center h-[100%] bg-[#F6EEE580] border-2 border-black" id="content-page">
+                <div class="text-center h-[100%] bg-[#F6EEE580] border-2 border-black h-[70vw]" id="content-page">
                     <div class="text-center py-4">
                         <p>ทุกกลีบดอกคือวันที่คุณหันมาดูแลหัวใจตัวเอง</p>
                         <p>คุณปลูกไปแล้ว 7 ดอกจาก 3 สายพันธ์ุ</p>

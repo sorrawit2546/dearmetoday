@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { AuthResponse } from '../model/api-data';
 import { entryNote } from '../model/entry-note';
 import { QuickNote, QuickNoteDto } from '../model/quick-note';
+import { garden, seed, stackRecord } from '../model/seed-stack';
 
 @Injectable({
   providedIn: 'root',
@@ -139,6 +140,37 @@ export class Api {
         withCredentials: true,
       }
     );
+  }
+
+  
+  getStackRecordByID(): Observable<stackRecord> {
+    return this.http.post<stackRecord>(
+      `${environment.apiUrl}/seed-stack/stack`,
+      {},
+      {
+        withCredentials:true
+      }
+    )
+  }
+  // Get Seed By SeedID
+  getSeedByID(): Observable<seed> {
+    return this.http.post<seed>(
+      `${environment.apiUrl}/seed-stack/seed`,
+      {},
+      {
+        withCredentials:true
+      }
+    )
+  }
+  // Get Garden By UserID
+  getGardenByID(): Observable<garden> {
+    return this.http.post<garden>(
+      `${environment.apiUrl}/seed-stack/garden`,
+      {},
+      {
+        withCredentials:true
+      }
+    )
   }
 }
 export type { AuthResponse };
