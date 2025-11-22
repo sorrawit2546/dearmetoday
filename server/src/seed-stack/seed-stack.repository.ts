@@ -11,71 +11,71 @@ export class SeedStackRepository{
     // createStackRecord()
     // 
     async createStackRecord(userID: string, seedID: string){
-        //    const data = await this.prisma.StackRecord.create({
-        //         data: {
-        //             stack: 1,
-        //             status: 'PlantStatus.growing',
-        //             userId: userID,
-        //             seedId: seedID,
-        //         }
+        //    const data = await this.prisma.stackRecord.create({
+        //         // data: {
+        //         //     stack: 1,
+        //         //     // status: ,
+        //         //     userId: userID,
+        //         //     seedId: seedID,
+        //         // }
         //    })
         //    return data;
     }
     // getStackRecordByID() 
     // 
     async getStackRecordByID(userID: string){
-        // const data = await this.prisma.StackRecord.findFirst({
-        //     where: {
-        //         userId: userID,
-        // }
-        // })
-        // return data;
+        const data = await this.prisma.stackRecord.findFirst({
+            where: {
+                userId: userID,
+        }
+        })
+        return data;
     }
     // setStackRecordByID()
     //
     async setStackRecordByID(userID: string){
-        // const data = await this.prisma.StackRecord.update({
-        //     where: {
-        //         userId: userID
-        //     },
-        //     data: {
-        //         stack: stack++,
-        //         updatedAt: new Date()
-        //     }
-        // })
-        // return data;
+        const data = await this.prisma.stackRecord.update({
+            where: {
+                userId: userID
+            },
+            data: {
+                // stack: stack++,
+                updatedAt: new Date()
+            }
+        })
+        return data;
     }
     // deleteStackRecordByID()
     //
     async deleteStackRecordByID(ID: string, userID: string, seedID: string){
-        // const data = await this.prisma.StackRecord.delete({
-        //     where: {
-        //         id: ID,
-        //         userId: userID,
-        //         seedId: seedID,
-        //         status: PlantStatus.bloomed
-        //     }
-        // })
-        // return data;
+        const data = await this.prisma.stackRecord.delete({
+            where: {
+                id: ID,
+                userId: userID,
+                seedId: seedID,
+                // status: PlantStatus.bloomed
+            }
+        })
+        return data;
     }
 
     // ********************************* Seed's repository order by crud *******************************************************
     // createSeed()
     //
     async creteSeed(nameEng: string, nameTH: string, description: string, growthDays: Number, icon: string, renderType: string, imageStages: string[], animationFile: string, animationKey: string, rarity: string, emotionTag: string, unlockCondition: string){
-        // const data = await this.prisma.Seed.create({
+        // const data = await this.prisma.seed.create({
         //     data: {
         //         nameEng: nameEng,
         //         nameTH: nameTH,
         //         description: description,
-        //         growthDays: growthDays,
-        //         icon: icon,
-        //         renderType: renderType,
+        //         // growthDays: growthDays,
+        //         // icon: icon,
+        //         // renderType: renderType,
         //         imageStages: imageStages,
         //         animationFile: animationFile,
         //         animationKey: animationKey,
-        //         rarity: rarity,
-        //         emotionTag: emotionTag,
+        //         // rarity: rarity,
+        //         // emotionTag: emotionTag,
         //         unlockCondition: unlockCondition
         //     }
         // })
@@ -84,17 +84,17 @@ export class SeedStackRepository{
     // getSeedByID()
     //
     async getSeedByID(seedID: string){
-        // const data = await this.prisma.Seed.findFirst({
-        //     where: {
-        //         id: seedID
-        //     }
-        // })
-        // return data;
+        const data = await this.prisma.seed.findFirst({
+            where: {
+                id: seedID
+            }
+        })
+        return data;
     }
     // setSeedByID()
     //
     async setSeedByID(seedID: string, fieldName: string, value: any){
-        // const data = this.prisma.Seed.update({
+        // const data = this.prisma.seed.update({
         //     where: {
         //         id: seedID
         //     },
@@ -107,12 +107,12 @@ export class SeedStackRepository{
     // deleteSeed()
     //
     async deleteSeed(seedID: string){
-        // const data = this.prisma.Seed.delete({
-        //     where: {
-        //         id: seedID
-        //     }
-        // })
-        // return data;
+        const data = this.prisma.seed.delete({
+            where: {
+                id: seedID
+            }
+        })
+        return data;
     }
 
     
