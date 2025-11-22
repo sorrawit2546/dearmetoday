@@ -49,6 +49,25 @@ export class NoteForm implements OnChanges {
   showMessage = signal(false);
   previewImages = signal<PreviewImage[]>([]);
   formattedDate = signal('');
+  selectedQuote = signal<{ text: string; author: string } | null>(null);
+
+  private readonly quotes: { text: string; author: string }[] = [
+    { text: 'The only way to do great work is to love what you do.', author: 'Steve Jobs' },
+    { text: 'We are what we repeatedly do. Excellence, then, is not an act, but a habit.', author: 'Aristotle' },
+    { text: 'What we think, we become.', author: 'Buddha' },
+    { text: 'You miss 100% of the shots you don’t take.', author: 'Wayne Gretzky' },
+    { text: 'Simplicity is the ultimate sophistication.', author: 'Leonardo da Vinci' },
+    { text: 'The unexamined life is not worth living.', author: 'Socrates' },
+    { text: 'Art washes away from the soul the dust of everyday life.', author: 'Pablo Picasso' },
+    { text: 'If you are going through hell, keep going.', author: 'Winston Churchill' },
+    { text: 'Happiness depends upon ourselves.', author: 'Aristotle' },
+    { text: 'The journey of a thousand miles begins with one step.', author: 'Lao Tzu' },
+    { text: 'In the middle of difficulty lies opportunity.', author: 'Albert Einstein' },
+    { text: 'Peace comes from within. Do not seek it without.', author: 'Buddha' },
+    { text: 'The purpose of our lives is to be happy.', author: 'Dalai Lama' },
+    { text: 'Not everything that is faced can be changed, but nothing can be changed until it is faced.', author: 'James Baldwin' },
+    { text: 'Let the beauty of what you love be what you do.', author: 'Rumi' },
+  ];
 
   constructor(
     private ngZone: NgZone,
@@ -65,6 +84,10 @@ export class NoteForm implements OnChanges {
         year: 'numeric',
       })
     );
+
+    // Select a random quote on each open
+    const idx = this.quotes.length > 0 ? Math.floor(Math.random() * this.quotes.length) : 0;
+    this.selectedQuote.set(this.quotes[idx] ?? null);
 
     this.apiService.getUserdataFromGoogle().subscribe({
       next: (response: AuthResponse) => {
@@ -136,9 +159,9 @@ export class NoteForm implements OnChanges {
     const validFiles = files.slice(0, remainingSlots);
 
     validFiles.forEach((file) => {
-      if (file.size > 3 * 1024 * 1024) {
+      if (file.size > 5 * 1024 * 1024) {
         this.toastService.showToast(
-          `ไฟล์ภาพ "${file.name}" มีขนาดเกิน 3MB, กรุณาเลือกไฟล์ที่เล็กกว่า`,
+          `ไฟล์ภาพ "${file.name}" มีขนาดเกิน 5MB, กรุณาเลือกไฟล์ที่เล็กกว่า`,
           true
         );
         return; // ข้ามไฟล์นี้

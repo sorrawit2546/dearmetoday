@@ -14,8 +14,12 @@ import { CalendarService } from './calendar/calendar.service';
 import { CalendarModule } from './calendar/calendar.module';
 import { QuickNoteModule } from './quick-note/quick-note.module';
 import { SummaryModule } from './summary/summary.module';
+import { StorageCleanupService } from './storage/storage-cleanup.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ResendModule } from './third-party/resend/resend.module';
 
 @Module({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   imports: [
     QuickNoteModule,
     PositiveNoteModule,
@@ -36,6 +40,9 @@ import { SummaryModule } from './summary/summary.module';
     CalendarModule,
     QuickNoteModule,
     SummaryModule,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    ScheduleModule.forRoot(),
+    ResendModule,
   ],
   controllers: [AppController],
   providers: [
@@ -45,6 +52,7 @@ import { SummaryModule } from './summary/summary.module';
       useClass: GlobalExceptionFilter,
     },
     CalendarService,
+    StorageCleanupService,
   ],
 })
 export class AppModule {

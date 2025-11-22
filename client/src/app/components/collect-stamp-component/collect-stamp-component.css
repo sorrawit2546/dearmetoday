@@ -1,0 +1,111 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.8s ease-in-out both;
+  will-change: transform, opacity;
+}
+
+/* รอยขอบด้านซ้ายแบบสมุด */
+.notebook-margin {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 24px;
+  width: 6px;
+  background: repeating-linear-gradient(
+    rgba(210, 180, 140, 0.35) 0 4px,
+    transparent 8px
+  );
+  border-right: 2px solid rgba(170, 150, 110, 0.4);
+  z-index: 5;
+}
+
+/* ปรับ modal ให้เหมือนหน้ากระดาษจริง */
+.notebook-modal {
+  background: #fffdf8;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12),
+    inset 0 0 60px rgba(0, 0, 0, 0.04);
+}
+
+/* Responsive mobile */
+@media (max-width: 640px) {
+  .notebook-margin {
+    left: 14px;
+    width: 4px;
+  }
+
+  .bg-paper-lines::after {
+    background-image: repeating-linear-gradient(
+      #e4ddce 0px,
+      #e4ddce 1px,
+      transparent 22px
+    );
+  }
+
+  .notebook-modal {
+    border-width: 2px;
+    border-radius: 20px;
+  }
+}
+
+/* เอฟเฟกต์ fade in/out สำหรับภาพ */
+[ng-reflect-ng-if="true"] img {
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* เอฟเฟกต์ fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+[ng-reflect-ng-if="true"] img {
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+/* ปรับขนาดปุ่มบนมือถือ */
+@media (max-width: 640px) {
+  .lightbox-btn {
+    font-size: 2rem;
+  }
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+
+p {
+  white-space: pre-line; /* แสดงขึ้นบรรทัดใหม่ได้ */
+  word-break: break-word; /* ตัดคำเมื่อยาวเกิน */
+}
+

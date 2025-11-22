@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
-import { Api, AuthResponse} from './api';
 import { User } from '../model/api-data';
+import { Api, AuthResponse } from './api';
 
 @Injectable({
   providedIn: 'root',
@@ -39,10 +39,16 @@ export class AuthService {
   }
 
   logout(): Observable<any> {
+    const user = this.getCurrentUser();
+    // เคลียร์ session key ของ onboarding popup ถ้ามี user
+    if (user && user.email) {
+      const key = `onboarding_shown_session_${user.email}`;
+      sessionStorage.removeItem(key);
+    }
     this.currentUserSubject.next(null);
     return this.apiService.logout().pipe(
       tap(() => {
-        console.log('AuthService : logout success')
+        console.log('AuthService : logout success');
       }),
       catchError((error) => {
         console.log('AuthService: Logout error, but still clearing user state');

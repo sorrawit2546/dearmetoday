@@ -1,0 +1,380 @@
+<!-- Navigation -->
+<nav
+  class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-[#EAE4DA]"
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+      <!-- Brand -->
+      <a
+        routerLink="/"
+        class="text-2xl sm:text-3xl font-bold tracking-tight text-[#2c2c2c]"
+      >
+        Dearme,Today
+      </a>
+
+      <!-- Desktop actions -->
+      <div class="hidden md:flex items-center gap-4">
+        <a
+          routerLink="/privacy"
+          class="text-sm text-[#5C5042] hover:text-[#2c2c2c]"
+          >Privacy</a
+        >
+        <span class="text-[#C8BFB0]">|</span>
+        <a
+          routerLink="/terms"
+          class="text-sm text-[#5C5042] hover:text-[#2c2c2c]"
+          >Terms</a
+        >
+
+        <button
+          type="button"
+          class="text-[#20b2aa] border-2 rounded-3xl border-[#20b2aa] px-4 py-2 bg-white hover:text-[#333] transition"
+          routerLink="/login"
+        >
+          Join Now
+        </button>
+        <button
+          type="button"
+          class="rounded-3xl bg-[#2c2c2c] text-white hover:bg-[#1e1e1e] px-4 py-2 transition"
+          routerLink="/aboutdearme"
+        >
+          About
+        </button>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button
+        type="button"
+        class="md:hidden inline-flex items-center justify-center rounded-xl p-2 border border-[#EAE4DA] text-[#4C4030] hover:bg-[#F6F2EA] transition"
+        aria-label="Open menu"
+        aria-controls="mobile-menu"
+        [attr.aria-expanded]="isMenuOpen()"
+        (click)="toggleMenu()"
+      >
+        <svg
+          *ngIf="!isMenuOpen()"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+        <svg
+          *ngIf="isMenuOpen()"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden" *ngIf="isMenuOpen()">
+    <div class="space-y-2 px-4 pb-4">
+      <a
+        routerLink="/aboutdearme"
+        class="block rounded-xl px-4 py-3 text-[#4C4030] bg-white border border-[#EAE4DA]"
+      >
+        About
+      </a>
+      <a
+        routerLink="/privacy"
+        class="block rounded-xl px-4 py-3 text-[#4C4030] hover:bg-[#F6F2EA] border border-transparent"
+      >
+        Privacy
+      </a>
+      <a
+        routerLink="/terms"
+        class="block rounded-xl px-4 py-3 text-[#4C4030] hover:bg-[#F6F2EA] border border-transparent"
+      >
+        Terms
+      </a>
+      <div class="flex gap-3 pt-1">
+        <button
+          type="button"
+          class="flex-1 text-[#20b2aa] border-2 rounded-2xl border-[#20b2aa] px-4 py-2 bg-white hover:text-[#333] transition"
+          routerLink="/login"
+          (click)="closeMenu()"
+        >
+          Join Now
+        </button>
+        <button
+          type="button"
+          class="flex-1 rounded-2xl bg-[#2c2c2c] text-white hover:bg-[#1e1e1e] px-4 py-2 transition"
+          routerLink="/aboutdearme"
+          (click)="closeMenu()"
+        >
+          About
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div
+  class="max-w-7xl mx-auto px-6 py-10 font-['Sarabun'] text-[#5C5042] grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-12"
+>
+  <!-- ===================== Main Blog Content ===================== -->
+  <div>
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center text-[#9B8E7B] py-10 italic">
+      กำลังโหลดบทความ...
+    </div>
+
+    <!-- Post -->
+    <div
+      *ngIf="!isLoading && post"
+      class="bg-[#FFFDF8] p-8 rounded-[28px] border border-[#E8E2D4] shadow-[0_4px_12px_rgba(0,0,0,0.05)] relative"
+      style="
+        background-image: linear-gradient(#f9f6ef 1px, transparent 1px),
+          linear-gradient(90deg, #f9f6ef 1px, transparent 1px);
+        background-size: 28px 28px;
+      "
+    >
+      <!-- รูสมุดตกแต่ง -->
+      <div
+        class="absolute left-[-12px] top-6 space-y-8 flex flex-col items-center"
+      >
+        <div class="w-3 h-3 rounded-full bg-[#E0D7C3] shadow-inner"></div>
+        <div class="w-3 h-3 rounded-full bg-[#E0D7C3] shadow-inner"></div>
+        <div class="w-3 h-3 rounded-full bg-[#E0D7C3] shadow-inner"></div>
+      </div>
+
+      <!-- ปุ่ม Back -->
+      <button
+        (click)="goBack()"
+        class="mb-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#EAE4DA] text-[#4C4030] bg-white hover:bg-[#F6F2EA] hover:border-[#DCCDB7] transition"
+        aria-label="Back"
+      >
+        <!-- ไอคอนลูกศรซ้าย -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        Back
+      </button>
+      <!-- 🌿 รูปปก -->
+      <img
+        *ngIf="post.cover"
+        [src]="post.cover"
+        alt="Cover Image"
+        class="w-full rounded-[28px] mb-8 border border-[#EAE4DA] shadow-[0_6px_20px_rgba(0,0,0,0.08)] object-cover max-h-[420px]"
+      />
+
+      <h1 class="text-3xl font-bold mb-6 text-[#5A4A3B] leading-snug">
+        {{ post.title }}
+      </h1>
+
+      <p class="text-sm text-[#9B8E7B] mb-4">
+        เขียนเมื่อ {{ post.date | date: "longDate" }}
+      </p>
+
+      <!-- ✍️ Author Section -->
+      <div class="flex items-center gap-3 mb-10">
+        <img
+          *ngIf="post.authorImage"
+          [src]="post.authorImage"
+          alt="{{ post.author }}"
+          class="w-12 h-12 rounded-full border border-[#EAE4DA] shadow-sm object-cover"
+        />
+        <div>
+          <p class="font-semibold text-[#4B3E2E] text-sm">{{ post.author }}</p>
+          <p class="text-xs text-[#9B8E7B]">ผู้เขียนบทความนี้</p>
+        </div>
+      </div>
+
+      <!-- 🌸 ปุ่มแชร์ -->
+      <div class="flex items-center gap-3 mb-8">
+        <span class="text-[#7A6C5E] text-sm">แชร์บทความนี้:</span>
+
+        <button
+          (click)="shareToTwitter()"
+          class="bg-[#E6DACA] hover:bg-[#DCCDB7] text-[#4C4030] px-3 py-1.5 text-sm rounded-full transition"
+        >
+          X
+        </button>
+
+        <button
+          (click)="copyLink()"
+          class="bg-[#E6DACA] hover:bg-[#DCCDB7] text-[#4C4030] px-3 py-1.5 text-sm rounded-full transition"
+        >
+          Copy link
+        </button>
+      </div>
+
+      <!-- 💰 Affiliate Section -->
+      <div class="my-10">
+        <h3 class="font-['Goudy Bookletter 1911'] text-[#5A4A3B] text-xl mb-4">
+          ของที่ใช้เขียนบันทึกที่แนะนำ 🌿
+        </h3>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <a
+            href="https://s.shopee.co.th/AKRxRNbyf2"
+            target="_blank"
+            class="flex items-center gap-4 bg-[#FFFDF8] border border-[#EAE4DA] rounded-[16px] p-4 hover:shadow-md transition"
+          >
+            <img
+              src="https://down-th.img.susercontent.com/file/th-11134207-7ras9-m6cebfx21acde6.webp"
+              class="w-20 h-20 object-cover rounded-lg border border-[#EAE4DA]"
+              alt="sticky-note"
+            />
+            <div>
+              <p class="font-medium text-[#4B3E2E]">
+                Sticky Note - สำหรับแปะหนังสือ
+              </p>
+              <p class="text-[#9B8E7B] text-sm">ราคา 30฿ — คลิกดูรายละเอียด</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- 📷 Markdown Content -->
+      <div #content>
+        <div class="mb-6 bg-white/70 rounded-2xl border border-[#EAE4DA] p-4">
+          <h3 class="text-sm font-semibold text-[#4C4030] mb-3">
+            Table of contents
+          </h3>
+          <nav *ngIf="toc.length > 0; else noToc" class="space-y-1">
+            <button
+              *ngFor="let item of toc"
+              (click)="scrollTo(item.id)"
+              class="block w-full text-left text-xs text-[#5C5042] hover:text-[#907D62] hover:bg-[#F6F2EA] rounded-md px-2 py-1 transition"
+              [ngClass]="{
+                'pl-2': item.level === 1,
+                'pl-4': item.level === 2,
+                'pl-6': item.level === 3
+              }"
+            >
+              {{ item.text }}
+            </button>
+          </nav>
+          <ng-template #noToc>
+            <p class="text-xs text-[#9B8E7B] italic">No headings</p>
+          </ng-template>
+        </div>
+
+        <markdown
+          [data]="post.content || ''"
+          (ready)="buildToc()"
+          class="md-render prose prose-lg max-w-none prose-img:rounded-2xl prose-img:mx-auto prose-img:my-8 prose-img:border prose-img:border-[#EAE4DA] prose-img:shadow-[0_6px_20px_rgba(0,0,0,0.08)] prose-headings:text-[#4B3E2E] prose-p:text-[#5C5042] prose-strong:text-[#3F3528] prose-blockquote:border-[#DCCDB7] prose-blockquote:text-[#7A6C5E]"
+        ></markdown>
+      </div>
+
+      <!-- 🌿 Cozy Promotion Banner -->
+      <div
+        class="my-10 bg-[#FDF8F2] border border-[#E8E2D4] rounded-[24px] p-6 text-center shadow-[0_4px_10px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.07)] transition"
+      >
+        <h3 class="font-['Goudy Bookletter 1911'] text-[#5A4A3B] text-2xl mb-2">
+          Dearme Today - journal ✨
+        </h3>
+        <p class="text-[#7A6C5E] mb-4">
+          เริ่มต้นเขียนบันทึกรายวันสุดอบอุ่น เพื่อเริ่มต้นวันใหม่ด้วยพลังบวก 💛
+        </p>
+        <a
+          href="https://dearmetoday.com"
+          target="_blank"
+          class="inline-block bg-[#E6DACA] hover:bg-[#DCCDB7] text-[#4C4030] px-5 py-2 rounded-full transition"
+        >
+          ดูรายละเอียด
+        </a>
+      </div>
+
+      <div
+        class="mt-10 text-center text-[#A59784] text-sm border-t border-[#EAE4DA] pt-6"
+      >
+        ✿ ขอบคุณที่อ่าน Dearme,Today ✿
+      </div>
+    </div>
+
+    <!-- Not found -->
+    <div
+      *ngIf="!isLoading && !post"
+      class="text-center text-[#9B8E7B] py-10 italic"
+    >
+      ไม่พบบทความนี้
+    </div>
+  </div>
+
+  <!-- ===================== Sidebar: Related Posts ===================== -->
+  <aside class="hidden lg:block">
+    <div
+      class="bg-[#FFFDF8] rounded-[24px] border border-[#EAE4DA] shadow-[0_4px_10px_rgba(0,0,0,0.05)] p-6 sticky top-24"
+    >
+      <h2
+        class="text-lg font-bold text-[#4C4030] mb-5 font-['Goudy Bookletter 1911']"
+      >
+        บทความอื่น ๆ 🌸
+      </h2>
+
+      <div *ngIf="relatedPosts && relatedPosts.length > 0; else noRelated">
+        <div
+          *ngFor="let item of relatedPosts"
+          [routerLink]="['/blog', item.slug]"
+          class="group flex flex-col gap-2 mb-6 cursor-pointer"
+        >
+          <img
+            *ngIf="item.cover"
+            [src]="item.cover"
+            alt="{{ item.title }}"
+            class="w-full h-36 object-cover rounded-[16px] border border-[#EAE4DA] shadow-sm transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+          <p
+            class="text-[#5A4A3B] font-semibold text-base group-hover:text-[#907D62] transition-colors"
+          >
+            {{ item.title }}
+          </p>
+          <p class="text-[#9B8E7B] text-sm italic">
+            {{ item.date | date: "mediumDate" }}
+          </p>
+        </div>
+      </div>
+
+      <ng-template #noRelated>
+        <p class="text-[#A59784] italic text-center py-4">
+          ไม่มีบทความอื่นในตอนนี้
+        </p>
+      </ng-template>
+    </div>
+  </aside>
+  <!-- 📢 Google Ads -->
+  <div class="my-10 flex justify-center">
+    <ins
+      class="adsbygoogle"
+      style="display: block; text-align: center"
+      data-ad-layout="in-article"
+      data-ad-format="fluid"
+      data-ad-client="ca-pub-7520634126504585"
+      data-ad-slot="1234567890"
+    ></ins>
+  </div>
+</div>
+
+<app-footer></app-footer>

@@ -14,8 +14,8 @@ async function bootstrap() {
   const frontendUrl = configService.get<string>('FRONTEND_URL');
 
   // ✅ body size limit
-  app.use(express.json({ limit: '10mb' }));
-  app.use(express.urlencoded({ limit: '10mb', extended: true }));
+  app.use(express.json({ limit: '30mb' }));
+  app.use(express.urlencoded({ limit: '30mb', extended: true }));
 
   // ปรับปรุง CORS configuration
   app.enableCors({

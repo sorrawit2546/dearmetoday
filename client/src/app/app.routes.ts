@@ -8,14 +8,30 @@ import { About } from './pages/about/about';
 import { PrivacyComponent } from './pages/privacy/privacy';
 import { TermsComponent } from './pages/terms/terms';
 import { SeedStack } from './seed-stack/seed-stack';
+import { CollectStampComponent } from './components/collect-stamp-component/collect-stamp-component';
+import { BlogList } from './pages/blog/blog-list/blog-list';
+import { BlogDetail } from './pages/blog/blog-detail/blog-detail';
 
 export const routes: Routes = [
   { component: Home, path: '' },
   { component: Dashboard, path: 'dashboard', canActivate: [AuthGuard] },
-  { component: Login, path: 'login'},
-  { component: Community, path: 'community', canActivate: [AuthGuard]},
-  { component: About, path: 'aboutdearme'},
+  { component: Login, path: 'login' },
+  { component: Community, path: 'community', canActivate: [AuthGuard] },
+  { component: About, path: 'aboutdearme' },
   { component: PrivacyComponent, path: 'privacy' },
   { component: TermsComponent, path: 'terms'},
   { component: SeedStack, path: 'garden'}
+  { component: TermsComponent, path: 'terms' },
+  {
+    component: CollectStampComponent,
+    path: 'collection',
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'blog',
+    children: [
+      { path: '', component: BlogList },
+      { path: ':slug', component: BlogDetail },
+    ],
+  },
 ];

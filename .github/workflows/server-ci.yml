@@ -1,7 +1,7 @@
 name: web-dearmetoday-backyard
 run-name: Deploy dearmetoday by ${{ github.actor }} on ${{ github.ref_name }}
 
-on:  
+on:
   push:
     paths:
       - "server/**"
@@ -42,7 +42,7 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test  
+      - name: Test
         run: npm test -- --ci --passWithNoTests
 
       - name: Build
@@ -59,16 +59,20 @@ jobs:
     needs: server
     runs-on: ubuntu-latest
     if: >
-        (github.event_name == 'push' &&
-        (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')))
-        || github.event_name == 'workflow_dispatch'
+      (github.event_name == 'push' &&
+      (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')))
+      || github.event_name == 'workflow_dispatch'
     env:
       SSH_HOST: ${{ secrets.SSH_HOST }}
       SSH_USER: ${{ secrets.SSH_USER }}
       SSH_KEY: ${{ secrets.SSH_KEY }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       DIRECT_URL: ${{ secrets.DIRECT_URL }}
-      RESEND_API_KEY : ${{ secrets.RESEND_API_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      SUPABASE_BUCKET: ${{ secrets.SUPABASE_BUCKET }}
+      SUPABASE_PUBLICURL: ${{ secrets.SUPABASE_PUBLICURL }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       MAIL_FROM: ${{ secrets.MAIL_FROM }}
       FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
@@ -90,7 +94,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: DATABASE_URL,DIRECT_URL,SENDGRID_API_KEY,RESEND_API_KEY,MAIL_FROM,FRONTEND_URL,SERVER_URL,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,JWT_SECRET,COOKIE_DOMAIN,COOKIE_SECURE,COOKIE_SAMESITE
+          envs: DATABASE_URL,DIRECT_URL,SENDGRID_API_KEY,SUPABASE_URL,SUPABASE_KEY,SUPABASE_BUCKET,SUPABASE_PUBLICURL,RESEND_API_KEY,MAIL_FROM,FRONTEND_URL,SERVER_URL,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,JWT_SECRET,COOKIE_DOMAIN,COOKIE_SECURE,COOKIE_SAMESITE
           script: |
             set -euo pipefail
 
@@ -115,7 +119,7 @@ jobs:
 
             echo "⏳ Waiting for containers..."
             sleep 15
-            
+
             # รอให้ container ทำงาน
             echo "🔄 Waiting for server to be ready..."
             for i in {1..30}; do
@@ -126,69 +130,69 @@ jobs:
               echo "⏳ Attempt $i/30: Server not ready yet..."
               sleep 2
             done
-            
+
             docker ps
             docker logs server --tail=50 || true
-            
+
             # Debug: ตรวจสอบไฟล์ใน container
             echo "🔍 Debug: ตรวจสอบไฟล์ใน container"
             docker exec server ls -la /app/dist/ || true
             docker exec server cat /app/dist/main.js | head -10 || true
-            
+
             # Debug: ตรวจสอบ environment variables
             echo "🔍 Debug: ตรวจสอบ environment variables"
             docker exec server env | grep -E "(DATABASE_URL|NODE_ENV|PORT)" || true
-            
+
             # Debug: ตรวจสอบ working directory
             echo "🔍 Debug: ตรวจสอบ working directory"
             docker exec server pwd || true
             docker exec server ls -la /app/ || true
-            
+
             # Debug: ตรวจสอบ volume mapping
             echo "🔍 Debug: ตรวจสอบ volume mapping"
             docker inspect server | grep -A 10 -B 10 "Mounts" || true
 
             # ✅ Prisma migrate/generate รันนอก container หลัก
             echo "🔍 Testing database connection..."
-            
+
             # ตรวจสอบ network connectivity
             echo "🔍 Testing network connectivity..."
             docker exec server ping -c 3 8.8.8.8 || true
             docker exec server nslookup db.efkinmzzhrsnvqkkznxg.supabase.co || true
-            
+
             # ตรวจสอบ port connectivity
             echo "🔍 Testing port connectivity..."
             docker exec server nc -zv db.efkinmzzhrsnvqkkznxg.supabase.co 5432 || true
-            
+
             # ตรวจสอบ Supabase Pooler connectivity
             echo "🔍 Testing Supabase Pooler connectivity..."
             docker exec server nc -zv aws-1-ap-southeast-1.pooler.supabase.com 6543 || true
             docker exec server nc -zv aws-1-ap-southeast-1.pooler.supabase.com 5432 || true
-            
+
             # ตรวจสอบ DATABASE_URL
             echo "🔍 DATABASE_URL: $DATABASE_URL"
             echo "🔍 DIRECT_URL: $DIRECT_URL"
             echo "🔍 NODE_ENV: $NODE_ENV"
-            
+
             # แก้ไข DIRECT_URL ให้ใช้ Direct Connection (IPv4) และ encode password
             echo "🔍 Converting DIRECT_URL to use Direct Connection..."
             export DIRECT_URL_IPV4=$(echo "$DIRECT_URL" | sed 's/db\.efkinmzzhrsnvqkkznxg\.supabase\.co:5432/aws-1-ap-southeast-1.pooler.supabase.com:5432/g' | sed 's/@Dearmetoday1809/%40Dearmetoday1809/g')
             echo "🔍 DIRECT_URL_IPV4: $DIRECT_URL_IPV4"
-            
+
             # แก้ไข DATABASE_URL ให้ใช้ Supabase Pooler (IPv4) และ encode password
             echo "🔍 Converting DATABASE_URL to use Supabase Pooler..."
             export DATABASE_URL_IPV4=$(echo "$DATABASE_URL" | sed 's/db\.efkinmzzhrsnvqkkznxg\.supabase\.co:5432/aws-1-ap-southeast-1.pooler.supabase.com:6543/g' | sed 's/@Dearmetoday1809/%40Dearmetoday1809/g' | sed 's/$/\&pgbouncer=true/g')
             echo "🔍 DATABASE_URL_IPV4: $DATABASE_URL_IPV4"
-            
+
             # ตรวจสอบว่า DATABASE_URL_IPV4 ถูกต้องหรือไม่
             echo "🔍 Verifying DATABASE_URL_IPV4..."
             echo "$DATABASE_URL_IPV4" | grep -q "aws-1-ap-southeast-1.pooler.supabase.com:6543" && echo "✅ Pooler conversion successful" || echo "❌ Pooler conversion failed"
-            
+
             docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL_IPV4" server npx prisma db pull --print || true
-            
+
             echo "🔄 Running Prisma migrate deploy..."
             docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL_IPV4" server npx prisma migrate deploy
-            
+
             echo "🔄 Running Prisma generate..."
             docker compose -f docker-compose.prod.yml run --rm -e DATABASE_URL="$DATABASE_URL_IPV4" -e DIRECT_URL="$DIRECT_URL_IPV4" server npx prisma generate
 
@@ -197,4 +201,3 @@ jobs:
             # 🔍 ตรวจสอบว่า container ที่กำลังรันใช้ image/tag อะไร
             echo "🔍 Checking running container images..."
             docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}" | grep -E "frontyard|backyard" || true
-
