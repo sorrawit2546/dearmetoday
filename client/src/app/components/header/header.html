@@ -1,74 +1,104 @@
-<div class="navbar bg-base-100 shadow-sm pl-4 pr-4 md:pl-24 md:pr-24">
-  <a routerLink="/dashboard" class="justify-center items-center ml-2 md:ml-16">
-    <img src="assets/images/dearme,logo.png" alt="" class="h-10 w-16 md:h-10 md:w-16 ml-16 mr-10">
-  </a>
-  <div class="flex-1 justify-items-center space-x-4 md:space-x-10 hidden sm:flex">
+<!-- ✅ Header -->
+<header
+  class="navbar border-b border-[#E8DEC4] px-4 sm:px-8 md:px-16 lg:px-24 shadow-sm sticky top-0 z-40 overflow-visible"
+>
+  <!-- 🔹 Left section: Logo -->
+  <div class="flex items-center gap-3 shrink-0">
+    <a routerLink="/dashboard" class="flex items-center gap-2">
+      <img
+        src="assets/images/dearme,logo.png"
+        alt="จดบันทึกออนไลน์ Dearme,Today"
+        class="h-8 sm:h-10 w-auto object-contain"
+      />
+      <span
+        class="hidden sm:inline text-xl md:text-2xl font-bold text-[#5A4A3B]"
+      >
+        Dear me, Today
+      </span>
+    </a>
+  </div>
+
+  <!-- 🔹 Middle section: Desktop Nav -->
+  <nav
+    class="hidden sm:flex flex-1 justify-center items-center space-x-3 md:space-x-8"
+  >
     <a
       routerLink="/dashboard"
       routerLinkActive="active-tab"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="text-base md:text-xl font-bold px-2 md:px-3 py-2 rounded-lg transition-colors hover:bg-blue-100 pr-3"
+      class="text-sm sm:text-base md:text-lg font-semibold px-3 py-2 rounded-lg hover:bg-[#E8F0FE] transition-colors"
       >Home</a
     >
-    <a routerLink="/community"
-    routerLinkActive="active-tab"
-    [routerLinkActiveOptions]="{ exact: true }" class="text-base px-2 md:px-3 py-2 md:text-xl rounded-lg font-bold transition-colors hover:bg-blue-100">Community</a>
-  </div>
-  <!-- Mobile menu button -->
-  <div class="sm:hidden">
-    <div class="dropdown">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-square">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-      </div>
-      <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-xl z-20 w-48 p-2 shadow">
-        <li><a routerLink="/dashboard" routerLinkActive="active-tab" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a></li>
-        <li><a href="/community">Community</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="flex gap-2">
-    <div class="dropdown dropdown-end">
-      <div tabindex="0" role="button" class="btn btn-ghost m-1 rounded-2xl hover:bg-blue-100 hover:border-none" (click)="markQuickNotesRead()" (focus)="markQuickNotesRead()">
+
+    <a
+      routerLink="/collection"
+      routerLinkActive="active-tab"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="text-sm sm:text-base md:text-lg font-semibold px-3 py-2 rounded-lg hover:bg-[#E8F0FE] transition-colors"
+      >Collection</a
+    >
+
+    <a
+      routerLink="/community"
+      routerLinkActive="active-tab"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="text-sm sm:text-base md:text-lg font-semibold px-3 py-2 rounded-lg hover:bg-[#E8F0FE] transition-colors"
+      >Community</a
+    >
+    <a
+      routerLink="/blog"
+      routerLinkActive="active-tab"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="text-sm sm:text-base md:text-lg font-semibold px-3 py-2 rounded-lg hover:bg-[#E8F0FE] transition-colors"
+      >Blog</a
+    >
+  </nav>
+
+  <!-- 🔹 Right section: Tools & User -->
+  <div class="flex items-center gap-2 sm:gap-3 ml-auto shrink-0">
+    <!-- 💌 Quick Notes Dropdown -->
+    <div class="dropdown dropdown-end relative sm:static">
+      <button
+        tabindex="0"
+        class="btn btn-ghost btn-circle hover:bg-[#E8F0FE]"
+        (click)="markQuickNotesRead()"
+      >
         <div class="relative">
           <img
             src="assets/images/freeze-message-box-snow-svgrepo-com.svg"
-            alt="freez-message"
-            alt="error icon"
-            class="swap-off fill-current h-8 w-8 md:h-10 md:w-10"
+            alt="Messages"
+            class="h-6 sm:h-7 md:h-8 w-6 sm:w-7 md:w-8"
           />
           @if (unreadQuickNotes()) {
-            <span class="status status-info animate-bounce absolute -top-1 -right-1 h-3 w-3 rounded-full"></span>
+          <span
+            class="absolute -top-1 -right-1 h-3 w-3 bg-[#3B82F6] rounded-full animate-pulse"
+          ></span>
           }
         </div>
-      </div>
+      </button>
+
       <ul
         tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-xl z-10 w-64 sm:w-52 max-w-[90vw] p-2 shadow-sm"
-        (mouseenter)="markQuickNotesRead()"
+        class="dropdown-content menu bg-[#FFFDF8] border border-[#E8DEC4] rounded-xl w-64 sm:w-72 max-w-[90vw] p-3 shadow-lg z-[9999] absolute right-0 left-auto sm:right-0 sm:left-auto"
       >
-      @if(quickNoteMessage(); as quickNotes){
-        @if(quickNotes.length > 0){
-          @for(quicknote of quickNotes; track quicknote.id){
-            <div class="border-dashed border-1 rounded-lg my-1 border-accent">
-              <li class="">
-                <a>{{quicknote.thankMessage}}</a>
-                <span class="badge badge-soft badge-info rounded-lg h-8 w-full px-2">{{quicknote.createdAt | date:'EEEE d, MMMM'}}</span>
-              </li>
-            </div>
-          }
-        }@else{
-          <div class="border-dashed border-1 rounded-lg my-1 border-accent">
-            <li class="">
-              <a>No message!</a>
-            </li>
-          </div>
-        }
-      }
+        @if (quickNoteMessage(); as quickNotes) { @if (quickNotes.length > 0) {
+        @for (quicknote of quickNotes; track quicknote.id) {
+        <li class="p-2 border-b border-dashed border-[#E8DEC4]">
+          <p class="text-sm text-[#5C5042]">{{ quicknote.thankMessage }}</p>
+          <span class="text-xs text-[#8A7C67] block mt-1"
+            >{{ quicknote.createdAt | date:'EEEE d, MMMM' }}</span
+          >
+        </li>
+        } } @else {
+        <li class="text-center text-sm text-[#A29780] italic">No messages</li>
+        } }
       </ul>
     </div>
+
+    <!-- 👤 User Dropdown -->
     <div class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-        <div class="w-8 md:w-10 rounded-full">
+        <div class="w-8 sm:w-9 md:w-10 rounded-full">
           <img
             *ngIf="user()?.avatarUrl"
             [src]="user()?.avatarUrl"
@@ -78,11 +108,64 @@
       </div>
       <ul
         tabindex="0"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-lg z-10 mt-3 w-44 md:w-52 p-2 shadow"
+        class="menu menu-sm dropdown-content bg-[#FFFDF8] border border-[#E8DEC4] rounded-lg mt-3 w-44 sm:w-52 p-2 shadow-md z-50"
       >
-        <li class="menu-title text-sm md:text-base text-blue-500">{{ user()?.name }}</li>
-        <li><button class="rounded-lg hover:not-even:bg-blue-100" (click)="logout()">Logout</button></li>
+        <li class="menu-title text-sm md:text-base text-[#3B82F6] mb-1">
+          {{ user()?.name }}
+        </li>
+        <li>
+          <button
+            class="rounded-lg hover:bg-[#E8F0FE] text-[#5A4A3B]"
+            (click)="logout()"
+          >
+            Logout
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 📱 Mobile Menu -->
+    <div class="sm:hidden dropdown dropdown-end w-full">
+      <button
+        tabindex="0"
+        role="button"
+        class="btn btn-ghost btn-square hover:bg-[#E8F0FE]"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 text-[#5C5042]"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+
+      <ul
+        tabindex="0"
+        class="dropdown-content menu bg-[#FFFDF8] border border-[#E8DEC4] z-[9999] fixed sm:absolute top-14 sm:top-auto right-0 sm:right-auto left-auto sm:left-auto transform-none sm:transform w-[min(20rem,90vw)] sm:w-48 mr-2 sm:mr-0 p-2 shadow-2xl rounded-l-xl sm:rounded-xl max-h-[70vh] overflow-auto origin-top-right"
+      >
+        <li>
+          <a routerLink="/dashboard" routerLinkActive="active-tab">Home</a>
+        </li>
+        <li>
+          <a routerLink="/collection" routerLinkActive="active-tab"
+            >Collection</a
+          >
+        </li>
+        <li>
+          <a routerLink="/community" routerLinkActive="active-tab">Community</a>
+        </li>
+        <li>
+          <a routerLink="/blog" routerLinkActive="active-tab">Blog</a>
+        </li>
       </ul>
     </div>
   </div>
-</div>
+</header>

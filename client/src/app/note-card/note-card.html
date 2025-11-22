@@ -1,10 +1,26 @@
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden max-w-6xl">
-  <div class="flex flex-col md:flex-row gap-0 md:gap-4">
-    <!-- Photo Area -->
+<div
+  class="relative p-6 rounded-[28px] border border-[#e6e2d3] bg-[#fdfcf8] shadow-[0_6px_16px_rgba(0,0,0,0.05)] max-w-6xl mx-auto transition-all duration-300 ease-in-out hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)]"
+  style="
+    background-image: linear-gradient(#faf8f1 1px, transparent 1px),
+      linear-gradient(90deg, #faf8f1 1px, transparent 1px);
+    background-size: 28px 28px;
+  "
+  (click)="onCardClick($event)"
+>
+  <!-- Notebook holes -->
+  <div class="absolute top-6 -left-2 w-3 h-3 rounded-full bg-[#d8d4c4]"></div>
+  <div class="absolute top-16 -left-2 w-3 h-3 rounded-full bg-[#d8d4c4]"></div>
+  <div class="absolute top-28 -left-2 w-3 h-3 rounded-full bg-[#d8d4c4]"></div>
+
+  <!-- Header bar -->
+  <div class="absolute top-0 left-0 right-0 h-6 bg-gradient-to-r from-amber-200/70 to-amber-100/40 rounded-t-[28px]"></div>
+
+  <!-- Layout -->
+  <div class="flex flex-col md:flex-row gap-0 md:gap-4 relative z-10 mt-3">
+    <!-- Photo -->
     <div class="relative w-full md:w-1/2">
-      <!-- Image box fixed ratio -->
       <div
-        class="w-full bg-gray-100 flex items-center justify-center aspect-[4/3] md:aspect-[16/9] overflow-hidden"
+        class="w-full rounded-2xl bg-[#fafafa] flex items-center justify-center aspect-[4/3] md:aspect-[16/9] overflow-hidden border border-[#ebe7dc]"
         tabindex="0"
         (touchstart)="onTouchStart($event)"
         (touchend)="onTouchEnd($event)"
@@ -18,6 +34,7 @@
           decoding="async"
           draggable="false"
           (load)="onImageLoad($event)"
+          (error)="onImageError($event)"
           class="max-w-full max-h-full w-auto h-auto object-contain transition-transform duration-300 hover:scale-105"
         />
       </div>
@@ -25,53 +42,64 @@
       <!-- Controls -->
       <button
         *ngIf="(photos?.length ?? 0) > 1"
-        class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg"
-        (click)="prevPhoto()"
+        class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md"
+        (click)="prevPhoto(); $event.stopPropagation()"
         aria-label="Previous photo"
       >
         ◀
       </button>
       <button
         *ngIf="(photos?.length ?? 0) > 1"
-        class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg"
-        (click)="nextPhoto()"
+        class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md"
+        (click)="nextPhoto(); $event.stopPropagation()"
         aria-label="Next photo"
       >
         ▶
       </button>
 
-      <!-- Counter -->
       <div *ngIf="(photos?.length ?? 0) > 0" class="absolute bottom-3 left-1/2 -translate-x-1/2">
         <span class="px-2 py-1 text-xs rounded-full bg-black/60 text-white shadow">
           {{ currentIndex + 1 }} / {{ photos?.length ?? 0 }}
         </span>
       </div>
 
-      <!-- No photo state -->
       <ng-template #noPhoto>
         <div class="flex flex-col items-center justify-center text-gray-400 py-12">
           <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-10 h-10 mb-2">
-            <path d="M1.5 6A2.25 2.25 ..."/>
+            <path d="M1.5 6A2.25 2.25 ..." />
           </svg>
           <span class="text-sm">ไม่มีรูปภาพ</span>
         </div>
       </ng-template>
     </div>
 
-    <!-- Content Area -->
+    <!-- Content -->
     <div class="p-6 md:w-1/2 flex flex-col justify-between">
       <div>
-        <h3 class="mb-2 text-lg font-bold">🌠{{ date }}</h3>
-        <div class="text-amber-800">เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้ </div>
-        <p class=" mb-2 text-gray-700 whitespace-pre-line">{{ line1 }}</p>
-        <div class="text-amber-800">สิ่งเล็ก ๆ ที่ทำให้ยิ้มได้ในวันนี้ </div>
-        <p class=" mb-2 text-gray-700 whitespace-pre-line">{{ line2 }}</p>
-        <div class="text-amber-800">เรื่องราวที่ทำให้รู้สึกภูมิใจ </div>
-        <p class=" mb-2 text-gray-700 whitespace-pre-line">{{ line3 }}</p>
+        <div class="badge badge-neutral rounded-xl px-4 py-1 text-xs font-medium tracking-wide bg-[#f3f1ea] text-gray-600 mb-3">
+          🌠 {{ date }}
+        </div>
+
+        <div class="text-sm leading-relaxed text-gray-800 space-y-3">
+          <div class="border-l-4 border-amber-300 pl-3">
+            <div class="font-semibold text-amber-800">เรื่องราวดี ๆ ที่อยากขอบคุณหรืออยากเก็บไว้ในวันนี้</div>
+            <p class="whitespace-pre-line mt-1 text-gray-700">{{ line1 }}</p>
+          </div>
+          <div class="border-l-4 border-amber-300 pl-3">
+            <div class="font-semibold text-amber-800">สิ่งเล็ก ๆ ที่ทำให้ยิ้มได้ในวันนี้</div>
+            <p class="whitespace-pre-line mt-1 text-gray-700">{{ line2 }}</p>
+          </div>
+          <div class="border-l-4 border-amber-300 pl-3">
+            <div class="font-semibold text-amber-800">เรื่องราวที่ทำให้รู้สึกภูมิใจ</div>
+            <p class="whitespace-pre-line mt-1 text-gray-700">{{ line3 }}</p>
+          </div>
+        </div>
       </div>
 
-      <div class="mt-4 flex items-center justify-between gap-2">
-        <span class="badge badge-soft badge-primary px-3 py-1 rounded-lg truncate">{{ mood }}</span>
+      <div class="mt-5 flex items-center justify-between gap-2">
+        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-700 shadow-sm">
+          {{ mood }}
+        </span>
         <span class="badge badge-soft badge-success px-3 py-1 text-sm truncate">{{ email }}</span>
       </div>
     </div>

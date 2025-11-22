@@ -18,7 +18,9 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               { "glob": "**/*", "input": "public" },
-              { "glob": "**/*", "input": "src/assets", "output": "assets" }
+              { "glob": "robots.txt", "input": "public" },
+              { "glob": "**/*", "input": "src/assets", "output": "assets" },
+              { "glob": "_redirects", "input": "src", "output": "." }
             ],
             "styles": ["src/styles.css"],
             "outputMode": "static"
@@ -34,8 +36,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",

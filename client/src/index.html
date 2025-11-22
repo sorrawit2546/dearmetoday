@@ -1,45 +1,82 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dearmetoday">
+<html lang="th" data-theme="dearmetoday">
   <head>
+    <!-- 🔹 Google tag (gtag.js) - ต้องอยู่ด้านบนสุด -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YX32BLG2XV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-YX32BLG2XV', {
+        page_title: document.title,
+        page_location: window.location.href
+      });
+      window.gtag = gtag;
+    </script>
+
+    <!-- 🔹 Google AdSense -->
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7520634126504585"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- 🔹 Basic Meta -->
     <meta charset="utf-8" />
-    <title>Dearme,Today</title>
-    <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="/" />
+    <title>เขียน Gratitude Journal ออนไลน์</title>
+
+    <!-- 🔹 SEO Meta -->
     <meta
       name="description"
-      content="Dearme,Today — a journaling platform founded by Sorrawit Sangmanee and co-founded by Thanathan Junto, helping people reflect and grow with positivity."
+      content="แพลตฟอร์ม เขียน Gratitude Journal ที่ช่วยให้คุณการบันทึกความรู้สึกขอบคุณ เติบโตด้วยพลังบวก และรู้สึกขอบคุณในทุกวัน เขียนบันทึกได้ง่ายและมีความหมาย"
     />
-    <!-- 🔍 JSON-LD Schema for SEO -->
+    <meta name="author" content="Dearme,Today Team" />
+    <meta property="og:title" content="เขียน Gratitude Journal ออนไลน์ | Dearme,Today" />
+    <meta property="og:description" content="แพลตฟอร์มจดบันทึกออนไลน์ที่ช่วยให้คุณสะท้อนความคิด เติบโต และขอบคุณในแต่ละวัน" />
+    <meta property="og:image" content="https://dearmetoday.com/assets/og-cover.jpg" />
+    <meta property="og:url" content="https://dearmetoday.com" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dearme,Today — เขียน Gratitude Journal ออนไลน์" />
+    <meta name="twitter:description" content="จดบันทึกพลังบวกทุกวัน ด้วย Dearme,Today แพลตฟอร์ม Gratitude Journal ออนไลน์" />
+    <meta name="twitter:image" content="https://dearmetoday.com/assets/og-cover.jpg" />
+
+    <!-- 🔹 JSON-LD Schema -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "Dearme,Today",
         "url": "https://dearmetoday.com",
+        "logo": "https://dearmetoday.com/assets/logo.png",
+        "description": "แพลตฟอร์มเขียน Gratitude Journal ออนไลน์ เพื่อสะท้อนความคิดและเติบโตด้วยพลังบวก",
+        "foundingDate": "2025",
         "founders": [
-          {
-            "@type": "Person",
-            "name": "Sorrawit Sangmanee"
-          },
-          {
-            "@type": "Person",
-            "name": "Thanathan Janto"
-          }
+          { "@type": "Person", "name": "Sorrawit Sangmanee" },
+          { "@type": "Person", "name": "Thanathan Janto" }
         ],
         "contactPoint": [
           {
             "@type": "ContactPoint",
             "email": "contact@dearmetoday.com",
             "contactType": "customer support",
-            "availableLanguage": ["Thai"]
+            "availableLanguage": ["Thai", "English"]
           }
         ],
-        "foundingDate": "2025",
-        "sameAs": ["https://github.com/sorrawit2546"]
+        "sameAs": [
+          "https://github.com/sorrawit2546",
+          "https://www.linkedin.com/in/sorrawit2546/",
+          "https://www.instagram.com/dearmetoday.app/"
+        ]
       }
     </script>
+
+    <!-- 🔹 Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
+
   <body>
     <app-root></app-root>
   </body>

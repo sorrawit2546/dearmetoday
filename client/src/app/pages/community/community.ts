@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   Component,
   computed,
@@ -7,6 +7,7 @@ import {
   resource,
   signal,
 } from '@angular/core';
+import { PLATFORM_ID } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { Footer } from '../../components/footer/footer';
@@ -25,14 +26,17 @@ import { AuthService } from '../../services/auth.service';
 export class Community {
   private authService = inject(AuthService);
   private apiService = inject(Api);
+  private platformId = inject(PLATFORM_ID);
   user = toSignal(this.authService.currentUser$, { initialValue: null });
   activeCard: number | null = null;
+  isMobile = signal<boolean>(false);
 
   // Pagination properties
   currentPage = signal(1);
   itemsPerPage = 3;
 
   toggleCard(index: number) {
+    if (this.isMobile()) return; // disable expand on mobile
     // Convert paginated index to global index
     const globalIndex = (this.currentPage() - 1) * this.itemsPerPage + index;
     this.activeCard = this.activeCard === globalIndex ? null : globalIndex;
@@ -122,7 +126,14 @@ export class Community {
   }
 
   ngOnInit(): void {
-    // this.authService.checkAuthState();
+    // Detect mobile viewport
+    if (isPlatformBrowser(this.platformId)) {
+      const mq = window.matchMedia('(max-width: 640px)'); // Tailwind sm breakpoint
+      const update = (e: MediaQueryList | MediaQueryListEvent) =>
+        this.isMobile.set('matches' in e ? e.matches : (e as MediaQueryList).matches);
+      update(mq);
+      mq.addEventListener?.('change', update as any);
+    }
   }
 
   updateNoteIsActive(id: string, newValue: boolean): void {

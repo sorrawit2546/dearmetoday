@@ -7,6 +7,7 @@ export interface entryNote{
   imageUrls: string[];
   mood: string;
   createdAt: Date;
+  isDelete?: boolean;
   showMessage: boolean;
 }
 

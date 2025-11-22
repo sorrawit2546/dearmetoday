@@ -11,6 +11,7 @@ import { getAllNoteSendById } from './entity/positive-note.entity';
 import { PositiveNoteController } from './positive-note.controller';
 import { PositiveNoteService } from './positive-note.service';
 import { SummaryGateway } from '../summary/summary.gateway';
+import { StorageService } from '../storage/storage.service';
 import { firstValueFrom } from 'rxjs';
 
 jest.mock('jsonwebtoken', () => ({
@@ -20,6 +21,9 @@ jest.mock('jsonwebtoken', () => ({
 interface MinimalRequestLike {
   user?: unknown;
   cookies?: Record<string, string>;
+  headers?: {
+    authorization?: string;
+  };
 }
 
 describe('PositiveNoteController', () => {
@@ -67,6 +71,16 @@ describe('PositiveNoteController', () => {
           provide: SummaryGateway,
           useValue: {},
         },
+        {
+          provide: StorageService,
+          useValue: {
+            uploadBuffer: jest
+              .fn()
+              .mockResolvedValue('https://example.com/mock-image.jpg'),
+            uploadFiles: jest.fn().mockResolvedValue([]),
+            deleteFiles: jest.fn().mockResolvedValue(true),
+          },
+        },
       ],
     }).compile();
 
@@ -100,6 +114,9 @@ describe('PositiveNoteController', () => {
       cookies: {
         access_token: 'mock-token',
       },
+      headers: {
+        authorization: 'Bearer mock-token',
+      },
     };
     const mockNoteId = 'note-1';
     const mockResultData = 'Positive Note is Deleted!';
@@ -130,6 +147,9 @@ describe('PositiveNoteController', () => {
     const mockReq: MinimalRequestLike = {
       cookies: {
         access_token: 'mock-token',
+      },
+      headers: {
+        authorization: 'Bearer mock-token',
       },
     };
     const mockNoteId = 'note-1';
@@ -197,6 +217,9 @@ describe('PositiveNoteController', () => {
     const mockReq: MinimalRequestLike = {
       cookies: {
         access_token: 'mock-token',
+      },
+      headers: {
+        authorization: 'Bearer mock-token',
       },
     };
     const mockNoteId = 'note-1';
@@ -306,7 +329,12 @@ describe('PositiveNoteController', () => {
 
     // const createPositiveNoteSpy = jest.spyOn(mockService, 'createPositiveNote');
 
-    const req: MinimalRequestLike = { user: undefined };
+    const req: MinimalRequestLike = {
+      user: undefined,
+      headers: {
+        authorization: 'Bearer mock-token',
+      },
+    };
     // Act
     const result = await controller.createPositiveNote(
       files,
@@ -338,6 +366,9 @@ describe('PositiveNoteController', () => {
     const mockReq: MinimalRequestLike = {
       cookies: {
         access_token: 'mock-token',
+      },
+      headers: {
+        authorization: 'Bearer mock-token',
       },
     };
 
@@ -381,6 +412,9 @@ describe('PositiveNoteController', () => {
       cookies: {
         access_token: 'mock-token',
       },
+      headers: {
+        authorization: 'Bearer mock-token',
+      },
     };
     const mockRecentNote: getAllNoteSendById = {
       id: 'note-1',
@@ -411,6 +445,9 @@ describe('PositiveNoteController', () => {
     const mockReq: MinimalRequestLike = {
       cookies: {
         access_token: 'mock-token',
+      },
+      headers: {
+        authorization: 'Bearer mock-token',
       },
     };
 

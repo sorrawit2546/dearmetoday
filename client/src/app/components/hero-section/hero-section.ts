@@ -24,6 +24,7 @@ import { ToastService } from '../../services/toast.service';
 import { ToastComponent } from '../toast/toast.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
+import { BlogService, BlogMeta } from '../../pages/blog/blog.service';
 
 @Component({
   selector: 'app-hero-section',
@@ -32,7 +33,12 @@ import { Subscription } from 'rxjs';
   styleUrl: './hero-section.css',
 })
 export class HeroSection implements OnInit, OnDestroy {
-  constructor(private router: Router, private apiService: Api, private toastService: ToastService) {}
+  constructor(
+    private router: Router,
+    private apiService: Api,
+    private toastService: ToastService,
+    private blogService: BlogService
+  ) {}
   ngOnDestroy(): void {
     this.noteCountSub?.unsubscribe();
   }
@@ -45,6 +51,7 @@ export class HeroSection implements OnInit, OnDestroy {
   user = toSignal(this.authService.currentUser$, { initialValue: null });
   isAuthed = computed(() => !!this.user());
   noteCount = signal<number>(0);
+  latestPosts = signal<BlogMeta[]>([]);
   navigateToGoogleProvide() {
     window.location.href = `${environment.apiUrl}/auth/google`;
   }
@@ -59,6 +66,17 @@ export class HeroSection implements OnInit, OnDestroy {
     this.noteCountSub = this.apiService.getAllPositiveNoteCountStream().subscribe({
       next: (count) => this.noteCount.set(count),
       error: (err) => console.error('SSE error', err),
+    });
+
+    // Load latest 3 blog posts
+    this.blogService.getAllPosts().subscribe({
+      next: (posts) => {
+        const latest = (posts ?? []).slice(0, 3);
+        this.latestPosts.set(latest);
+      },
+      error: (err) => {
+        console.error('Failed to load blog posts', err);
+      },
     });
   }
 
