@@ -334,7 +334,7 @@
         บทความอื่น ๆ 🌸
       </h2>
 
-      <div *ngIf="relatedPosts && relatedPosts.length > 0; else noRelated">
+      <div *ngIf="!isLoading && relatedPosts && relatedPosts.length > 0; else noRelated">
         <div
           *ngFor="let item of relatedPosts"
           [routerLink]="['/blog', item.slug]"
@@ -358,8 +358,11 @@
       </div>
 
       <ng-template #noRelated>
-        <p class="text-[#A59784] italic text-center py-4">
+        <p class="text-[#A59784] italic text-center py-4" *ngIf="!isLoading">
           ไม่มีบทความอื่นในตอนนี้
+        </p>
+        <p class="text-[#A59784] italic text-center py-4" *ngIf="isLoading">
+          กำลังโหลด...
         </p>
       </ng-template>
     </div>
