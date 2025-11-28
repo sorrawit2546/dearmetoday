@@ -13,7 +13,7 @@ datasource db {
 
 // ## โมเดลสำหรับผู้ใช้งาน (User)
 model User {
-  id        String  @id @default(uuid())
+  id        String  @id @map("id")
   email     String  @unique
   name      String? // จาก Google profile
   avatarUrl String? @map("avatar_url") // URL รูปจาก Google

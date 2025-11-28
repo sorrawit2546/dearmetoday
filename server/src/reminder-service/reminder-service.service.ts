@@ -11,15 +11,19 @@ export class ReminderServiceService {
   ) {}
 
   isAfter21(): boolean {
-    const now = new Date();
+    const now = new Date(
+      new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }),
+    );
+
     const cutoff = new Date(
       now.getFullYear(),
       now.getMonth(),
       now.getDate(),
-      21,
-      0,
+      22,
+      15,
       0,
     );
+
     return now >= cutoff;
   }
 
