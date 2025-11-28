@@ -182,4 +182,107 @@ export class ResendService {
       throw err;
     }
   }
+
+  async sendReminderEmail(toEmail: string, name: string) {
+    const today = new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    const html = `
+      <div style="
+        font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif;
+        max-width: 640px;
+        margin: 40px auto;
+        background-color: #fdfcf8;
+        border-radius: 24px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+      ">
+        <div style="
+          width: 0; height: 0;
+          border-left: 320px solid transparent;
+          border-right: 320px solid transparent;
+          border-bottom: 100px solid #e3d5ca;
+          margin: 0 auto;
+          border-radius: 8px 8px 0 0;
+        "></div>
+  
+        <div style="
+          background: #fffaf4;
+          padding: 28px 32px;
+          border: 1px solid #e6e2d3;
+          border-radius: 16px;
+          margin-top: -60px;
+        ">
+  
+          <h2 style="
+            text-align: center;
+            font-size: 22px;
+            color: #5b4636;
+            margin-bottom: 20px;
+          ">
+            ✨ Gentle Reminder from DearMe.Today
+          </h2>
+  
+          <p style="color:#6b4f3f;font-size:15px;line-height:1.7;">
+            สวัสดีครับ/ค่ะ <strong>${name}</strong> 💛<br/><br/>
+            ตอนนี้เลยเวลา <strong>สามทุ่ม</strong> มาแล้วนะครับ/ค่ะ!<br/>
+            และวันนี้คุณยังไม่ได้เขียน <strong>Gratitude Journal</strong> เลย :(
+          </p>
+  
+          <p style="color:#6b4f3f;font-size:15px;line-height:1.7;margin-top:12px;">
+            ลองเขียนสั้น ๆ สัก 1 นาทีดูนะครับ/ค่ะ  
+            เรื่องเล็ก ๆ ที่ทำให้คุณรู้สึกดี… มีค่ามากกว่าที่คิดเสมอ 💛
+          </p>
+  
+          <div style="
+            background:#fcf8f3;
+            padding:16px 18px;
+            border-left:4px solid #d5bda5;
+            border-radius:8px;
+            margin:24px 0;
+            color:#6b4f3f;
+            font-size:15px;
+          ">
+            ✏️ <strong>คำถามช่วยเริ่มต้น:</strong><br/>
+            – วันนี้คุณขอบคุณอะไร?<br/>
+            – มีอะไรที่ทำให้คุณยิ้ม?<br/>
+            – คุณภูมิใจอะไรในตัวเองวันนี้?
+          </div>
+  
+          <p style="
+            font-size:12px;
+            color:#8b7b6f;
+            margin-top:32px;
+            text-align:center;
+          ">
+          การเขียน "ทบทวน" ว่าในวันหนึ่งเราทำอะไร คิดอะไร และใช้เวลาอย่างไร จะช่วยให้เรามีเกณฑ์ในการเปรียบเทียบเพื่อพัฒนาตัวเอง<br/>
+            ✨ Sent with kindness via <strong>DearMeToday</strong><br/>
+            (${today})
+          </p>
+        </div>
+      </div>
+    `;
+
+    try {
+      const { data, error } = await this.resend.emails.send({
+        from: this.mailFrom,
+        to: toEmail,
+        subject: `Gentle Reminder | Have you written your Gratitude Journal today?`,
+        html,
+      });
+
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
+      if (error) throw error;
+
+      this.logger.log(`📨 Reminder email sent to ${toEmail} (${name})`);
+      return data;
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      this.logger.error(`❌ Failed to send reminder email: ${err.message}`);
+      throw err;
+    }
+  }
 }
