@@ -8,6 +8,7 @@ export class PrismaService
 {
   constructor() {
     super();
+    console.log('💾 Prisma DB URL:', process.env.DATABASE_URL);
   }
   async onModuleInit() {
     await this.$connect();

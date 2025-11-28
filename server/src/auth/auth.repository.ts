@@ -1,8 +1,4 @@
-import {
-  BadGatewayException,
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
+import { BadGatewayException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GoogleUser } from './entity/auth.entity';
 
@@ -12,29 +8,39 @@ export class AuthRepository {
 
   async findUserByGoogleId(googleId: string): Promise<any> {
     try {
-      const resultUser = await this.prisma.user.findFirst({
-        where: {
-          googleId: googleId,
-        },
+      return await this.prisma.user.findFirst({
+        where: { googleId },
       });
-      return resultUser;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw new BadRequestException(['BadRequestException']);
-      }
       throw new BadGatewayException();
     }
   }
 
   async createWithGoogle(googleUser: GoogleUser): Promise<any> {
-    return await this.prisma.user.create({
-      data: {
-        email: googleUser.email,
-        name: googleUser.name,
-        avatarUrl: googleUser.avatarUrl,
-        provider: googleUser.provider,
-        googleId: googleUser.id,
-      },
-    });
+    try {
+      return await this.prisma.user.upsert({
+        where: { id: googleUser.id }, // ใช้ id จาก Google OAuth เป็น primary key
+        update: {
+          email: googleUser.email,
+          name: googleUser.name,
+          avatarUrl: googleUser.avatarUrl,
+          provider: googleUser.provider,
+          googleId: googleUser.id,
+        },
+        create: {
+          id: googleUser.id, // ต้องมีเสมอ เพราะ schema ไม่มี default(uuid())
+          email: googleUser.email,
+          name: googleUser.name,
+          avatarUrl: googleUser.avatarUrl,
+          provider: googleUser.provider,
+          googleId: googleUser.id,
+        },
+      });
+    } catch (error) {
+      // eslint-disable-next-line prettier/prettier
+      console.error('❌ Failed to create/upsert user:', error);
+      throw new BadGatewayException('Failed to create or update user');
+    }
   }
 }
