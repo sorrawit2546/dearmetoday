@@ -8,19 +8,24 @@ export class ReminderServiceService {
   constructor(
     private reminderRepository: ReminderServiceRepository,
     private resendService: ResendService,
-  ) {}
+  ) {
+    console.log('[CRON] ReminderServiceService CREATED');
+  }
 
-  isAfter21(): boolean {
+  isAfter18(): boolean {
     const now = new Date(
       new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }),
     );
+
+    console.log('[CRON] now Asia/Bangkok:', now.toString());
+    console.log('[CRON] hour =', now.getHours());
 
     const cutoff = new Date(
       now.getFullYear(),
       now.getMonth(),
       now.getDate(),
-      15,
-      15,
+      18,
+      0,
       0,
     );
 
@@ -29,7 +34,11 @@ export class ReminderServiceService {
 
   @Cron('0 */10 * * * *')
   async checkAllUsersDailyReminder() {
-    if (!this.isAfter21()) return;
+    console.log('[CRON] triggered:', new Date().toISOString());
+    if (!this.isAfter18()) {
+      console.log('[CRON] skipped because time < 18:00');
+      return;
+    }
     const allUser = await this.reminderRepository.getAllUser();
     for (const users of allUser) {
       const hasNote = await this.reminderRepository.checkUserWriteNoteToday(
@@ -39,5 +48,6 @@ export class ReminderServiceService {
         await this.resendService.sendReminderEmail(users.email, users.name);
       }
     }
+    console.log('[CRON] passed time check');
   }
 }
