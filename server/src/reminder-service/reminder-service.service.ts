@@ -25,7 +25,7 @@ export class ReminderServiceService {
       now.getMonth(),
       now.getDate(),
       18,
-      10,
+      15,
       0,
     );
 
@@ -35,19 +35,28 @@ export class ReminderServiceService {
   @Cron('0 */10 * * * *')
   async checkAllUsersDailyReminder() {
     console.log('[CRON] triggered:', new Date().toISOString());
-    if (!this.isAfter18()) {
-      console.log('[CRON] skipped because time < 18:00');
-      return;
-    }
+    if (!this.isAfter18()) return;
+
     const allUser = await this.reminderRepository.getAllUser();
-    for (const users of allUser) {
+
+    for (const user of allUser) {
       const hasNote = await this.reminderRepository.checkUserWriteNoteToday(
-        users.id,
+        user.id,
       );
+
       if (!hasNote) {
-        await this.resendService.sendReminderEmail(users.email, users.name);
+        try {
+          await this.resendService.sendReminderEmail(user.email, user.name);
+          console.log('[CRON] sent to', user.email);
+
+          // ป้องกัน rate-limit → 500ms - 1s พอ
+          await new Promise((resolve) => setTimeout(resolve, 800));
+        } catch (error) {
+          console.error('[CRON] failed for', user.email, error.message);
+        }
       }
     }
-    console.log('[CRON] passed time check');
+
+    console.log('[CRON] finished all users');
   }
 }
