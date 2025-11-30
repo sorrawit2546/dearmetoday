@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { tsParticles } from "tsparticles-engine";
+import { loadSnowPreset } from "tsparticles-preset-snow";
 
 @Component({
   selector: 'app-login',

@@ -228,7 +228,7 @@ export class ResendService {
             color: #8b1e22; 
             margin-bottom: 20px;
           ">
-      🎄 Gentle Reminder from Dear Me,Today
+      🎄 ถึงเวลาเขียนบันทึกขอบคุณให้ตัวเองแล้วนะ วันนี้อย่าลืมแวะมานะ 🎁Dear Me,Today🎁
     </h2>
 
     <p style="color:#5c3d2e;font-size:15px;line-height:1.7;">
@@ -244,7 +244,7 @@ export class ResendService {
 
     <!-- CTA Button -->
     <div style="text-align:center; margin:22px 0 12px 0;">
-      <a href="https://dearme.today" target="_blank"
+      <a href="https://dearmetoday.com/login" target="_blank"
          style="
             background:#c0392b;
             color:#fff;

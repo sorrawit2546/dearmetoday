@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
+import { loadSnowPreset } from "tsparticles-preset-snow";
+import { tsParticles } from "tsparticles-engine";
+import { Snow } from './shared/snow/snow';
 
 declare global {
   interface Window {
@@ -11,7 +14,7 @@ declare global {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,CommonModule],
+  imports: [RouterOutlet,CommonModule,Snow],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -36,4 +39,5 @@ export class App {
         }
       });
   }
+
 }
