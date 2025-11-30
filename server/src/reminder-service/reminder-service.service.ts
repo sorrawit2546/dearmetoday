@@ -19,8 +19,8 @@ export class ReminderServiceService {
       now.getFullYear(),
       now.getMonth(),
       now.getDate(),
-      23,
-      30,
+      15,
+      15,
       0,
     );
 
