@@ -233,7 +233,7 @@ export class ResendService {
 
     <p style="color:#5c3d2e;font-size:15px;line-height:1.7;">
       สวัสดี <strong>${name}</strong> 🎁💛<br/><br/>
-      ตอนนี้เลยเวลา <strong>สามทุ่ม</strong> มาแล้วนะ!<br/>
+      ตอนนี้เลยเวลา <strong>22:00 น.</strong> มาแล้วนะ!<br/>
       และวันนี้คุณยังไม่ได้เขียน <strong>Gratitude Journal</strong> เลย 🎄
     </p>
 
