@@ -32,7 +32,7 @@ export class ReminderServiceService {
     return now >= cutoff;
   }
 
-  @Cron('0 */10 * * * *')
+  @Cron('0 0 21 * * *')
   async checkAllUsersDailyReminder() {
     console.log('[CRON] triggered:', new Date().toISOString());
     if (!this.isAfter18()) return;
