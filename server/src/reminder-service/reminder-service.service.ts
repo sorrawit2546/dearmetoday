@@ -24,7 +24,7 @@ export class ReminderServiceService {
       now.getFullYear(),
       now.getMonth(),
       now.getDate(),
-      22,
+      21,
       0,
       0,
     );
@@ -32,7 +32,7 @@ export class ReminderServiceService {
     return now >= cutoff;
   }
 
-  @Cron('0 0 22 * * *', { timeZone: 'Asia/Bangkok' })
+  @Cron('0 0 21 * * *', { timeZone: 'Asia/Bangkok' })
   async checkAllUsersDailyReminder() {
     console.log('[CRON] triggered:', new Date().toISOString());
     if (!this.isAfter18()) return;
