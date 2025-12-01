@@ -17,6 +17,7 @@ import { SummaryModule } from './summary/summary.module';
 import { StorageCleanupService } from './storage/storage-cleanup.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ResendModule } from './third-party/resend/resend.module';
+import { SeedStackModule } from './seed-stack/seed-stack.module';
 
 @Module({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -43,6 +44,7 @@ import { ResendModule } from './third-party/resend/resend.module';
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     ScheduleModule.forRoot(),
     ResendModule,
+    SeedStackModule,
   ],
   controllers: [AppController],
   providers: [

@@ -7,9 +7,22 @@ import {
   Req,
   HttpCode,
   Param,
+  UseInterceptors,
+  Body,
+  UploadedFile,
+  UploadedFiles,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { SeedStackService } from './seed-stack.service';
+import { FilesInterceptor, FileInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { createSeedDTO } from './dto/seed/createSeed.dto';
+
+export interface SeedUploadFiles {
+  icon: Express.Multer.File;
+  imageStages: Express.Multer.File[];
+}
 
 @Controller('seed-stack')
 export class SeedsController {
@@ -44,5 +57,64 @@ export class SeedsController {
   @Delete('stacks')
   DeleteStack(): string {
     return;
+  }
+
+
+  // ***************************************** Seed *********************************************************************
+
+  @Post('seed')
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {name: 'icon', maxCount: 1},
+        {name: 'imageStages', maxCount: 10},
+      ],
+      {
+        storage:diskStorage({
+          destination: './uploads',
+          filename: (req, file, callback) => {
+            const prefix = file.fieldname === 'icon' ? 'seed' : 'stage';
+            const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            callback(null, prefix + unique + extname(file.originalname));
+          }
+        })
+    })
+  //   FileInterceptor('icon', {
+  //   storage: diskStorage({
+  //     destination: './seed/icon',
+  //     filename: (req, icon, cb) => {
+  //       const unique = 'seed' + Date.now() + '-' + Math.round(Math.random() * 1e9);
+  //       cb(null, unique + extname(icon.originalname));
+  //     }
+  //   })
+  // }),
+  // FilesInterceptor('imageStages', 10, {
+  //   storage: diskStorage({
+  //     destination: './seed/stage',
+  //     filename: (req, img, cb) => {
+  //       const unique = 'stage' + Date.now() + '-' + Math.round(Math.random() * 1e9);
+  //       cb(null, unique + extname(img.originalname));
+  //     }
+  //   })
+  // })
+  )
+  createSeed(
+    @Body() dto: createSeedDTO,
+    // @UploadedFile() icon: Express.Multer.File,
+    // @UploadedFiles() imageStages: Express.Multer.File[],
+    @UploadedFiles() files: SeedUploadFiles
+  ){ 
+    console.log('controller')
+    return this.service.createSeed(dto, files);
+  }
+
+  @Put()
+  updateSeed(): string{
+    return;
+  }
+
+  @Delete()
+  deleteSeed(): string{
+    return
   }
 }

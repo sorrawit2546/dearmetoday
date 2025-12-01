@@ -1,7 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SeedStackRepository } from './seed-stack.repository';
 import { error } from 'console';
+import { createSeedDTO } from './dto/seed/createSeed.dto';
 
+
+export interface SeedUploadFiles {
+  icon: Express.Multer.File;
+  imageStages: Express.Multer.File[];
+}
 @Injectable()
 export class SeedStackService {
     constructor(
@@ -54,14 +60,25 @@ export class SeedStackService {
 
     // ********************************* Seed's services order by crud *******************************************************
     // createSeed()
-    //
-    async createSeed(nameEng: string, nameTH: string, description: string, growthDays: Number, icon: string, renderType: string, imageStages: string[], animationFile: string, animationKey: string, rarity: string, emotionTag: string, unlockCondition: string){
+    // This service ใช้สำหรับการ สร้าง seed เข้าสู่ระบบ
+    async createSeed(dto: createSeedDTO, files: SeedUploadFiles){
         try{
-            const result = this.repository.creteSeed(nameEng, nameTH, description, growthDays, icon, renderType, imageStages, animationFile, animationKey, rarity, emotionTag, unlockCondition);
+            console.log('services')
+            
+            //
+            const iconPath = files.icon?.[0]?.filename; 
+            const stagePaths = files.imageStages?.map(f => f.filename) ?? [];
+            console.log('icaonPath : ', iconPath)
+            console.log('stagePaths : ', stagePaths)
+            // dto.icon = iconPath;
+            // dto.imageStages = stagePaths;
+            return this.repository.createSeed(dto, iconPath, stagePaths)
         }catch (error) {
             console.log(error);
         }
     }
+
+
     // getSeed()
     //
     async getSeed(seedID: string){

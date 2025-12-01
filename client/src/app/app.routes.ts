@@ -20,7 +20,7 @@ export const routes: Routes = [
   { component: About, path: 'aboutdearme' },
   { component: PrivacyComponent, path: 'privacy' },
   { component: TermsComponent, path: 'terms'},
-  { component: SeedStack, path: 'garden'}
+  { component: SeedStack, path: 'garden'},
   { component: TermsComponent, path: 'terms' },
   {
     component: CollectStampComponent,

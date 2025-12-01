@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
+import { createSeedDTO } from "./dto/seed/createSeed.dto";
 
 @Injectable()
 export class SeedStackRepository{
@@ -62,24 +63,24 @@ export class SeedStackRepository{
     // ********************************* Seed's repository order by crud *******************************************************
     // createSeed()
     //
-    async creteSeed(nameEng: string, nameTH: string, description: string, growthDays: Number, icon: string, renderType: string, imageStages: string[], animationFile: string, animationKey: string, rarity: string, emotionTag: string, unlockCondition: string){
-        // const data = await this.prisma.seed.create({
-        //     data: {
-        //         nameEng: nameEng,
-        //         nameTH: nameTH,
-        //         description: description,
-        //         // growthDays: growthDays,
-        //         // icon: icon,
-        //         // renderType: renderType,
-        //         imageStages: imageStages,
-        //         animationFile: animationFile,
-        //         animationKey: animationKey,
-        //         // rarity: rarity,
-        //         // emotionTag: emotionTag,
-        //         unlockCondition: unlockCondition
-        //     }
-        // })
-        // return data
+    async createSeed(dto: createSeedDTO, icaonPath: string, stagePaths: string[]){
+        const data = await this.prisma.seed.create({
+            data: {
+                nameEng: dto.nameEng,
+                nameTH: dto.nameTH,
+                description: dto.description,
+                growthDays: dto.growthDays,
+                icon: icaonPath,
+                renderType: dto.renderType,
+                imageStages: stagePaths,
+                animationFile: dto.animationFile,
+                animationKey: dto.animationKey,
+                rarity: dto.rarity,
+                emotionTag: dto.emotionTag,
+                unlockCondition: dto.unlockCondition,
+            }
+        })
+        return data
     }
     // getSeedByID()
     //
