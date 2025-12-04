@@ -18,6 +18,8 @@ import { FilesInterceptor, FileInterceptor, FileFieldsInterceptor } from '@nestj
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { createSeedDTO } from './dto/seed/createSeed.dto';
+import { createUserHasSeedDTO } from './dto/userHasSeed/createUserHasSeed.dto';
+import { createStackRecordDTO } from './dto/stackRecord/createStackRecord.dto';
 
 export interface SeedUploadFiles {
   icon: Express.Multer.File;
@@ -27,8 +29,8 @@ export interface SeedUploadFiles {
 @Controller('seed-stack')
 export class SeedsController {
   constructor(private readonly service: SeedStackService) {}
+
   // ***************************************** Stack Record *********************************************************************
-  // Get Method
   // This function is used to fetch data in stack table
   @Get('stack')
   GetStack(@Req() req: Request): string {
@@ -36,11 +38,12 @@ export class SeedsController {
   }
   // Post Method
   // This function is handle request that try to get stack record by id
-  @Post('stack')
+  @Post('create-stack')
   @HttpCode(201)
-  getStackRecordByID(@Param('id') id:string): string {
-    this.service.getStackRecordByID(id);
-    return 'get stack record by ID';
+  getStackRecordByID(
+    @Body() dto: createStackRecordDTO
+  ){
+    return this.service.createStackRecord(dto)
   }
   // This function is handle request that try to create stack record
   @Post('create-stack')
@@ -61,7 +64,7 @@ export class SeedsController {
 
 
   // ***************************************** Seed *********************************************************************
-
+  // This end-point is used to create seed
   @Post('seed')
   @UseInterceptors(
     FileFieldsInterceptor(
@@ -79,32 +82,11 @@ export class SeedsController {
           }
         })
     })
-  //   FileInterceptor('icon', {
-  //   storage: diskStorage({
-  //     destination: './seed/icon',
-  //     filename: (req, icon, cb) => {
-  //       const unique = 'seed' + Date.now() + '-' + Math.round(Math.random() * 1e9);
-  //       cb(null, unique + extname(icon.originalname));
-  //     }
-  //   })
-  // }),
-  // FilesInterceptor('imageStages', 10, {
-  //   storage: diskStorage({
-  //     destination: './seed/stage',
-  //     filename: (req, img, cb) => {
-  //       const unique = 'stage' + Date.now() + '-' + Math.round(Math.random() * 1e9);
-  //       cb(null, unique + extname(img.originalname));
-  //     }
-  //   })
-  // })
   )
   createSeed(
     @Body() dto: createSeedDTO,
-    // @UploadedFile() icon: Express.Multer.File,
-    // @UploadedFiles() imageStages: Express.Multer.File[],
     @UploadedFiles() files: SeedUploadFiles
   ){ 
-    console.log('controller')
     return this.service.createSeed(dto, files);
   }
 
@@ -116,5 +98,22 @@ export class SeedsController {
   @Delete()
   deleteSeed(): string{
     return
+  }
+
+  // ***************************************** UserHasSeed *********************************************************************
+  // This end-point is used to create record in user
+  @Post('claim-seed')
+  createUserHasSeed(
+    @Body() dto: createUserHasSeedDTO
+  ){
+    return this.service.createUserHasSeed(dto)
+  }
+  //
+  @Post('isowned-seed')
+  @HttpCode(200)
+  getOwnedSeedByID(
+    @Body() dto: createUserHasSeedDTO
+  ){
+    return this.service.getOwendSeedByID(dto)
   }
 }

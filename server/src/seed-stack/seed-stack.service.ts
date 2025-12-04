@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SeedStackRepository } from './seed-stack.repository';
 import { error } from 'console';
 import { createSeedDTO } from './dto/seed/createSeed.dto';
+import { createUserHasSeedDTO } from './dto/userHasSeed/createUserHasSeed.dto';
+import { createStackRecordDTO } from './dto/stackRecord/createStackRecord.dto';
 
 
 export interface SeedUploadFiles {
@@ -16,38 +18,63 @@ export class SeedStackService {
 
     // ************************************* Stack Record *****************************************************************
     // createStackRecord()
-    // This 
-    async createDefaultStackRecord(userID: string){
+    // This function is used to create stack record.
+    async createStackRecord(dto: createStackRecordDTO){
         try{
-            const seedID: string = 'default seedId'
-            const result = this.repository.createStackRecord(userID, seedID)
+            if(await this.getStackRecordByID(dto.userId)){
+                return {
+                    message: "You are planted.!"
+                }
+            }else{
+                this.randomPlant(dto.userId)
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
+    // randomPlant()
+    // This function is used to creat default stack record by random seed.
+    async randomPlant(userID: string){
+        try{
+            const ownedSeed = this.getAllOwnedSeed(userID);
+            const randomSeed = (await ownedSeed).at(Math.random() * (await ownedSeed).length-1)
+            await this.specificPlant(userID, randomSeed.seedId);
         }catch (error) {
             console.log(error);
+        }
+    }
+    // specificPlant()
+    // This function is used to plant a specific seed
+    async specificPlant(userID: string, seedID: string){
+        try{    
+            return this.repository.createStackRecord(userID, seedID);
+        }catch(error){
+            console.log(error)
         }
     }
     // getStackRecordByID()
     // This function are service for get stack record by id
     async getStackRecordByID(userID: string){
         try{
-            const result = this.repository.getStackRecordByID(userID);
+            return this.repository.getStackRecordByID(userID)
         }catch (error) {
             console.log(error);
         }
     }
     // setStackRecordByID()
     // This ใช้ตอนเขียน หาว่ามีมั้ย -> มีให้อัปเดท -> ไม่มีสร้างใหม่ -> คืนค่า
-    async setStackRecordByID(userID: string){
-        try{
-            const find = this.getStackRecordByID(userID)
-            if(find){
-                const result = this.repository.setStackRecordByID(userID)
-            }else{
-                const result = this.createDefaultStackRecord(userID)
-            }
-        }catch (error) {
-            console.log(error);
-        }
-    }
+    // async setStackRecordByID(dto: cre){
+    //     try{
+    //         const find = this.getStackRecordByID(userID)
+    //         if(find){
+    //             const result = this.repository.setStackRecordByID(userID)
+    //         }else{
+    //             const result = this.createDefaultStackRecord(userID)
+    //         }
+    //     }catch (error) {
+    //         console.log(error);
+    //     }
+    // }
     // deleteStackRecordByID()
     // This
     async deleteStackRecordByID(ID: string, userID: string, seedID: string){
@@ -121,11 +148,39 @@ export class SeedStackService {
 
     }
     // ********************************* UserHasSeed's services order by crud *******************************************************
-    async createUserHasSeed(){
-
+    // createUseerHasSeed()
+    // This function is used to ....
+    async createUserHasSeed(dto: createUserHasSeedDTO){
+        try{
+            if(await this.getOwendSeedByID(dto)){
+                return {
+                    message: "You are already owned this seed.!"
+                }
+            }else{
+                return this.repository.createUserHasSeed(dto)
+            }
+        }catch(error){
+            console.log(error)
+        }
     }
-    async getUserHasSeedByID(){
+    // getAllOwnedSeed()
+    // This function is used to find all seed that has been owned by user.
+    async getAllOwnedSeed(userID: string){
+        try{
+            return this.repository.getAllOwnedSeed(userID)
+        }catch(error){
+            console.log(error)
+        }
+    }
 
+    // getOwnedSeedByID()
+    //
+    async getOwendSeedByID(dto: createUserHasSeedDTO){
+        try{
+            return this.repository.getOwnedSeedByID(dto)
+        }catch(error){
+            console.log(error)
+        }
     }
     async setUserHasSeed(){
 
