@@ -25,6 +25,30 @@ export class AuthController {
     private readonly config: ConfigService,
   ) {}
 
+  @Post('google/mobile')
+  async googleMobileLogin(@Req() req: Request, @Res() res: Response) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const { access_token } = req.body;
+
+      if (!access_token) {
+        throw new UnauthorizedException('Missing access_token');
+      }
+
+      const result = await this.authService.loginWithGoogleMobile(access_token);
+
+      return res.json({
+        success: true,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        user: result.user,
+        accessToken: result.accessToken,
+      });
+    } catch (e) {
+      console.error('[Google Mobile Login ERROR]', e);
+      throw new UnauthorizedException('Google Mobile Login Failed');
+    }
+  }
+
   @Get('google')
   @UseGuards(AuthGuard('google'))
   googleLogin() {
