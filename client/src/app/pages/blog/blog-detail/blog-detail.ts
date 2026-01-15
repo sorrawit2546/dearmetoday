@@ -90,6 +90,7 @@ export class BlogDetail implements OnInit {
       // ✅ โหลดบทความอื่น
       this.blogService.getAllPosts().subscribe((all) => {
         this.relatedPosts = all.filter((p) => p.slug !== post.slug).slice(0, 3);
+        this.cdr.markForCheck(); // ✅ บังคับให้ Angular detect การเปลี่ยนแปลง
       });
 
        // ✅ ยิง Event GA4 เพื่อ track ผู้อ่านรายบทความ

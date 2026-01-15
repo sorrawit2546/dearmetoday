@@ -334,11 +334,11 @@
         บทความอื่น ๆ 🌸
       </h2>
 
-      <div *ngIf="relatedPosts && relatedPosts.length > 0; else noRelated">
-        <div
+      <div *ngIf="!isLoading && relatedPosts && relatedPosts.length > 0; else noRelated">
+        <a
           *ngFor="let item of relatedPosts"
           [routerLink]="['/blog', item.slug]"
-          class="group flex flex-col gap-2 mb-6 cursor-pointer"
+          class="group flex flex-col gap-2 mb-6 cursor-pointer block no-underline"
         >
           <img
             *ngIf="item.cover"
@@ -354,12 +354,15 @@
           <p class="text-[#9B8E7B] text-sm italic">
             {{ item.date | date: "mediumDate" }}
           </p>
-        </div>
+        </a>
       </div>
 
       <ng-template #noRelated>
-        <p class="text-[#A59784] italic text-center py-4">
+        <p class="text-[#A59784] italic text-center py-4" *ngIf="!isLoading">
           ไม่มีบทความอื่นในตอนนี้
+        </p>
+        <p class="text-[#A59784] italic text-center py-4" *ngIf="isLoading">
+          กำลังโหลด...
         </p>
       </ng-template>
     </div>

@@ -1,7 +1,8 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { error } from 'console';
 import { PrismaService } from 'src/prisma/prisma.service';
+@Injectable()
 export class ReminderServiceRepository {
   constructor(private prisma: PrismaService) {}
 

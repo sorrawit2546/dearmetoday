@@ -144,21 +144,37 @@
 
         <!-- Daily Mood Flow Chart -->
         <div
-          class="bg-[#FFFDF8] rounded-[36px] border border-[#e6e2d3] shadow-[0_6px_16px_rgba(0,0,0,0.06)] mb-10 p-8 md:p-10 relative overflow-hidden transition-all duration-300 hover:shadow-[0_10px_24px_rgba(0,0,0,0.08)]"
+          class="bg-[#FFFDF8] rounded-[36px] border border-[#e6e2d3] shadow-[0_6px_16px_rgba(0,0,0,0.08)] mb-10 p-8 md:p-10 relative overflow-hidden transition-all duration-300 hover:shadow-[0_10px_24px_rgba(0,0,0,0.12)]"
           style="
-            background-image: linear-gradient(#faf8f1 1px, transparent 1px),
+            background-image: url('/assets/christmas/snow-overlay.png'),
+              linear-gradient(#faf8f1 1px, transparent 1px),
               linear-gradient(90deg, #faf8f1 1px, transparent 1px);
-            background-size: 26px 26px;
+            background-size: cover, 26px 26px, 26px 26px;
           "
         >
+          <!-- Christmas ornaments -->
+          <img
+            src="/assets/christmas/holly.png"
+            class="absolute top-3 left-4 w-10 opacity-85"
+          />
+          <img
+            src="/assets/christmas/bell.png"
+            class="absolute top-3 right-4 w-10 opacity-85"
+          />
+
           <!-- Header -->
-          <div class="mb-6 text-center">
-            <h3 class="text-xl md:text-2xl font-bold text-[#5C5042]">
-              🌿 Daily Mood Flow
+          <div class="mb-6 text-center relative">
+            <h3 class="text-xl md:text-2xl font-bold text-[#4a3f34]">
+              🎄 Daily Mood Flow
             </h3>
-            <p class="text-sm text-[#8B7E6B] mt-1">
+            <p class="text-sm text-[#7a6e5c] mt-1">
               Your emotional journey through the week
             </p>
+
+            <!-- small Christmas lights underline -->
+            <div
+              class="mx-auto mt-3 w-32 h-[6px] rounded-full bg-gradient-to-r from-red-300 via-yellow-200 to-green-300 opacity-80"
+            ></div>
           </div>
 
           <!-- Chart Container -->
@@ -177,7 +193,7 @@
             <!-- Chart Background -->
             <div
               #chartContainer
-              class="ml-8 h-full relative bg-gradient-to-t from-[#F4EFE7] to-transparent rounded-[20px] border border-[#e9e4d8]"
+              class="ml-8 h-full relative bg-gradient-to-t from-[#f3efe4] via-[#faf7f0] to-transparent rounded-[20px] border border-[#e9e2d5]"
             >
               <!-- Data Points -->
               <div class="absolute inset-0 flex justify-between px-2 sm:px-4">
@@ -185,10 +201,10 @@
                   *ngFor="let day of weeklyMoodData(); let i = index"
                   class="group flex flex-col items-center h-full relative flex-1"
                 >
-                  <!-- Flower marker -->
+                  <!-- Christmas Flower marker -->
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="absolute w-6 h-6 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-3"
+                    class="absolute w-7 h-7 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-3 drop-shadow-md"
                     [style.top]="calcTopPosition(day.mood)"
                     [attr.fill]="getMoodColor(day.mood)"
                     viewBox="0 0 24 24"
@@ -200,7 +216,7 @@
 
                   <!-- Tooltip -->
                   <div
-                    class="absolute -top-10 px-2 py-1 text-[10px] sm:text-xs text-white bg-[#5C5042] rounded-lg shadow-md opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-300 whitespace-nowrap"
+                    class="absolute -top-10 px-2 py-1 text-[10px] sm:text-xs text-white bg-[#3b372f] rounded-lg shadow-md opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-300 whitespace-nowrap"
                   >
                     {{ day.date }} : {{ day.mood.toFixed(1) }}
                   </div>
@@ -224,7 +240,7 @@
           <!-- Toggle Week Buttons -->
           <div class="flex justify-center mt-8">
             <div
-              class="relative inline-flex bg-[#F5F2EB] rounded-full p-1 shadow-inner border border-[#EAE4DA] overflow-hidden"
+              class="relative inline-flex bg-[#F7F3EB] rounded-full p-1 shadow-inner border border-[#EAE4DA] overflow-hidden"
             >
               <!-- Active background -->
               <div
@@ -232,10 +248,10 @@
                 [class.translate-x-0]="selectedWeek() === 'prev'"
                 [class.translate-x-full]="selectedWeek() === 'current'"
                 [ngClass]="
-                  selectedWeek() === 'prev'
-                    ? 'bg-gradient-to-r from-[#E6B7A9] to-[#D6C4A3]'
-                    : 'bg-gradient-to-r from-[#D6C4A3] to-[#20B2AA]'
-                "
+          selectedWeek() === 'prev'
+            ? 'bg-gradient-to-r from-red-300 to-red-200'
+            : 'bg-gradient-to-r from-green-300 to-green-200'
+        "
               ></div>
 
               <!-- Prev -->

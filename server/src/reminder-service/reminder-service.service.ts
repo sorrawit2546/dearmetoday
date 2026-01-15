@@ -8,36 +8,55 @@ export class ReminderServiceService {
   constructor(
     private reminderRepository: ReminderServiceRepository,
     private resendService: ResendService,
-  ) {}
+  ) {
+    console.log('[CRON] ReminderServiceService CREATED');
+  }
 
-  isAfter21(): boolean {
+  isAfter18(): boolean {
     const now = new Date(
       new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }),
     );
+
+    console.log('[CRON] now Asia/Bangkok:', now.toString());
+    console.log('[CRON] hour =', now.getHours());
 
     const cutoff = new Date(
       now.getFullYear(),
       now.getMonth(),
       now.getDate(),
-      22,
-      15,
+      21,
+      0,
       0,
     );
 
     return now >= cutoff;
   }
 
-  @Cron('0 */10 * * * *')
+  @Cron('0 0 21 * * *', { timeZone: 'Asia/Bangkok' })
   async checkAllUsersDailyReminder() {
-    if (!this.isAfter21()) return;
+    console.log('[CRON] triggered:', new Date().toISOString());
+    if (!this.isAfter18()) return;
+
     const allUser = await this.reminderRepository.getAllUser();
-    for (const users of allUser) {
+
+    for (const user of allUser) {
       const hasNote = await this.reminderRepository.checkUserWriteNoteToday(
-        users.id,
+        user.id,
       );
+
       if (!hasNote) {
-        await this.resendService.sendReminderEmail(users.email, users.name);
+        try {
+          await this.resendService.sendReminderEmail(user.email, user.name);
+          console.log('[CRON] sent to', user.email);
+
+          // ป้องกัน rate-limit → 500ms - 1s พอ
+          await new Promise((resolve) => setTimeout(resolve, 800));
+        } catch (error) {
+          console.error('[CRON] failed for', user.email, error.message);
+        }
       }
     }
+
+    console.log('[CRON] finished all users');
   }
 }
