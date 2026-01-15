@@ -1,72 +1,63 @@
+<app-header></app-header>
 <div class="mx-auto max-w-6xl px-6 py-12">
-    <!-- Top section -->
-    <div class="grid grid-cols-1 gap-10 md:grid-cols-2">
-      <!-- Image -->
-      <div class="flex justify-center">
-        <img
-          [src]="product().image"
-          [alt]="product().title"
-          class="w-full max-w-md rounded-xl object-cover shadow-sm"
-        />
-      </div>
-  
-      <!-- Summary -->
-      <div class="flex flex-col justify-center gap-4">
-        <h1 class="text-3xl font-bold">
-          {{ product().title }}
-        </h1>
-  
-        <p class="text-gray-600 leading-relaxed">
-          {{ product().shortDescription }}
-        </p>
-  
-        <script async
-  src="https://js.stripe.com/v3/buy-button.js">
-</script>
-
-<stripe-buy-button
-  buy-button-id="buy_btn_1SpmSWPoDqs9jcbwIg8CibVB"
-  publishable-key="pk_live_51SR2U6PoDqs9jcbwVbFXIUV2gbfes89tuxvOVXJcN5qM5dMriT4uHgjnnJT1HE4V0YzixRUHDdQHTDW6hsd9frPh00qCNE7mLX"
->
-</stripe-buy-button>
-      </div>
+  <!-- Top section -->
+  <div class="grid grid-cols-1 gap-10 md:grid-cols-2">
+    <!-- Image -->
+    <div class="flex justify-center">
+      <img
+        [src]="product().image"
+        [alt]="product().title"
+        class="w-full max-w-md rounded-xl object-cover shadow-sm"
+      />
     </div>
-  
-    <!-- Divider -->
-    <hr class="my-16" />
-  
-    <!-- Detail section -->
-    <div class="mx-auto max-w-3xl space-y-10">
-      <h2 class="text-2xl font-semibold">
-        {{ product().title }}
-      </h2>
-  
-      <p class="text-gray-700 leading-relaxed">
-        {{ product().longDescription }}
+
+    <!-- Summary -->
+    <div class="flex flex-col justify-center gap-4">
+      <h1 class="text-3xl font-bold">{{ product().title }}</h1>
+
+      <p class="text-gray-600 leading-relaxed">
+        {{ product().shortDescription }}
       </p>
-  
-      <h3 class="font-semibold">ภายในประกอบด้วยคำถามชวนคิดที่เรียบง่าย แต่ทรงพลัง เช่น</h3>
-      <ul class="list-disc space-y-2 pl-6 text-gray-700">
-        <li *ngFor="let item of product().features">
-          {{ item }}
-        </li>
-      </ul>
-  
-      <div>
-        <h3 class="font-semibold">เหมาะสำหรับ</h3>
-        <ul class="mt-2 list-disc pl-6 text-gray-700">
-          <li *ngFor="let item of product().suitableFor">
-            {{ item }}
-          </li>
-        </ul>
-      </div>
-  
-      <div>
-        <h3 class="font-semibold">รูปแบบไฟล์</h3>
-        <p class="text-gray-700">
-          {{ product().fileFormat }}
-        </p>
+
+      <div class="flex justify-center">
+        <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+
+        <stripe-buy-button
+          buy-button-id="buy_btn_1SpmSWPoDqs9jcbwIg8CibVB"
+          publishable-key="pk_live_51SR2U6PoDqs9jcbwVbFXIUV2gbfes89tuxvOVXJcN5qM5dMriT4uHgjnnJT1HE4V0YzixRUHDdQHTDW6hsd9frPh00qCNE7mLX"
+        >
+        </stripe-buy-button>
       </div>
     </div>
   </div>
-  
+
+  <!-- Divider -->
+  <hr class="my-16" />
+
+  <!-- Detail section -->
+  <div class="mx-auto max-w-3xl space-y-10">
+    <h2 class="text-2xl font-semibold">{{ product().title }}</h2>
+    <img src="assets/images/prod-2.png" alt="" class="justify-center w-120 h-full">
+
+    <p class="text-gray-700 leading-relaxed">{{ product().longDescription }}</p>
+
+    <h3 class="font-semibold">
+      ภายในประกอบด้วยคำถามชวนคิดที่เรียบง่าย แต่ทรงพลัง เช่น
+    </h3>
+    <ul class="list-disc space-y-2 pl-6 text-gray-700">
+      <li *ngFor="let item of product().features">{{ item }}</li>
+    </ul>
+
+    <div>
+      <h3 class="font-semibold">เหมาะสำหรับ</h3>
+      <ul class="mt-2 list-disc pl-6 text-gray-700">
+        <li *ngFor="let item of product().suitableFor">{{ item }}</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="font-semibold">รูปแบบไฟล์</h3>
+      <p class="text-gray-700">{{ product().fileFormat }}</p>
+    </div>
+  </div>
+</div>

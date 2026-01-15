@@ -1,6 +1,4 @@
 import { Component, signal } from '@angular/core';
-import { describe } from 'node:test';
-import { Store } from '../../pages/store/store';
 import { Route, Router } from '@angular/router';
 
 interface items {

@@ -1,6 +1,7 @@
 import { Component, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { Header } from '../../components/header/header';
 
 interface Product {
   id: string;
@@ -15,7 +16,7 @@ interface Product {
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CommonModule],
+  imports: [CommonModule, Header],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -31,13 +32,14 @@ export class ProductDetail {
 
   product = signal<Product>({
     id: this.productId,
-    title: 'Positive Note Sheet',
+    title: 'Daily Positive Note – 30 Day Practice',
     image: 'assets/images/prod-1.png',
     shortDescription:
       'แผ่นบันทึกเชิงบวกสำหรับการทบทวนตนเองในแต่ละวัน ออกแบบมาเพื่อช่วยให้คุณหยุดพักจากความเร่งรีบ และหันกลับมารับรู้คุณค่าเล็ก ๆ ที่เกิดขึ้นในชีวิตประจำวันอย่างมีระบบ',
     longDescription:
       'แผ่นบันทึกเชิงบวกสำหรับการทบทวนตนเองในแต่ละวัน ออกแบบมาเพื่อช่วยให้คุณหยุดพักจากความเร่งรีบ และหันกลับมารับรู้คุณค่าเล็ก ๆ ที่เกิดขึ้นในชีวิตประจำวันอย่างมีระบบ',
     features: [
+      'ไฟล์ PDF สำหรับจดบันทึก 30 วัน!',
       'ความรู้สึกของวันนี้',
       'สิ่งที่คุณรู้สึกขอบคุณ (วันละ 3 บรรทัด)',
       'เรื่องราวดี ๆ ที่เกิดขึ้น',
