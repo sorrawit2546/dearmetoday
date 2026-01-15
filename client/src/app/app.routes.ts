@@ -10,6 +10,8 @@ import { TermsComponent } from './pages/terms/terms';
 import { CollectStampComponent } from './components/collect-stamp-component/collect-stamp-component';
 import { BlogList } from './pages/blog/blog-list/blog-list';
 import { BlogDetail } from './pages/blog/blog-detail/blog-detail';
+import { Store } from './pages/store/store';
+import { ProductDetail } from './components/product-detail/product-detail';
 
 export const routes: Routes = [
   { component: Home, path: '' },
@@ -31,4 +33,10 @@ export const routes: Routes = [
       { path: ':slug', component: BlogDetail },
     ],
   },
+  {
+    component: Store, path: 'store'
+  },
+  {
+    component: ProductDetail, path: 'store/product/:id'
+  }
 ];
